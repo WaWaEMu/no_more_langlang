@@ -2,6 +2,8 @@ import './bootstrap';
 import { createApp } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import App from './App.vue';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 
 const router = createRouter({
     history: createWebHashHistory(),
