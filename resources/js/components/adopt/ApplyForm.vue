@@ -8,7 +8,7 @@
                         <span class="text-danger">*</span>
                         送養標題
                     </label>
-                    <input type="text" id="title" class="form-control" placeholder="" required>
+                    <input type="text" id="title" class="form-control" placeholder="" v-model="formData.title" required>
                 </div>
                 <div class="d-flex gap-4">
                     <div class="w-100">
@@ -16,8 +16,8 @@
                             <span class="text-danger">*</span>
                             縣市
                         </label>
-                        <select id="city" class="form-select" v-model="selectedCity" required>
-                            <option value="" disabled>請選擇縣市</option>
+                        <select id="city" class="form-select" v-model="formData.city" required>
+                            <option disabled>請選擇縣市</option>
                             <option v-for="city in Object.keys(cities)" :key="city" :value="city">
                                 {{ city }}
                             </option>
@@ -28,9 +28,10 @@
                             <span class="text-danger">*</span>
                             鄉鎮區
                         </label>
-                        <select id="town" class="form-select" v-model="selectedTown" required>
-                            <option value="" disabled>請選擇鄉鎮區</option>
-                            <option v-for="town in cities[selectedCity]" :key="town" :value="town">
+                        <select id="town" class="form-select" v-model="formData.town" required>
+                            <option v-if="!formData.city" disabled>請先選擇縣市</option>
+                            <option v-if="formData.city" disabled>請選擇鄉鎮區</option>
+                            <option v-if="formData.city" v-for="town in cities[formData.city]" :key="town" :value="town">
                                 {{ town }}
                             </option>
                         </select>
@@ -40,8 +41,8 @@
                             <span class="text-danger">*</span>
                             是否為浪浪
                         </label>
-                        <select id="is-stray" class="form-select" required>
-                            <option value="" disabled>請選擇</option>
+                        <select id="is-stray" class="form-select" v-model="formData.isStray" required>
+                            <option disabled>請選擇</option>
                             <option :value=true>是</option>
                             <option :value=false>否</option>
                         </select>
@@ -53,8 +54,8 @@
                             <span class="text-danger">*</span>
                             動物種類
                         </label>
-                        <select id="type" class="form-select" v-model="selectedPet" required>
-                            <option value="" disabled>請選擇種類</option>
+                        <select id="type" class="form-select" v-model="formData.type" required>
+                            <option disabled>請選擇種類</option>
                             <option v-for="pet in Object.keys(pets)" :key="pet" :value="pet">
                                 {{ pet }}
                             </option>
@@ -65,9 +66,10 @@
                             <span class="text-danger">*</span>
                             花紋
                         </label>
-                        <select id="color" class="form-select" v-model="selectedColor" required>
-                            <option value="" disabled>請選擇花紋</option>
-                            <option v-for="color in pets[selectedPet]" :key="color" :value="color">
+                        <select id="color" class="form-select" v-model="formData.color" required>
+                            <option v-if="!formData.type" disabled>請先選擇動物種類</option>
+                            <option v-if="formData.type" disabled>請選擇花紋</option>
+                            <option v-if="formData.type" v-for="color in pets[formData.type]" :key="color" :value="color">
                                 {{ color }}
                             </option>
                         </select>
@@ -77,8 +79,8 @@
                             <span class="text-danger">*</span>
                             毛型
                         </label>
-                        <select id="fur-type" class="form-select" required>
-                            <option value="" disabled>請選擇毛型</option>
+                        <select id="fur-type" class="form-select" v-model="formData.furType" required>
+                            <option disabled>請選擇毛型</option>
                             <option value="短毛">短毛</option>
                             <option value="長毛">長毛</option>
                         </select>
@@ -90,15 +92,15 @@
                             <span class="text-danger">*</span>
                             動物名字
                         </label>
-                        <input type="text" id="name" class="form-control" placeholder="" required>
+                        <input type="text" id="name" class="form-control" placeholder="" v-model="formData.name" required>
                     </div>
                     <div class="w-100">
                         <label for="gender">
                             <span class="text-danger">*</span>
                             動物性別
                         </label>
-                        <select id="gender" class="form-select"  required>
-                            <option value="" disabled>請選擇性別</option>
+                        <select id="gender" class="form-select" v-model="formData.gender" required>
+                            <option disabled>請選擇性別</option>
                             <option value="male">男生</option>
                             <option value="female">女生</option>
                         </select>
@@ -110,8 +112,8 @@
                             <span class="text-danger">*</span>
                             大約年紀
                         </label>
-                        <select id="age" class="form-select" required>
-                            <option value="" disabled>請選擇年紀範圍</option>
+                        <select id="age" class="form-select" v-model="formData.age" required>
+                            <option disabled>請選擇年紀範圍</option>
                             <option value="0-1">0 ~ 1歲</option>
                             <option value="1-4">1 ~ 4歲</option>
                             <option value="4-7">4 ~ 7歲</option>
@@ -126,8 +128,8 @@
                             <span class="text-danger">*</span>
                             結紮狀態
                         </label>
-                        <select id="is-neuter" class="form-select" required>
-                            <option value="" disabled>請選擇結紮狀態</option>
+                        <select id="is-neuter" class="form-select" v-model="formData.isNeuter" required>
+                            <option disabled>請選擇結紮狀態</option>
                             <option :value=true>已結紮</option>
                             <option :value=false>未結紮</option>
                         </select>
@@ -140,7 +142,7 @@
                     </label>
                     <div id="can-send-city">
                         <label v-for="city in Object.keys(cities)" class="me-3">
-                            <input type="checkbox" name="cities[]" :value=city class="me-1">
+                            <input type="checkbox" v-model="formData.canSendCity" :value=city class="me-1">
                             {{ city }}
                         </label>
                     </div>
@@ -150,21 +152,21 @@
                         <span class="text-danger">*</span>
                         送養說明
                     </label>
-                    <textarea id="des" class="form-control" rows="4" required></textarea>
+                    <textarea id="des" class="form-control" rows="4" v-model="formData.des" required></textarea>
                 </div>
                 <div>
                     <label for="health-des">
                         <span class="text-danger">*</span>
                         健康狀態說明
                     </label>
-                    <textarea id="health-des" class="form-control" rows="4" required></textarea>
+                    <textarea id="health-des" class="form-control" rows="4" v-model="formData.healthDes" required></textarea>
                 </div>
                 <div>
                     <label for="cond">
                         <span class="text-danger">*</span>
                         領養條件
                     </label>
-                    <textarea id="cond" class="form-control" rows="4" required></textarea>
+                    <textarea id="cond" class="form-control" rows="4" v-model="formData.cond" required></textarea>
                 </div>
                 <div>
                     <label>送養相關圖片</label>
@@ -183,7 +185,7 @@
                     <UpdateImg v-show="showModal" />
                 </div>
                 <div class="text-end">
-                    <button class="apply-form__btn btn px-5 py-2">確定送出</button>
+                    <button @click="submit()" class="apply-form__btn btn px-5 py-2">確定送出</button>
                 </div>
             </form>
         </div>
@@ -191,28 +193,51 @@
 </template>
 
 <script setup lang="ts" name="ApplyForm">
-    import { ref, watch } from 'vue'
+    import { ref, reactive, watch } from 'vue'
     import { cities } from '@/../data/cities'
     import { pets } from '@/../data/pets'
     import UpdateImg from '@/components/modals/UpdateImg.vue'
 
-    const selectedCity = ref()
-    const selectedTown = ref()
-    const selectedPet = ref()
-    const selectedColor = ref()
     const showModal = ref(false)
+    const formData = reactive({
+        title: '',
+        city: '',
+        town: '',
+        isStray: null,
+        type: '',
+        color: '',
+        furType: '',
+        name: '',
+        gender: '',
+        age: '',
+        isNeuter: null,
+        canSendCity: [],
+        des: '',
+        healthDes: '',
+        cond: '',
+        img: ''
+    })
 
-    const initTown = watch(selectedCity, () => {
-        selectedTown.value = ''
-    })
-    const initColor = watch(selectedPet, () => {
-        selectedColor.value = ''
-    })
+    const initTown = watch(
+        () => formData.city,
+        () => {
+            formData.town = ''
+        })
+
+    const initColor = watch(
+        () => formData.type,
+        () => {
+            formData.color
+        }
+    )
 
     function updateImg() {
         showModal.value = true
     }
 
+    function submit() {
+        
+    }
 </script>
 
 <style scoped>
