@@ -12,19 +12,25 @@
                     </button>
                 </div>
                 <div class="modal-body d-flex justify-content-center align-items-center my-2 gap-5">
-                    <div class="update-img__upload d-flex flex-column">
-                        <label for="choose-img" class="update-img__choose d-flex justify-content-center align-items-center rounded-circle mt-4 ms-4 fs-1 fw-bold">
-                            <input type="file" accept="image/*" id="choose-img" class="d-none">
-                            <span>+</span>
-                        </label>
-                        <span class="d-flex justify-content-center align-items-center flex-grow-1 fs-3">圖檔將上傳至此</span>
+                    <div class="update-img__upload d-flex flex-column overflow-hidden">
+                        <template v-if="!imageUrl">
+                            <label for="choose-img" class="update-img__choose d-flex justify-content-center align-items-center rounded-circle mt-4 ms-4 fs-1 fw-bold">
+                                <input type="file" accept="image/*" id="choose-img" class="d-none" @change="previewImg">
+                                <span>+</span>
+                            </label>
+                            <span class="d-flex justify-content-center align-items-center flex-grow-1 fs-3">圖檔將上傳至此</span>
+                        </template>
+                        <template v-if="imageUrl">
+                            <ImgCropper :imageUrl="imageUrl" @update:preview-img="savePreviewImg" />
+                        </template>
                     </div>
                     <div class="d-flex flex-column">
                         <span class="fs-5 fw-medium">裁減預覽</span>
                         <img src="@public/icons/arrow-right.svg" class="update-img__icon--arrow">
                     </div>
-                    <div class="update-img__preview d-flex justify-content-center align-items-center">
-                        <img src="`@public/icons/image.svg`" class="update-img__icon--img">
+                    <div class="update-img__preview d-flex justify-content-center align-items-center overflow-hidden">
+                        <img v-if="!previewImgUrl" src="`@public/icons/image.svg`" class="update-img__icon--img">
+                        <img v-if="previewImgUrl" :src="previewImgUrl" class="w-100 h-100 object-fit-contain">
                     </div>
                 </div>
                 <div class="modal-footer mx-5 mb-3">
@@ -42,6 +48,21 @@
 </template>
 
 <script setup lang="ts" name="UpdateImg">
+    import { ref } from 'vue'
+    import ImgCropper from '@/components/ImgCropper.vue'
+
+    const imageUrl = ref<string | null>(null)
+    const previewImgUrl = ref<string | null>(null)
+
+    const previewImg = (event: Event) => {
+        const target = event.target as HTMLInputElement
+        if (!target.files || target.files.length === 0) return 
+        imageUrl.value = URL.createObjectURL(target.files[0])
+    }
+
+    function savePreviewImg(url: string) {
+        previewImgUrl.value = url
+    }
 </script>
 
 <style scoped>
@@ -54,8 +75,8 @@
     }
 
     .update-img__upload {
-        width: 450px;
-        height: 450px;
+        width: 400px;
+        height: 400px;
         aspect-ratio: 1;
         background-color: #f2f2f2;
         color: #bfbfbf;
@@ -73,8 +94,8 @@
     }
 
     .update-img__preview {
-        width: 200px;
-        height: 200px;
+        width: 250px;
+        height: 250px;
         color: #bfbfbf;
         box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
         border-radius: 5%;
