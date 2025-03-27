@@ -197,9 +197,10 @@
     import { cities } from '@/../data/cities'
     import { pets } from '@/../data/pets'
     import UpdateImg from '@/components/modals/UpdateImg.vue'
+    import { FormInter } from '@/types/form'
 
-    const showModal = ref(false)
-    const formData = reactive({
+    const showModal = ref<boolean>(false)
+    const formData = reactive<FormInter>({
         title: '',
         city: '',
         town: '',
