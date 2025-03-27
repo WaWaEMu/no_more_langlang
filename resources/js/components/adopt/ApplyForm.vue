@@ -182,7 +182,7 @@
                             </button>
                         </div>
                     </div>
-                    <UpdateImg v-show="showModal" />
+                    <UpdateImg v-show="showModal" @update:confirm-img="saveConfirmImg" />
                 </div>
                 <div class="text-end">
                     <button @click="submit()" class="apply-form__btn btn px-5 py-2">確定送出</button>
@@ -218,6 +218,7 @@
         cond: '',
         img: ''
     })
+    const imgList = ref<string[]>([])
 
     const initTown = watch(
         () => formData.city,
@@ -234,6 +235,10 @@
 
     function updateImg() {
         showModal.value = true
+    }
+
+    function saveConfirmImg(url: string) {
+        imgList.value.push(url)
     }
 
     function submit() {
