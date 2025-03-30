@@ -171,10 +171,13 @@
                 <div>
                     <label>送養相關圖片</label>
                     <div class="d-flex gap-4">
-                        <div class="d-flex flex-column w-25">
-                            <!-- tmp -->
-                            <img src="../../components/sample.jpg" class="apply-form__preview">
-                            <button @click="updateImg()"
+                        <div v-for="(url, index) in imgUrlList" :key="index" class="d-flex flex-column w-25">
+                            <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
+                                <img src="@public/icons/image.svg" alt="" class="w-50">
+                            </div>
+                            <img v-else :src="url" class="apply-form__upload--img">
+                            <button type="button"
+                                    @click="updateImg(index, url)"
                                     class="apply-form__btn apply-form__btn--img btn fw-medium"
                                     data-bs-toggle="modal"
                                     data-bs-target="#update-img-modal">
@@ -182,10 +185,10 @@
                             </button>
                         </div>
                     </div>
-                    <UpdateImg v-show="showModal" @update:confirm-img="saveConfirmImg" />
+                    <UpdateImg v-show="showModal" :selectedimg-url="selectedImg.url" @update:confirm-img="saveConfirmImg" />
                 </div>
                 <div class="text-end">
-                    <button @click="submit()" class="apply-form__btn btn px-5 py-2">確定送出</button>
+                    <button type="submit" @click="submit()" class="apply-form__btn btn px-5 py-2">確定送出</button>
                 </div>
             </form>
         </div>
@@ -198,6 +201,7 @@
     import { pets } from '@/../data/pets'
     import UpdateImg from '@/components/modals/UpdateImg.vue'
     import { FormInter } from '@/types/form'
+    import { Modal } from 'bootstrap'
 
     const showModal = ref<boolean>(false)
     const formData = reactive<FormInter>({
@@ -218,7 +222,11 @@
         cond: '',
         img: ''
     })
-    const imgList = ref<string[]>([])
+    const selectedImg = ref<{ index: number | null; url: string }>({
+        index: null ,
+        url: ''
+    })
+    const imgUrlList = ref<string[]>(['', '', ''])
 
     const initTown = watch(
         () => formData.city,
@@ -233,12 +241,27 @@
         }
     )
 
-    function updateImg() {
+    function updateImg(index: number, url: string) {
+        selectedImg.value.index = index
+        selectedImg.value.url = url
         showModal.value = true
     }
 
     function saveConfirmImg(url: string) {
-        imgList.value.push(url)
+        if (selectedImg.value.index !== null) {
+            imgUrlList.value[selectedImg.value.index] = url
+            selectedImg.value.index = null
+        }
+        showModal.value = false
+        closeModal()
+    }
+
+    function closeModal() {
+        const modalElement = document.getElementById('update-img-modal') as HTMLElement
+        if (modalElement) {
+            const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement)
+            modalInstance.hide()
+        }
     }
 
     function submit() {
@@ -256,7 +279,15 @@
         width: 85%;
     }
 
-    .apply-form__preview {
+    .apply-form__upload--placeholder {
+        background-color: #fff;
+        width: 150px;
+        height: 150px;
+        aspect-ratio: 1 / 1;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .apply-form__upload--img {
         border-radius: 5px 5px 0 0;
         aspect-ratio: 1 / 1;
         object-fit: cover;

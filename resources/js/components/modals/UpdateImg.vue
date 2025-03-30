@@ -35,11 +35,11 @@
                 </div>
                 <div class="modal-footer mx-5 mb-3">
                     <div>
-                        <button @click="resetUpload()" class="update-img__btn--dark btn px-5 py-2">重新上傳</button>
+                        <button type="button" @click="resetUpload()" class="update-img__btn--dark btn px-5 py-2">重新上傳</button>
                     </div>
                     <div class="ms-auto">
                         <button class="update-img__btn--dark btn me-3 px-4 py-2" data-bs-dismiss="modal" aria-label="Close">取消</button>
-                        <button @click="confirmImg()" class="update-img__btn--light btn px-4 py-2">確認</button>
+                        <button type="button" @click="confirmImg()" class="update-img__btn--light btn px-4 py-2">確認</button>
                     </div>
                 </div>
             </div>
@@ -48,8 +48,10 @@
 </template>
 
 <script setup lang="ts" name="UpdateImg">
-    import { ref } from 'vue'
+    import { ref, watch } from 'vue'
     import ImgCropper from '@/components/ImgCropper.vue'
+
+    const { selectedimgUrl } = defineProps<{ selectedimgUrl: string }>()
 
     const emit = defineEmits<{
         (event: 'update:confirm-img', value: string): void
@@ -63,6 +65,12 @@
         if (!target.files || target.files.length === 0) return 
         imageUrl.value = URL.createObjectURL(target.files[0])
     }
+
+    watch(() => selectedimgUrl, (newVal) => {
+        if (newVal) {
+            imageUrl.value = newVal;
+        }
+    })
 
     function savePreviewImg(url: string) {
         previewImgUrl.value = url
@@ -79,6 +87,7 @@
             return
         }
         emit('update:confirm-img', previewImgUrl.value)
+        resetUpload()
     }
 </script>
 
