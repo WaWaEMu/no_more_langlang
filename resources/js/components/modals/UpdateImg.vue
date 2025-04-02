@@ -13,15 +13,15 @@
                 </div>
                 <div class="modal-body d-flex justify-content-center align-items-center my-2 gap-5">
                     <div class="update-img__upload d-flex flex-column overflow-hidden">
-                        <template v-if="!imageUrl">
+                        <template v-if="!imgUrl.original">
                             <label for="choose-img" class="update-img__choose d-flex justify-content-center align-items-center rounded-circle mt-4 ms-4 fs-1 fw-bold">
                                 <input type="file" accept="image/*" id="choose-img" class="d-none" @change="previewImg">
                                 <span>+</span>
                             </label>
                             <span class="d-flex justify-content-center align-items-center flex-grow-1 fs-3">圖檔將上傳至此</span>
                         </template>
-                        <template v-if="imageUrl">
-                            <ImgCropper :imageUrl="imageUrl" @update:preview-img="savePreviewImg" />
+                        <template v-if="imgUrl.original">
+                            <ImgCropper :originalImg="imgUrl.original" @update:preview-img="savePreviewImg" />
                         </template>
                     </div>
                     <div class="d-flex flex-column">
@@ -29,8 +29,8 @@
                         <img src="@public/icons/arrow-right.svg" class="update-img__icon--arrow">
                     </div>
                     <div class="update-img__preview d-flex justify-content-center align-items-center overflow-hidden">
-                        <img v-if="!previewImgUrl" src="`@public/icons/image.svg`" class="update-img__icon--img">
-                        <img v-if="previewImgUrl" :src="previewImgUrl" class="w-100 h-100 object-fit-contain">
+                        <img v-if="!imgUrl.preview" src="`@public/icons/image.svg`" class="update-img__icon--img">
+                        <img v-if="imgUrl.preview" :src="imgUrl.preview" class="w-100 h-100 object-fit-contain">
                     </div>
                 </div>
                 <div class="modal-footer mx-5 mb-3">
@@ -57,36 +57,38 @@
         (event: 'update:confirm-img', value: string): void
     }>()
 
-    const imageUrl = ref<string | null>(null)
-    const previewImgUrl = ref<string | null>(null)
+    const imgUrl = ref<{ original: string | null; preview: string | null }>({
+        original: '',
+        preview: ''
+    })
 
     const previewImg = (event: Event) => {
         const target = event.target as HTMLInputElement
         if (!target.files || target.files.length === 0) return 
-        imageUrl.value = URL.createObjectURL(target.files[0])
+        imgUrl.value.original = URL.createObjectURL(target.files[0])
     }
 
     watch(() => selectedimgUrl, (newVal) => {
         if (newVal) {
-            imageUrl.value = newVal;
+            imgUrl.value.original = newVal;
         }
     })
 
     function savePreviewImg(url: string) {
-        previewImgUrl.value = url
+        imgUrl.value.preview = url
     }
 
     function resetUpload() {
-        imageUrl.value = null
-        previewImgUrl.value = null
+        imgUrl.value.original = null
+        imgUrl.value.preview = null
     }
 
     function confirmImg() {
-        if (previewImgUrl.value === null) {
+        if (imgUrl.value.preview === null) {
             alert('請先上傳圖檔')
             return
         }
-        emit('update:confirm-img', previewImgUrl.value)
+        emit('update:confirm-img', imgUrl.value.preview)
         resetUpload()
     }
 </script>

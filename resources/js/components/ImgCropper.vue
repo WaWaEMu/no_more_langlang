@@ -15,13 +15,13 @@ import { VueCropper } from 'vue-cropper'
 import { ref, reactive } from 'vue'
 
 const props = defineProps<{
-    imageUrl: string
+    originalImg: string
 }>()
-const { imageUrl } = props
+const { originalImg } = props
 
 const cropper = ref<VueCropper | null>(null)
 const option = reactive({
-    img: imageUrl as string,
+    img: originalImg as string,
     outputSize: 1,
     outputType: 'jpeg',
     info: true,
