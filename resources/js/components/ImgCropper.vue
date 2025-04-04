@@ -12,16 +12,15 @@
 <script setup lang="ts" name="ImgCropper">
 import 'vue-cropper/dist/index.css'
 import { VueCropper } from 'vue-cropper'
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 
 const props = defineProps<{
     originalImg: string
 }>()
-const { originalImg } = props
 
 const cropper = ref<VueCropper | null>(null)
 const option = reactive({
-    img: originalImg as string,
+    img: props.originalImg as string,
     outputSize: 1,
     outputType: 'jpeg',
     info: true,
@@ -45,6 +44,10 @@ const emit = defineEmits<{
     (event: 'update:preview-img', value: any): void
 }>()
 const previewImg = ref<any>(null)
+
+watch(() => props.originalImg, (newVal) => {
+    option.img = newVal
+}, { immediate: true })
 
 function onRealTime() {
     if (cropper.value) {
