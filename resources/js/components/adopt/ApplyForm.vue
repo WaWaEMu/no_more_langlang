@@ -171,7 +171,7 @@
                 <div>
                     <label>送養相關圖片</label>
                     <div class="d-flex gap-4">
-                        <div v-for="(url, index) in imgUrlList" :key="index" class="d-flex flex-column w-25">
+                        <div v-for="(url, index) in previewImgList" :key="index" class="d-flex flex-column w-25">
                             <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <img src="@public/icons/image.svg" alt="" class="w-50">
                             </div>
@@ -185,7 +185,10 @@
                             </button>
                         </div>
                     </div>
-                    <UpdateImg v-show="showModal" :selectedimg-url="selectedImg.url" @update:confirm-img="saveConfirmImg" />
+                    <UpdateImg v-show="showModal"
+                        :selected-img="selectedImg"
+                        @update:confirm-img="saveConfirmImg"
+                    />
                 </div>
                 <div class="text-end">
                     <button type="submit" @click="submit()" class="apply-form__btn btn px-5 py-2">確定送出</button>
@@ -222,11 +225,13 @@
         cond: '',
         img: ''
     })
-    const selectedImg = ref<{ index: number | null; url: string }>({
+    const selectedImg = ref<{ index: number | null; originalUrl: string, previewUrl: string }>({
         index: null ,
-        url: ''
+        originalUrl: '',
+        previewUrl: ''
     })
-    const imgUrlList = ref<string[]>(['', '', ''])
+    const previewImgList = ref<string[]>(['', '', ''])
+    const originalImgList = ref<string[]>(['', '', ''])
 
     const initTown = watch(
         () => formData.city,
@@ -242,14 +247,19 @@
     )
 
     function updateImg(index: number, url: string) {
-        selectedImg.value.index = index
-        selectedImg.value.url = url
+        Object.assign(selectedImg.value, {
+            index,
+            previewUrl: url,
+            originalUrl: originalImgList.value[index]
+        })
         showModal.value = true
     }
 
-    function saveConfirmImg(url: string) {
-        if (selectedImg.value.index !== null) {
-            imgUrlList.value[selectedImg.value.index] = url
+    function saveConfirmImg(imgUrl: { original: string ; preview: string }) {
+        const index = selectedImg.value.index
+        if (index !== null) {
+            previewImgList.value[index] = imgUrl.preview
+            originalImgList.value[index] = imgUrl.original
             selectedImg.value.index = null
         }
         showModal.value = false

@@ -51,10 +51,10 @@
     import { ref, watch } from 'vue'
     import ImgCropper from '@/components/ImgCropper.vue'
 
-    const { selectedimgUrl } = defineProps<{ selectedimgUrl: string }>()
+    const { selectedImg } = defineProps<{ selectedImg: { index: number | null; originalUrl: string, previewUrl: string } }>()
 
     const emit = defineEmits<{
-        (event: 'update:confirm-img', value: string): void
+        (event: 'update:confirm-img', value: { original: string; preview: string }): void
     }>()
 
     const imgUrl = ref<{ original: string | null; preview: string | null }>({
@@ -68,11 +68,14 @@
         imgUrl.value.original = URL.createObjectURL(target.files[0])
     }
 
-    watch(() => selectedimgUrl, (newVal) => {
+    watch(() => selectedImg, (newVal) => {
         if (newVal) {
-            imgUrl.value.original = newVal;
+            Object.assign(imgUrl.value, {
+                original: newVal.originalUrl,
+                preview: newVal.previewUrl
+            })
         }
-    })
+    }, { deep: true })
 
     function savePreviewImg(url: string) {
         imgUrl.value.preview = url
@@ -84,11 +87,14 @@
     }
 
     function confirmImg() {
-        if (imgUrl.value.preview === null) {
+        if (imgUrl.value.original === null || imgUrl.value.preview === null ) {
             alert('請先上傳圖檔')
             return
         }
-        emit('update:confirm-img', imgUrl.value.preview)
+        emit('update:confirm-img', {
+            original: imgUrl.value.original,
+            preview: imgUrl.value.preview
+        })
         resetUpload()
     }
 </script>
