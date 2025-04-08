@@ -14,5 +14,8 @@ export interface FormInter {
     des: string;
     healthDes: string;
     cond: string;
-    img: string;
+    img: {
+        previewList: [string, string, string],
+        originalList: [string, string, string]
+    };
 }

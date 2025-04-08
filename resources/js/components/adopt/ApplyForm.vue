@@ -171,7 +171,7 @@
                 <div>
                     <label>送養相關圖片</label>
                     <div class="d-flex gap-4 flex-wrap">
-                        <div v-for="(url, index) in previewImgList" :key="index" class="d-flex flex-column w-25">
+                        <div v-for="(url, index) in previewList" :key="index" class="d-flex flex-column w-25">
                             <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <img src="@public/icons/image.svg" alt="" class="w-50">
                             </div>
@@ -199,7 +199,7 @@
 </template>
 
 <script setup lang="ts" name="ApplyForm">
-    import { ref, reactive, watch } from 'vue'
+    import { ref, reactive, watch, computed } from 'vue'
     import { cities } from '@/../data/cities'
     import { pets } from '@/../data/pets'
     import UpdateImg from '@/components/modals/UpdateImg.vue'
@@ -223,15 +223,16 @@
         des: '',
         healthDes: '',
         cond: '',
-        img: ''
+        img: {
+            previewList: ['', '', ''],
+            originalList: ['', '', '']
+        }
     })
     const selectedImg = ref<{ index: number | null; originalUrl: string, previewUrl: string }>({
         index: null ,
         originalUrl: '',
         previewUrl: ''
     })
-    const previewImgList = ref<string[]>(['', '', ''])
-    const originalImgList = ref<string[]>(['', '', ''])
 
     const initTown = watch(
         () => formData.city,
@@ -246,20 +247,26 @@
         }
     )
 
+    const previewList = computed(() => formData.img.previewList)
+
     function updateImg(index: number, url: string) {
+        const { originalList } = formData.img
+
         selectedImg.value = {
             index,
             previewUrl: url,
-            originalUrl: originalImgList.value[index]
+            originalUrl: originalList[index]
         }
         showModal.value = true
     }
 
     function saveConfirmImg(imgUrl: { original: string ; preview: string }) {
         const index = selectedImg.value.index
+        const { previewList, originalList } = formData.img
+
         if (index !== null) {
-            previewImgList.value[index] = imgUrl.preview
-            originalImgList.value[index] = imgUrl.original
+            previewList[index] = imgUrl.preview
+            originalList[index] = imgUrl.original
         }
         showModal.value = false
         closeModal()
@@ -274,7 +281,7 @@
     }
 
     function submit() {
-        
+
     }
 </script>
 
