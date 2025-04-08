@@ -170,7 +170,7 @@
                 </div>
                 <div>
                     <label>送養相關圖片</label>
-                    <div class="d-flex gap-4">
+                    <div class="d-flex gap-4 flex-wrap">
                         <div v-for="(url, index) in previewImgList" :key="index" class="d-flex flex-column w-25">
                             <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <img src="@public/icons/image.svg" alt="" class="w-50">
