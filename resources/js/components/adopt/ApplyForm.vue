@@ -247,11 +247,11 @@
     )
 
     function updateImg(index: number, url: string) {
-        Object.assign(selectedImg.value, {
+        selectedImg.value = {
             index,
             previewUrl: url,
             originalUrl: originalImgList.value[index]
-        })
+        }
         showModal.value = true
     }
 
@@ -260,7 +260,6 @@
         if (index !== null) {
             previewImgList.value[index] = imgUrl.preview
             originalImgList.value[index] = imgUrl.original
-            selectedImg.value.index = null
         }
         showModal.value = false
         closeModal()

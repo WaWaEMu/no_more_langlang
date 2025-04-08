@@ -8,7 +8,7 @@
         <div class="modal-dialog update-img__modal">
             <div class="modal-content">
                 <div class="modal-header me-3 mt-3">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" @click="cancelClick()" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body d-flex justify-content-center align-items-center my-2 gap-5">
@@ -38,7 +38,7 @@
                         <button type="button" @click="resetUpload()" class="update-img__btn--dark btn px-5 py-2">重新上傳</button>
                     </div>
                     <div class="ms-auto">
-                        <button class="update-img__btn--dark btn me-3 px-4 py-2" data-bs-dismiss="modal" aria-label="Close">取消</button>
+                        <button type="button" @click="cancelClick()" class="update-img__btn--dark btn me-3 px-4 py-2" data-bs-dismiss="modal" aria-label="Close">取消</button>
                         <button type="button" @click="confirmImg()" class="update-img__btn--light btn px-4 py-2">確認</button>
                     </div>
                 </div>
@@ -95,6 +95,11 @@
             original: imgUrl.value.original,
             preview: imgUrl.value.preview
         })
+        resetUpload()
+    }
+
+    function cancelClick() {
+        if (selectedImg.originalUrl !== '') return
         resetUpload()
     }
 </script>
