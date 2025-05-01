@@ -136,37 +136,37 @@
                     </div>
                 </div>
                 <div>
-                    <label for="can-send-city">
+                    <label for="sendable-city">
                         <span class="text-danger">*</span>
                         可送養地區 (複選)
                     </label>
-                    <div id="can-send-city">
+                    <div id="sendable-city">
                         <label v-for="city in Object.keys(cities)" class="me-3">
-                            <input type="checkbox" v-model="formData.canSendCity" :value=city class="me-1">
+                            <input type="checkbox" v-model="formData.sendableCity" :value=city class="me-1">
                             {{ city }}
                         </label>
                     </div>
                 </div>
                 <div>
-                    <label for="des">
+                    <label for="description">
                         <span class="text-danger">*</span>
                         送養說明
                     </label>
-                    <textarea id="des" class="form-control" rows="4" v-model="formData.des" required></textarea>
+                    <textarea id="description" class="form-control" rows="4" v-model="formData.description" required></textarea>
                 </div>
                 <div>
-                    <label for="health-des">
+                    <label for="health-description">
                         <span class="text-danger">*</span>
                         健康狀態說明
                     </label>
-                    <textarea id="health-des" class="form-control" rows="4" v-model="formData.healthDes" required></textarea>
+                    <textarea id="health-description" class="form-control" rows="4" v-model="formData.healthDescription" required></textarea>
                 </div>
                 <div>
-                    <label for="cond">
+                    <label for="condition">
                         <span class="text-danger">*</span>
                         領養條件
                     </label>
-                    <textarea id="cond" class="form-control" rows="4" v-model="formData.cond" required></textarea>
+                    <textarea id="condition" class="form-control" rows="4" v-model="formData.condition" required></textarea>
                 </div>
                 <div>
                     <label>送養相關圖片</label>
@@ -219,11 +219,11 @@
         gender: '',
         age: '',
         isNeuter: null,
-        canSendCity: [],
-        des: '',
-        healthDes: '',
-        cond: '',
-        img: {
+        sendableCity: [],
+        description: '',
+        healthDescription: '',
+        condition: '',
+        image: {
             previewList: ['', '', ''],
             originalList: ['', '', '']
         }
@@ -247,10 +247,10 @@
         }
     )
 
-    const previewList = computed(() => formData.img.previewList)
+    const previewList = computed(() => formData.image.previewList)
 
     function updateImg(index: number, url: string) {
-        const { originalList } = formData.img
+        const { originalList } = formData.image
 
         selectedImg.value = {
             index,
@@ -262,7 +262,7 @@
 
     function saveConfirmImg(imgUrl: { original: string ; preview: string }) {
         const index = selectedImg.value.index
-        const { previewList, originalList } = formData.img
+        const { previewList, originalList } = formData.image
 
         if (index !== null) {
             previewList[index] = imgUrl.preview

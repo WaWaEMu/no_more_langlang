@@ -10,11 +10,11 @@ export interface FormInter {
     gender: string;
     age: string;
     isNeuter: boolean | null;
-    canSendCity: string[];
-    des: string;
-    healthDes: string;
-    cond: string;
-    img: {
+    sendableCity: string[];
+    description: string;
+    healthDescription: string;
+    condition: string;
+    image: {
         previewList: [string, string, string],
         originalList: [string, string, string]
     };
