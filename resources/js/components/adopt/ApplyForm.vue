@@ -205,6 +205,7 @@
     import UpdateImg from '@/components/modals/UpdateImg.vue'
     import { FormInter } from '@/types/form'
     import { Modal } from 'bootstrap'
+    import axios from 'axios'
 
     const showModal = ref<boolean>(false)
     const formData = reactive<FormInter>({
@@ -281,7 +282,9 @@
     }
 
     function submit() {
-
+        axios.post('/api/adopt/add', formData)
+            .then()
+            .catch()
     }
 </script>
 
