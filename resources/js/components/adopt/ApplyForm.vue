@@ -251,10 +251,22 @@
     const previewList = computed(() => formData.image.previewList)
 
     function updateImg(index: number, url: string) {
-        const { originalList } = formData.image
+        const { previewList, originalList } = formData.image
+
+        // Fill in the empty preview field
+        let resolvedIndex = index
+        if (url === '') {
+            const emptyIndex = previewList.slice(0, index).findIndex(p => p === '')
+            if (emptyIndex !== -1) {
+                resolvedIndex = emptyIndex
+            }
+        }
+
+        // Prevent out-of-range index
+        if (resolvedIndex < 0 || resolvedIndex >= previewList.length) return
 
         selectedImg.value = {
-            index,
+            index: resolvedIndex,
             previewUrl: url,
             originalUrl: originalList[index]
         }
