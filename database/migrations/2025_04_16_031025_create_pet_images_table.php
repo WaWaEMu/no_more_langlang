@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pet_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pet_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['preview', 'original']);
+            $table->enum('type', ['preview']);
             $table->unsignedTinyInteger('index');
             $table->string('path')->nullable();
             $table->timestamps();

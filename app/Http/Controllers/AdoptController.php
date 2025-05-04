@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 class AdoptController extends Controller
 {
     public function add(Request $request) {
-        $types = ['preview' => $request->image['previewList'], 'original' => $request->image['originalList']];
         $cities = $request->sendableCity;
+        $paths = $request->imgPath;
 
         try {
             $pet = Pet::create([
@@ -37,13 +37,12 @@ class AdoptController extends Controller
                 ]);
             }
 
-            foreach ($types as $type => $list) {
-                foreach ($list as $index => $path)
-                    $pet->images()->create([
-                        'type' => $type,
-                        'index' => $index,
-                        'path' => $path ?: null
-                    ]);
+            foreach ($paths as $index => $path) {
+                $pet->images()->create([
+                    'type' => 'preview',
+                    'index' => $index,
+                    'path' => $path ?: null
+                ]);
             }
 
             return response()->json([

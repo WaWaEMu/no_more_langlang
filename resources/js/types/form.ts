@@ -14,8 +14,5 @@ export interface FormInter {
     description: string;
     healthDescription: string;
     condition: string;
-    image: {
-        previewList: [string, string, string],
-        originalList: [string, string, string]
-    };
+    imgPath: ['', '', ''];
 }

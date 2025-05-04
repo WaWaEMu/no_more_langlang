@@ -171,7 +171,7 @@
                 <div>
                     <label>送養相關圖片</label>
                     <div class="d-flex gap-4 flex-wrap">
-                        <div v-for="(url, index) in previewList" :key="index" class="d-flex flex-column w-25">
+                        <div v-for="(url, index) in formData.imgPath" :key="index" class="d-flex flex-column w-25">
                             <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <img src="@public/icons/image.svg" alt="" class="w-50">
                             </div>
@@ -186,7 +186,6 @@
                         </div>
                     </div>
                     <UpdateImg v-show="showModal"
-                        :selected-img="selectedImg"
                         @update:confirm-img="saveConfirmImg"
                     />
                 </div>
@@ -224,15 +223,11 @@
         description: '',
         healthDescription: '',
         condition: '',
-        image: {
-            previewList: ['', '', ''],
-            originalList: ['', '', '']
-        }
+        imgPath: ['', '', '']
     })
-    const selectedImg = ref<{ index: number | null; originalUrl: string, previewUrl: string }>({
+    const selectedImg = ref<{ index: number | null, url: string }>({
         index: null ,
-        originalUrl: '',
-        previewUrl: ''
+        url: ''
     })
 
     const initTown = watch(
@@ -248,38 +243,36 @@
         }
     )
 
-    const previewList = computed(() => formData.image.previewList)
+    const imgPath = computed(() => formData.imgPath)
 
     function updateImg(index: number, url: string) {
-        const { previewList, originalList } = formData.image
+        const { imgPath } = formData
 
         // Fill in the empty preview field
         let resolvedIndex = index
         if (url === '') {
-            const emptyIndex = previewList.slice(0, index).findIndex(p => p === '')
+            const emptyIndex = imgPath.slice(0, index).findIndex(p => p === '')
             if (emptyIndex !== -1) {
                 resolvedIndex = emptyIndex
             }
         }
 
         // Prevent out-of-range index
-        if (resolvedIndex < 0 || resolvedIndex >= previewList.length) return
+        if (resolvedIndex < 0 || resolvedIndex >= imgPath.length) return
 
         selectedImg.value = {
             index: resolvedIndex,
-            previewUrl: url,
-            originalUrl: originalList[index]
+            url,
         }
         showModal.value = true
     }
 
-    function saveConfirmImg(imgUrl: { original: string ; preview: string }) {
+    function saveConfirmImg(previewUrl: string) {
         const index = selectedImg.value.index
-        const { previewList, originalList } = formData.image
+        const { imgPath } = formData
 
         if (index !== null) {
-            previewList[index] = imgUrl.preview
-            originalList[index] = imgUrl.original
+            imgPath[index] = previewUrl
         }
         showModal.value = false
         closeModal()

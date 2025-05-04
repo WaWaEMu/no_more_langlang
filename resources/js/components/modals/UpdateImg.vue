@@ -15,7 +15,7 @@
                     <div class="update-img__upload d-flex flex-column overflow-hidden">
                         <template v-if="!imgUrl.original">
                             <label for="choose-img" class="update-img__choose d-flex justify-content-center align-items-center rounded-circle mt-4 ms-4 fs-1 fw-bold">
-                                <input type="file" accept="image/*" id="choose-img" class="d-none" @change="previewImg">
+                                <input type="file" accept="image/*" id="choose-img" class="d-none" @change="showImg">
                                 <span>+</span>
                             </label>
                             <span class="d-flex justify-content-center align-items-center flex-grow-1 fs-3">圖檔將上傳至此</span>
@@ -51,10 +51,8 @@
     import { ref, watch } from 'vue'
     import ImgCropper from '@/components/ImgCropper.vue'
 
-    const { selectedImg } = defineProps<{ selectedImg: { index: number | null; originalUrl: string, previewUrl: string } }>()
-
     const emit = defineEmits<{
-        (event: 'update:confirm-img', value: { original: string; preview: string }): void
+        (event: 'update:confirm-img', previewUrl: string): void
     }>()
 
     const imgUrl = ref<{ original: string | null; preview: string | null }>({
@@ -62,20 +60,12 @@
         preview: ''
     })
 
-    const previewImg = (event: Event) => {
+    // Show upload image
+    const showImg = (event: Event) => {
         const target = event.target as HTMLInputElement
         if (!target.files || target.files.length === 0) return 
         imgUrl.value.original = URL.createObjectURL(target.files[0])
     }
-
-    watch(() => selectedImg, (newVal) => {
-        if (newVal) {
-            Object.assign(imgUrl.value, {
-                original: newVal.originalUrl,
-                preview: newVal.previewUrl
-            })
-        }
-    }, { deep: true })
 
     function savePreviewImg(url: string) {
         imgUrl.value.preview = url
@@ -91,15 +81,11 @@
             alert('請先上傳圖檔')
             return
         }
-        emit('update:confirm-img', {
-            original: imgUrl.value.original,
-            preview: imgUrl.value.preview
-        })
+        emit('update:confirm-img', imgUrl.value.preview)
         resetUpload()
     }
 
     function cancelClick() {
-        if (selectedImg.originalUrl !== '') return
         resetUpload()
     }
 </script>
