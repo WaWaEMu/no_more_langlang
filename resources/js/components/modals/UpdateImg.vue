@@ -21,7 +21,7 @@
                             <span class="d-flex justify-content-center align-items-center flex-grow-1 fs-3">圖檔將上傳至此</span>
                         </template>
                         <template v-if="imgUrl.original">
-                            <ImgCropper :originalImg="imgUrl.original" @update:preview-img="savePreviewImg" />
+                            <ImgCropper :originalImg="imgUrl.original" @update:preview-url="savePreviewUrl" @update:image-blob="saveImageBlob" />
                         </template>
                     </div>
                     <div class="d-flex flex-column">
@@ -52,13 +52,14 @@
     import ImgCropper from '@/components/ImgCropper.vue'
 
     const emit = defineEmits<{
-        (event: 'update:confirm-img', previewUrl: string): void
+        (event: 'update:confirm-img', payload: { previewUrl: string, blob: Blob }): void
     }>()
 
     const imgUrl = ref<{ original: string | null; preview: string | null }>({
         original: '',
         preview: ''
     })
+    const imgBlob = ref<Blob>()
 
     // Show upload image
     const showImg = (event: Event) => {
@@ -67,8 +68,12 @@
         imgUrl.value.original = URL.createObjectURL(target.files[0])
     }
 
-    function savePreviewImg(url: string) {
+    function savePreviewUrl(url: string) {
         imgUrl.value.preview = url
+    }
+
+    function saveImageBlob(blob: Blob) {
+        imgBlob.value = blob
     }
 
     function resetUpload() {
@@ -81,7 +86,10 @@
             alert('請先上傳圖檔')
             return
         }
-        emit('update:confirm-img', imgUrl.value.preview)
+        emit('update:confirm-img', {
+            previewUrl: imgUrl.value.preview,
+            blob: imgBlob.value!
+        })
         resetUpload()
     }
 

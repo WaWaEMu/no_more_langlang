@@ -41,9 +41,11 @@ const option = reactive({
     mode: 'contain'
 })
 const emit = defineEmits<{
-    (event: 'update:preview-img', value: any): void
+    (event: 'update:preview-url', value: any): void
+    (event: 'update:image-blob', value: Blob): void
 }>()
 const previewImg = ref<any>(null)
+const oldUrl = ref<string | null>(null)
 
 watch(() => props.originalImg, (newVal) => {
     option.img = newVal
@@ -51,9 +53,17 @@ watch(() => props.originalImg, (newVal) => {
 
 function onRealTime() {
     if (cropper.value) {
-        cropper.value.getCropData((data: any) => {
-            previewImg.value = data
-            emit('update:preview-img', previewImg.value)
+        cropper.value.getCropBlob((blob: Blob) => {
+            const objUrl = URL.createObjectURL(blob)
+            // Emit the preview URL to the parent component for image display
+            emit('update:preview-url', objUrl)
+            // Emit the Blob to the parent component for storage
+            emit('update:image-blob', blob)
+
+            if (oldUrl.value) {
+                URL.revokeObjectURL(oldUrl.value)
+            }
+            oldUrl.value = objUrl
         })
     }
 }

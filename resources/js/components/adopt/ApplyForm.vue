@@ -8,7 +8,7 @@
                         <span class="text-danger">*</span>
                         送養標題
                     </label>
-                    <input type="text" id="title" class="form-control" placeholder="" v-model="formData.title" required>
+                    <input type="text" id="title" class="form-control" placeholder="" v-model="formState.title" required>
                 </div>
                 <div class="d-flex gap-4">
                     <div class="w-100">
@@ -16,7 +16,7 @@
                             <span class="text-danger">*</span>
                             縣市
                         </label>
-                        <select id="city" class="form-select" v-model="formData.city" required>
+                        <select id="city" class="form-select" v-model="formState.city" required>
                             <option disabled>請選擇縣市</option>
                             <option v-for="city in Object.keys(cities)" :key="city" :value="city">
                                 {{ city }}
@@ -28,10 +28,10 @@
                             <span class="text-danger">*</span>
                             鄉鎮區
                         </label>
-                        <select id="town" class="form-select" v-model="formData.town" required>
-                            <option v-if="!formData.city" disabled>請先選擇縣市</option>
-                            <option v-if="formData.city" disabled>請選擇鄉鎮區</option>
-                            <option v-if="formData.city" v-for="town in cities[formData.city]" :key="town" :value="town">
+                        <select id="town" class="form-select" v-model="formState.town" required>
+                            <option v-if="!formState.city" disabled>請先選擇縣市</option>
+                            <option v-if="formState.city" disabled>請選擇鄉鎮區</option>
+                            <option v-if="formState.city" v-for="town in cities[formState.city]" :key="town" :value="town">
                                 {{ town }}
                             </option>
                         </select>
@@ -41,7 +41,7 @@
                             <span class="text-danger">*</span>
                             是否為浪浪
                         </label>
-                        <select id="is-stray" class="form-select" v-model="formData.isStray" required>
+                        <select id="is-stray" class="form-select" v-model="formState.isStray" required>
                             <option disabled>請選擇</option>
                             <option :value=true>是</option>
                             <option :value=false>否</option>
@@ -54,7 +54,7 @@
                             <span class="text-danger">*</span>
                             動物種類
                         </label>
-                        <select id="type" class="form-select" v-model="formData.type" required>
+                        <select id="type" class="form-select" v-model="formState.type" required>
                             <option disabled>請選擇種類</option>
                             <option v-for="pet in Object.keys(pets)" :key="pet" :value="pet">
                                 {{ pet }}
@@ -66,10 +66,10 @@
                             <span class="text-danger">*</span>
                             花紋
                         </label>
-                        <select id="color" class="form-select" v-model="formData.color" required>
-                            <option v-if="!formData.type" disabled>請先選擇動物種類</option>
-                            <option v-if="formData.type" disabled>請選擇花紋</option>
-                            <option v-if="formData.type" v-for="color in pets[formData.type]" :key="color" :value="color">
+                        <select id="color" class="form-select" v-model="formState.color" required>
+                            <option v-if="!formState.type" disabled>請先選擇動物種類</option>
+                            <option v-if="formState.type" disabled>請選擇花紋</option>
+                            <option v-if="formState.type" v-for="color in pets[formState.type]" :key="color" :value="color">
                                 {{ color }}
                             </option>
                         </select>
@@ -79,7 +79,7 @@
                             <span class="text-danger">*</span>
                             毛型
                         </label>
-                        <select id="fur-type" class="form-select" v-model="formData.furType" required>
+                        <select id="fur-type" class="form-select" v-model="formState.furType" required>
                             <option disabled>請選擇毛型</option>
                             <option value="短毛">短毛</option>
                             <option value="長毛">長毛</option>
@@ -92,14 +92,14 @@
                             <span class="text-danger">*</span>
                             動物名字
                         </label>
-                        <input type="text" id="name" class="form-control" placeholder="" v-model="formData.name" required>
+                        <input type="text" id="name" class="form-control" placeholder="" v-model="formState.name" required>
                     </div>
                     <div class="w-100">
                         <label for="gender">
                             <span class="text-danger">*</span>
                             動物性別
                         </label>
-                        <select id="gender" class="form-select" v-model="formData.gender" required>
+                        <select id="gender" class="form-select" v-model="formState.gender" required>
                             <option disabled>請選擇性別</option>
                             <option value="male">男生</option>
                             <option value="female">女生</option>
@@ -112,7 +112,7 @@
                             <span class="text-danger">*</span>
                             大約年紀
                         </label>
-                        <select id="age" class="form-select" v-model="formData.age" required>
+                        <select id="age" class="form-select" v-model="formState.age" required>
                             <option disabled>請選擇年紀範圍</option>
                             <option value="0-1">0 ~ 1歲</option>
                             <option value="1-4">1 ~ 4歲</option>
@@ -128,7 +128,7 @@
                             <span class="text-danger">*</span>
                             結紮狀態
                         </label>
-                        <select id="is-neuter" class="form-select" v-model="formData.isNeuter" required>
+                        <select id="is-neuter" class="form-select" v-model="formState.isNeuter" required>
                             <option disabled>請選擇結紮狀態</option>
                             <option :value=true>已結紮</option>
                             <option :value=false>未結紮</option>
@@ -142,7 +142,7 @@
                     </label>
                     <div id="sendable-city">
                         <label v-for="city in Object.keys(cities)" class="me-3">
-                            <input type="checkbox" v-model="formData.sendableCity" :value=city class="me-1">
+                            <input type="checkbox" v-model="formState.sendableCity" :value=city class="me-1">
                             {{ city }}
                         </label>
                     </div>
@@ -152,26 +152,26 @@
                         <span class="text-danger">*</span>
                         送養說明
                     </label>
-                    <textarea id="description" class="form-control" rows="4" v-model="formData.description" required></textarea>
+                    <textarea id="description" class="form-control" rows="4" v-model="formState.description" required></textarea>
                 </div>
                 <div>
                     <label for="health-description">
                         <span class="text-danger">*</span>
                         健康狀態說明
                     </label>
-                    <textarea id="health-description" class="form-control" rows="4" v-model="formData.healthDescription" required></textarea>
+                    <textarea id="health-description" class="form-control" rows="4" v-model="formState.healthDescription" required></textarea>
                 </div>
                 <div>
                     <label for="condition">
                         <span class="text-danger">*</span>
                         領養條件
                     </label>
-                    <textarea id="condition" class="form-control" rows="4" v-model="formData.condition" required></textarea>
+                    <textarea id="condition" class="form-control" rows="4" v-model="formState.condition" required></textarea>
                 </div>
                 <div>
                     <label>送養相關圖片</label>
                     <div class="d-flex gap-4 flex-wrap">
-                        <div v-for="(url, index) in formData.imgPath" :key="index" class="d-flex flex-column w-25">
+                        <div v-for="(url, index) in imgUrls" :key="index" class="d-flex flex-column w-25">
                             <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <img src="@public/icons/image.svg" alt="" class="w-50">
                             </div>
@@ -207,7 +207,7 @@
     import axios from 'axios'
 
     const showModal = ref<boolean>(false)
-    const formData = reactive<FormInter>({
+    const formState = reactive<FormInter>({
         title: '',
         city: '',
         town: '',
@@ -223,42 +223,39 @@
         description: '',
         healthDescription: '',
         condition: '',
-        imgPath: ['', '', '']
+        blobs: ['', '', '']
     })
+    const imgUrls = ref<string[]>(['', '', ''])
     const selectedImg = ref<{ index: number | null, url: string }>({
         index: null ,
         url: ''
     })
 
     const initTown = watch(
-        () => formData.city,
+        () => formState.city,
         () => {
-            formData.town = ''
+            formState.town = ''
         })
 
     const initColor = watch(
-        () => formData.type,
+        () => formState.type,
         () => {
-            formData.color
+            formState.color
         }
     )
 
-    const imgPath = computed(() => formData.imgPath)
-
     function updateImg(index: number, url: string) {
-        const { imgPath } = formData
-
         // Fill in the empty preview field
         let resolvedIndex = index
         if (url === '') {
-            const emptyIndex = imgPath.slice(0, index).findIndex(p => p === '')
+            const emptyIndex = imgUrls.value.slice(0, index).findIndex(p => p === '')
             if (emptyIndex !== -1) {
                 resolvedIndex = emptyIndex
             }
         }
 
         // Prevent out-of-range index
-        if (resolvedIndex < 0 || resolvedIndex >= imgPath.length) return
+        if (resolvedIndex < 0 || resolvedIndex >= imgUrls.value.length) return
 
         selectedImg.value = {
             index: resolvedIndex,
@@ -267,13 +264,15 @@
         showModal.value = true
     }
 
-    function saveConfirmImg(previewUrl: string) {
+    function saveConfirmImg(payload: { previewUrl: string, blob: Blob }) {
+        const { previewUrl, blob } = payload
         const index = selectedImg.value.index
-        const { imgPath } = formData
 
         if (index !== null) {
-            imgPath[index] = previewUrl
+            imgUrls.value[index] = previewUrl
+            formState.blobs[index] = blob
         }
+
         showModal.value = false
         closeModal()
     }
@@ -286,8 +285,26 @@
         }
     }
 
+    function toFormData() {
+        const form = new FormData()
+        for (const [key, value] of Object.entries(formState)) {
+            if (Array.isArray(value)) {
+                value.forEach((v, i) => {
+                    form.append(`${key}[${i}]`, v)
+                })
+            } else if (typeof value === 'boolean') {
+                form.append(key, value ? '1' : '0')
+            } else if (value !== null && value !== undefined) {
+                form.append(key, value as string | Blob)
+            }
+        }
+        return form
+    }
+
     function submit() {
-        axios.post('/api/adopt/add', formData)
+        const realForm = toFormData()
+
+        axios.post('/api/adopt/add', realForm)
             .then()
             .catch()
     }

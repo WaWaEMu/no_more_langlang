@@ -14,5 +14,5 @@ export interface FormInter {
     description: string;
     healthDescription: string;
     condition: string;
-    imgPath: ['', '', ''];
+    blobs: ['', '', ''];
 }
