@@ -304,7 +304,7 @@
     function submit() {
         const realForm = toFormData()
 
-        axios.post('/api/adopt/add', realForm)
+        axios.post('/api/adopt/store', realForm)
             .then()
             .catch()
     }
