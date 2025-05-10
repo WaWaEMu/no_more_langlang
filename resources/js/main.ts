@@ -9,8 +9,8 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         { path: '/', component: () => import('@/pages/Home.vue') },
-        { path: '/adopt', component: () => import('@/pages/Adopt.vue') },
-        { path: '/adopt/add', component: () => import('@/pages/AddAdopt.vue') },
+        { path: '/adopt', component: () => import('@/pages/AdoptIndex.vue') },
+        { path: '/adopt/new', component: () => import('@/pages/AdoptCreate.vue') },
     ],
 });
 

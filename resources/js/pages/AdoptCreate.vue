@@ -7,7 +7,7 @@
     </Content>
 </template>
 
-<script setup lang="ts" name="AddAdopt">
+<script setup lang="ts" name="AdoptCreate">
     import Navbar from '@/components/Navbar.vue'
     import Content from '@/components/Content.vue'
     import ApplyForm from '@/components/adopt/ApplyForm.vue';
