@@ -8,19 +8,22 @@ use App\Contracts\PetCreatorInterface;
 class PetCreationService implements PetCreatorInterface {
     protected SendableCityService $cityService;
     protected PetImageService $imageService;
+    protected Pet $pet;
 
     public function __construct(
         SendableCityService $cityService,
-        PetImageService $imageService
+        PetImageService $imageService,
+        Pet $pet
     ) {
         $this->cityService = $cityService;
         $this->imageService = $imageService;
+        $this->pet = $pet;
     }
 
     public function create(array $data, array $blobs = []):Pet {
         $cities = $data['sendableCity'];
 
-        $pet = Pet::create([
+        $pet = $this->pet->create([
             'title' => $data['title'],
             'city' => $data['city'],
             'town' => $data['town'],
@@ -32,7 +35,6 @@ class PetCreationService implements PetCreatorInterface {
             'gender' => $data['gender'],
             'age' => $data['age'],
             'is_neuter' => $data['isNeuter'],
-            'sendable_city' => $cities,
             'description' => $data['description'],
             'health_description' => $data['healthDescription'],
             'condition' => $data['condition']
