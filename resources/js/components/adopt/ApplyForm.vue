@@ -41,7 +41,7 @@
                             <span class="text-danger">*</span>
                             是否為浪浪
                         </label>
-                        <select id="is-stray" class="form-select" v-model="formState.isStray" required>
+                        <select id="is-stray" class="form-select" v-model="formState.is_stray" required>
                             <option disabled>請選擇</option>
                             <option :value=true>是</option>
                             <option :value=false>否</option>
@@ -79,7 +79,7 @@
                             <span class="text-danger">*</span>
                             毛型
                         </label>
-                        <select id="fur-type" class="form-select" v-model="formState.furType" required>
+                        <select id="fur-type" class="form-select" v-model="formState.fur_type" required>
                             <option disabled>請選擇毛型</option>
                             <option value="短毛">短毛</option>
                             <option value="長毛">長毛</option>
@@ -128,7 +128,7 @@
                             <span class="text-danger">*</span>
                             結紮狀態
                         </label>
-                        <select id="is-neuter" class="form-select" v-model="formState.isNeuter" required>
+                        <select id="is-neuter" class="form-select" v-model="formState.is_neuter" required>
                             <option disabled>請選擇結紮狀態</option>
                             <option :value=true>已結紮</option>
                             <option :value=false>未結紮</option>
@@ -142,31 +142,31 @@
                     </label>
                     <div id="sendable-city">
                         <label v-for="city in Object.keys(cities)" class="me-3">
-                            <input type="checkbox" v-model="formState.sendableCity" :value=city class="me-1">
+                            <input type="checkbox" v-model="formState.sendable_city" :value=city class="me-1">
                             {{ city }}
                         </label>
                     </div>
                 </div>
                 <div>
-                    <label for="description">
+                    <label for="adoption-description">
                         <span class="text-danger">*</span>
                         送養說明
                     </label>
-                    <textarea id="description" class="form-control" rows="4" v-model="formState.description" required></textarea>
+                    <textarea id="adoption-description" class="form-control" rows="4" v-model="formState.adoption_description" required></textarea>
                 </div>
                 <div>
                     <label for="health-description">
                         <span class="text-danger">*</span>
                         健康狀態說明
                     </label>
-                    <textarea id="health-description" class="form-control" rows="4" v-model="formState.healthDescription" required></textarea>
+                    <textarea id="health-description" class="form-control" rows="4" v-model="formState.health_description" required></textarea>
                 </div>
                 <div>
-                    <label for="condition">
+                    <label for="adoption-condition">
                         <span class="text-danger">*</span>
                         領養條件
                     </label>
-                    <textarea id="condition" class="form-control" rows="4" v-model="formState.condition" required></textarea>
+                    <textarea id="adoption-condition" class="form-control" rows="4" v-model="formState.adoption_condition" required></textarea>
                 </div>
                 <div>
                     <label>送養相關圖片</label>
@@ -207,22 +207,23 @@
     import axios from 'axios'
 
     const showModal = ref<boolean>(false)
+    // Use snake_case keys to match backend expectations
     const formState = reactive<FormInter>({
         title: '',
         city: '',
         town: '',
-        isStray: null,
+        is_stray: null,
         type: '',
         color: '',
-        furType: '',
+        fur_type: '',
         name: '',
         gender: '',
         age: '',
-        isNeuter: null,
-        sendableCity: [],
-        description: '',
-        healthDescription: '',
-        condition: '',
+        is_neuter: null,
+        sendable_city: [],
+        adoption_description: '',
+        health_description: '',
+        adoption_condition: '',
         blobs: ['', '', '']
     })
     const imgUrls = ref<string[]>(['', '', ''])

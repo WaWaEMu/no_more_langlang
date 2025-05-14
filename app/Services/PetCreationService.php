@@ -21,24 +21,9 @@ class PetCreationService implements PetCreatorInterface {
     }
 
     public function create(array $data, array $blobs = []):Pet {
-        $cities = $data['sendableCity'];
+        $cities = $data['sendable_city'];
 
-        $pet = $this->pet->create([
-            'title' => $data['title'],
-            'city' => $data['city'],
-            'town' => $data['town'],
-            'is_stray' => $data['isStray'],
-            'type' => $data['type'],
-            'color' => $data['color'],
-            'fur_type' => $data['furType'],
-            'name' => $data['name'],
-            'gender' => $data['gender'],
-            'age' => $data['age'],
-            'is_neuter' => $data['isNeuter'],
-            'description' => $data['description'],
-            'health_description' => $data['healthDescription'],
-            'condition' => $data['condition']
-        ]);
+        $pet = $this->pet->create($data);
 
         $this->cityService->attachToPet($pet, $cities);
         $this->imageService->storeImage($pet, $blobs);

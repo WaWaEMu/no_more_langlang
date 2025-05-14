@@ -12,7 +12,7 @@ class Pet extends Model
     protected $fillable = [
         'title', 'city', 'town', 'is_stray', 'type', 'color',
         'fur_type', 'name', 'gender', 'age', 'is_neuter',
-        'description', 'health_description', 'condition'
+        'adoption_description', 'health_description', 'adoption_condition'
     ];
 
     public function sendableCitites() {

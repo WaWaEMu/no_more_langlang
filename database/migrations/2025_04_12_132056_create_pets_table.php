@@ -24,9 +24,9 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('age')->nullable();
             $table->boolean('is_neuter')->nullable();
-            $table->text('description')->nullable();
+            $table->text('adoption_description')->nullable();
             $table->text('health_description')->nullable();
-            $table->string('condition')->nullable();
+            $table->string('adoption_condition')->nullable();
             $table->timestamps();
         });
     }

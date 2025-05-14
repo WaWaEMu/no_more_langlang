@@ -2,17 +2,17 @@ export interface FormInter {
     title: string;
     city: string;
     town: string;
-    isStray: boolean | null;
+    is_stray: boolean | null;
     type: string;
     color: string;
-    furType: string;
+    fur_type: string;
     name: string;
     gender: string;
     age: string;
-    isNeuter: boolean | null;
-    sendableCity: string[];
-    description: string;
-    healthDescription: string;
-    condition: string;
+    is_neuter: boolean | null;
+    sendable_city: string[];
+    adoption_description: string;
+    health_description: string;
+    adoption_condition: string;
     blobs: ['', '', ''];
 }
