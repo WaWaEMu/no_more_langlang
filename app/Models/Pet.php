@@ -11,8 +11,7 @@ class Pet extends Model
 
     protected $fillable = [
         'title', 'city', 'town', 'is_stray', 'type', 'color',
-        'fur_type', 'name', 'gender', 'age', 'is_neuter',
-        'adoption_description', 'health_description', 'adoption_condition'
+        'fur_type', 'name', 'gender', 'age', 'is_neuter'
     ];
 
     public function sendableCitites() {
@@ -21,5 +20,10 @@ class Pet extends Model
 
     public function images() {
         return $this->hasMany(PetImage::class)->orderBy('type')->orderBy('index');
+    }
+
+    // Each pet has a record, so the hasOne method is used, and the function name is singular
+    public function detail() {
+        return $this->hasOne(PetDetail::class);
     }
 }
