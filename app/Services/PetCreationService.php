@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Pet;
 use App\Contracts\PetCreatorInterface;
-use App\Models\PetDetail;
+use Illuminate\Support\Arr;
 
 class PetCreationService implements PetCreatorInterface {
     protected SendableCityService $cityService;
@@ -26,11 +26,11 @@ class PetCreationService implements PetCreatorInterface {
 
     public function create(array $data, array $blobs = []):Pet {
         $cities = $data['sendable_city'];
-        $details = [
-            'adoption_description' => $data['adoption_description'],
-            'health_description' => $data['health_description'],
-            'adoption_condition' => $data['adoption_condition']
-        ];
+        $details = Arr::only($data, [
+            'adoption_description',
+            'health_description',
+            'adoption_condition',
+        ]);
 
         $pet = $this->pet->create($data);
 
