@@ -14,7 +14,7 @@ class Pet extends Model
         'fur_type', 'name', 'gender', 'age', 'is_neuter'
     ];
 
-    public function sendableCitites() {
+    public function sendableCities() {
         return $this->hasMany(PetSendableCity::class);
     }
 
@@ -25,5 +25,35 @@ class Pet extends Model
     // Each pet has a record, so the hasOne method is used, and the function name is singular
     public function detail() {
         return $this->hasOne(PetDetail::class);
+    }
+
+    public function attachSendableCities(array $cities):void {
+        foreach ($cities as $city) {
+            $this->sendableCities()->create([
+                'city' => $city
+            ]);
+        }
+    }
+
+    public function storeImages(array $images):void {
+        $index = 0;
+        $date = now()->format('Y_m_d');
+
+        foreach ($images as $image) {
+            $extension = $image->guessExtension();
+            $filename = $this->id . '_' . $index . '.' . $extension;
+            $path = $image->storeAs("images/{$date}", $filename, 'public');
+            $this->images()->create([
+                'type' => 'preview',
+                'index' => $index,
+                'path' => $path ?: null
+            ]);
+
+            $index++;
+        }
+    }
+
+    public function storeDetail(array $details):void {
+        $this->detail()->create($details);
     }
 }

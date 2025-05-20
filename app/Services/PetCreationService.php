@@ -7,21 +7,12 @@ use App\Contracts\PetCreatorInterface;
 use Illuminate\Support\Arr;
 
 class PetCreationService implements PetCreatorInterface {
-    protected SendableCityService $cityService;
-    protected PetImageService $imageService;
     protected Pet $pet;
-    protected PetDetailsService $detailService;
 
     public function __construct(
-        SendableCityService $cityService,
-        PetImageService $imageService,
         Pet $pet,
-        PetDetailsService $detailService
     ) {
-        $this->cityService = $cityService;
-        $this->imageService = $imageService;
         $this->pet = $pet;
-        $this->detailService = $detailService;
     }
 
     public function create(array $data, array $blobs = []):Pet {
@@ -34,9 +25,14 @@ class PetCreationService implements PetCreatorInterface {
 
         $pet = $this->pet->create($data);
 
-        $this->cityService->attachToPet($pet, $cities);
-        $this->imageService->storeImage($pet, $blobs);
-        $this->detailService->storeDetail($pet, $details);
+        // Attach cities where the pet can be adopted
+        $pet->attachSendableCities($cities);
+
+        // Store upload images related to the pet
+        $pet->storeImages($blobs);
+
+        // Save details description of the pet
+        $pet->storeDetail($details);
 
         return $pet;
     }
