@@ -17,7 +17,8 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive } from 'vue'
+    import { ref, reactive, onMounted } from 'vue'
+    import axios from 'axios'
 
     const email = ref('')
     const verify = ref('')
@@ -27,6 +28,12 @@
         token: '',
         password: '',
         password_confirmation: ''
+    })
+
+    onMounted(async () => {
+        const res = await axios.get('/api/password-reset/session')
+        form.token = res.data.token,
+        form.email = res.data.email
     })
 
     function resetPassword() {
