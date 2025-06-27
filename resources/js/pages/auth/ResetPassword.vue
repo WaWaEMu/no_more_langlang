@@ -19,6 +19,9 @@
 <script setup lang="ts">
     import { ref, reactive, onMounted } from 'vue'
     import axios from 'axios'
+    import { useRouter } from 'vue-router'
+
+    const router = useRouter()
 
     const email = ref('')
     const verify = ref('')
@@ -36,7 +39,15 @@
         form.email = res.data.email
     })
 
-    function resetPassword() {
-
+    async function resetPassword() {
+        try {
+            await axios.get('/sanctum/csrf-cookie')
+            // TodoList: handle status 422 (Token has expired or is invalid)
+            const res = await axios.post('/reset-password', form)
+            router.push('/login')
+        }
+        catch (error) {
+            console.error('重設密碼失敗', error)
+        }
     }
 </script>
