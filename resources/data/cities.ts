@@ -3,7 +3,7 @@ export interface CityInter {
     [cityName: string]: string[]
   }
 
-
+// List of cities and their towns or districts
 export const cities: CityInter = {
     "基隆市": ["中正區", "信義區", "仁愛區", "中山區", "安樂區", "暖暖區", "七堵區"],
     "台北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"], 

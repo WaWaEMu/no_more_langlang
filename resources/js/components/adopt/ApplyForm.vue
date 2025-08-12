@@ -245,6 +245,7 @@
         }
     )
 
+    // Opens the image update modal
     function updateImg(index: number, url: string) {
         // Fill in the empty preview field
         let resolvedIndex = index
@@ -265,6 +266,7 @@
         showModal.value = true
     }
 
+    // Update the form with the preview image selected from the image update modal
     function saveConfirmImg(payload: { previewUrl: string, blob: Blob }) {
         const { previewUrl, blob } = payload
         const index = selectedImg.value.index
@@ -286,22 +288,29 @@
         }
     }
 
+    // Convert formState to FormData format for submission
     function toFormData() {
         const form = new FormData()
         for (const [key, value] of Object.entries(formState)) {
+            // If the value is an array, append each item with an indexed key (e.g., ('sendable_city[0]', '台北市'), ('sendable_city[1]', '新北市'))
             if (Array.isArray(value)) {
                 value.forEach((v, i) => {
                     form.append(`${key}[${i}]`, v)
                 })
-            } else if (typeof value === 'boolean') {
+            }
+            // If the value is a boolean, convert it to '1' or '0'
+            else if (typeof value === 'boolean') {
                 form.append(key, value ? '1' : '0')
-            } else if (value !== null && value !== undefined) {
+            }
+            // For other types (e.g., string, Blob), append as is (if not null/undefined)
+            else if (value !== null && value !== undefined) {
                 form.append(key, value as string | Blob)
             }
         }
         return form
     }
 
+    // Submit the form
     function submit() {
         const realForm = toFormData()
 
