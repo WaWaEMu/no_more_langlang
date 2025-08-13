@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Contracts\PetCreatorInterface;
 use Illuminate\Support\Facades\Log;
+use App\Models\Pet;
 
 class AdoptController extends Controller
 {
@@ -12,6 +13,11 @@ class AdoptController extends Controller
 
     public function __construct(PetCreatorInterface $petCreatorInterface) {
         $this->petCreatorInterface = $petCreatorInterface;
+    }
+
+    public function index() {
+        $pets = Pet::with(['sendableCities', 'images', 'detail'])->get();
+        return response()->json($pets);
     }
 
     public function store(Request $request) {
