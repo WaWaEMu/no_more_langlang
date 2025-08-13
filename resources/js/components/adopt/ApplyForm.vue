@@ -202,13 +202,13 @@
     import { cities } from '@/../data/cities'
     import { pets } from '@/../data/pets'
     import UpdateImg from '@/components/modals/UpdateImg.vue'
-    import { FormInter } from '@/types/form'
+    import { PetFormInter } from '@/types/pet'
     import { Modal } from 'bootstrap'
     import axios from 'axios'
 
     const showModal = ref<boolean>(false)
     // Use snake_case keys to match backend expectations
-    const formState = reactive<FormInter>({
+    const formState = reactive<PetFormInter>({
         title: '',
         city: '',
         town: '',

@@ -1,4 +1,4 @@
-export interface FormInter {
+export interface PetFormInter {
     title: string;
     city: string;
     town: string;
