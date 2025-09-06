@@ -1,9 +1,16 @@
 <template>
     <Navbar />
+
+    <div class="container mt-5">
+        <div class="pet-search__wrapper mx-auto">
+            <PetSearch />
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts" name="Home">
     import Navbar from '@/components/Navbar.vue'
+    import PetSearch from '@/components/search/PetSearch.vue'
     import { ref, onMounted } from 'vue'
     import { PetInter } from '@/types/pet'
     import axios from 'axios'
@@ -19,3 +26,9 @@
         }
     })
 </script>
+
+<style>
+    .pet-search__wrapper {
+        max-width: 900px;
+    }
+</style>
