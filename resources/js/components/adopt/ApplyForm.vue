@@ -2,7 +2,7 @@
     <div class="container">
         <h2 class="mb-5 fs-4">送養動物表單</h2>
         <div class="apply-form__wrapper d-flex justify-content-center">
-            <form id="adopt-form" class="m-5 d-flex flex-column gap-4">
+            <form id="adopt-form" class="m-5 d-flex flex-column gap-4" @submit.prevent="submit()">
                 <div>
                     <label for="title">
                         <span class="text-danger">*</span>
@@ -196,7 +196,7 @@
                     />
                 </div>
                 <div class="text-end">
-                    <button type="submit" @click="submit()" class="apply-form__btn btn px-5 py-2">確定送出</button>
+                    <button type="submit" class="apply-form__btn btn px-5 py-2">確定送出</button>
                 </div>
             </form>
         </div>
