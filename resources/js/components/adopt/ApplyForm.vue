@@ -230,7 +230,7 @@
         adoption_description: '',
         health_description: '',
         adoption_condition: '',
-        blobs: ['', '', '']
+        blobs: []
     })
     const imgUrls = ref<string[]>(['', '', ''])
     const selectedImg = ref<{ index: number | null, url: string }>({
