@@ -14,7 +14,7 @@ export interface PetFormInter {
     adoption_description: string;
     health_description: string;
     adoption_condition: string;
-    blobs: ['', '', ''];
+    blobs: Blob[];
 }
 
 export interface PetInter {
