@@ -18,9 +18,11 @@
                         </label>
                         <select id="city" class="form-select" v-model="formState.city" required>
                             <option disabled>請選擇縣市</option>
-                            <option v-for="city in Object.keys(cities)" :key="city" :value="city">
-                                {{ city }}
-                            </option>
+                            <optgroup v-for="(cities, region) in areas" :key="region" :label="String(region)">
+                                <option v-for="city in Object.keys(cities)" :key="city" :value="city">
+                                    {{ city }}
+                                </option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="w-100">
@@ -31,7 +33,7 @@
                         <select id="town" class="form-select" v-model="formState.town" required>
                             <option v-if="!formState.city" disabled>請先選擇縣市</option>
                             <option v-if="formState.city" disabled>請選擇鄉鎮區</option>
-                            <option v-if="formState.city" v-for="town in cities[formState.city]" :key="town" :value="town">
+                            <option v-if="formState.city" v-for="town in districtsForCity" :key="town" :value="town">
                                 {{ town }}
                             </option>
                         </select>
@@ -140,11 +142,15 @@
                         <span class="text-danger">*</span>
                         可送養地區 (複選)
                     </label>
-                    <div id="sendable-city">
-                        <label v-for="city in Object.keys(cities)" class="me-3">
-                            <input type="checkbox" v-model="formState.sendable_city" :value=city class="me-1">
-                            {{ city }}
-                        </label>
+                    <div id="sendable-city" class="d-flex gap-4">
+                        <div v-for="(cities, region) in areas" :key="region" class="w-25">
+                            <span class="mx-1">{{ region }}</span>
+                            <hr>
+                            <label v-for="(districts, city) in cities" class="me-3">
+                                <input type="checkbox" v-model="formState.sendable_city" :value=city class="me-1">
+                                {{ city }}
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -199,7 +205,7 @@
 
 <script setup lang="ts" name="ApplyForm">
     import { ref, reactive, watch, computed } from 'vue'
-    import { cities } from '@/../data/cities'
+    import { areas } from '@/../data/areas'
     import { pets } from '@/../data/pets'
     import UpdateImg from '@/components/modals/UpdateImg.vue'
     import { PetFormInter } from '@/types/pet'
@@ -244,6 +250,15 @@
             formState.color
         }
     )
+
+    const districtsForCity = computed(() => {
+      for (const region in areas) {
+        if (formState.city in areas[region]) {
+          return areas[region][formState.city]
+        }
+      }
+      return []
+    })
 
     // Opens the image update modal
     function updateImg(index: number, url: string) {
@@ -360,5 +375,11 @@
 
     .apply-form__btn--img {
         border-radius: 0 0 5px 5px;
+    }
+
+    #sendable-city hr {
+        margin: 0.25rem 0;
+        height: 2px;
+        background-color: black;
     }
 </style>
