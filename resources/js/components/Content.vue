@@ -4,7 +4,7 @@
         <div class="w-75 py-5">
             <slot name="content"></slot>
         </div>
-        <div class="w-25 py-5">
+        <div class="w-25 py-5">123
             <slot name="sidebar"></slot>
         </div>
     </div>

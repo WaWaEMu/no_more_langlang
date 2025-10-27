@@ -7,7 +7,7 @@
         >
         </VueCropper>
     </div>
-</template>
+</template>999
 
 <script setup lang="ts" name="ImgCropper">
 import 'vue-cropper/dist/index.css'
