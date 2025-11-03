@@ -3,8 +3,8 @@
     <Content title="動物認養">
         <template #content>
             <div class="pet-search__wrapper mx-auto">
-                <PetSearch />
-                <PetList :pet-list="adopts" />
+                <PetSearch @update:pet-list="savePetList" />
+                <PetList :pet-list="activePets" />
             </div>
         </template>
     </Content>
@@ -15,11 +15,21 @@
     import PetSearch from '@/components/search/PetSearch.vue'
     import Content from '@/components/Content.vue'
     import PetList from '@/components/adopt/PetList.vue'
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
     import { PetInter } from '@/types/pet'
     import axios from 'axios'
 
     const adopts = ref<PetInter[]>([])
+    const activeType = ref('貓咪')
+
+    const cats = computed(() => adopts.value.filter(pet => pet.type === '貓咪'))
+    const dogs = computed(() => adopts.value.filter(pet => pet.type === '狗狗'))
+
+    const activePets = computed(() => {
+        if (activeType.value === '貓咪') return cats.value
+        if (activeType.value === '狗狗') return dogs.value
+        return adopts.value
+    })
 
     onMounted(async () => {
         try {
@@ -29,6 +39,10 @@
           console.error('Failed to fetch adopts:', error)
         }
     })
+
+    function savePetList(petType: string) {
+        activeType.value = petType
+    }
 </script>
 
 <style>

@@ -1,7 +1,7 @@
 <template>
     <ul class="list-unstyled d-flex gap-5">
         <li v-for="(colors, petType) in pets" :key="petType" class="pet-search__item"
-            :class="{ 'active': activePet === petType }" @click="activePet = petType">
+            :class="{ 'active': activePet === petType }" @click="updatePetList(petType)">
             {{ petType }}
         </li>
     </ul>
@@ -14,8 +14,16 @@ import { ref } from 'vue'
 import PetFilter from '@/components/search/PetFilter.vue'
 import { pets } from '@/../data/pets'
 
+const emit = defineEmits<{
+    (event: 'update:pet-list', value: string): void
+}>()
 const activePet = ref<string | number>('貓咪')
 
+function updatePetList(petType: string) {
+    activePet.value = petType
+
+    emit('update:pet-list', petType)
+}
 </script>
 
 <style>
