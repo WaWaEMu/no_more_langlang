@@ -4,6 +4,7 @@
         <template #content>
             <div class="pet-search__wrapper mx-auto">
                 <PetSearch />
+                <PetList :pet-list="adopts" />
             </div>
         </template>
     </Content>
@@ -13,6 +14,7 @@
     import Navbar from '@/components/Navbar.vue'
     import PetSearch from '@/components/search/PetSearch.vue'
     import Content from '@/components/Content.vue'
+    import PetList from '@/components/adopt/PetList.vue'
     import { ref, onMounted } from 'vue'
     import { PetInter } from '@/types/pet'
     import axios from 'axios'
