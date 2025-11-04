@@ -33,9 +33,9 @@
                 <!-- 一般選項 -->
                 <template v-if="isOption(options)">
                     <ul class="list-unstyled">
-                        <template v-for="option in options" :key="String(option.value)">
-                            <li v-if="!option.disabled" class="filter-dropdown__option py-2 rounded-md">
-                                {{ option.label }}
+                        <template v-for="item in options.items" :key="String(item.value)">
+                            <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md">
+                                {{ item.label }}
                             </li>
                         </template>
                     </ul>
@@ -74,11 +74,12 @@ function isPetColor(group: unknown): group is PetColorMapInter {
 }
 
 function isOption(group: unknown): group is OptionInter {
-    return Array.isArray(group) && group.every(
-        item => typeof item === 'object' &&
-            item !== null &&
-            'value' in item &&
-            'label' in item
+    return (
+        typeof group === 'object' &&
+        group !== null &&
+        'key' in group &&
+        'items' in group &&
+        Array.isArray((group as OptionInter).items)
     )
 }
 

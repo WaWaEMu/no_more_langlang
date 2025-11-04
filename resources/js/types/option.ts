@@ -4,4 +4,9 @@ export interface OptionItem {
     disabled?: boolean
 }
 
-export type OptionInter = OptionItem[]
+export interface OptionGroup {
+  key: string
+  items: OptionItem[]
+}
+
+export type OptionInter = OptionGroup

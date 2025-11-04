@@ -9,7 +9,7 @@
                 <template #label>花紋</template>
             </DropdownButton>
 
-            <DropdownButton :options="furOptions">
+            <DropdownButton :options="furTypeOptions">
                 <template #label>毛型</template>
             </DropdownButton>
 
@@ -53,7 +53,7 @@ const props = defineProps<{
     petColors: string[]
 }>()
 
-const { isStrayOptions, furOptions, genderOptions, ageOptions, isNeuterOptions } = options
+const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
 
 const filters = ref()
 
