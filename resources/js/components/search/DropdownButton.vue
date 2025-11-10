@@ -1,20 +1,36 @@
 <template>
     <li class="dropdown-button__list position-relative" @mouseenter="show = true" @mouseleave="show = false">
-        <button class="btn w-100 border px-3 py-2">
+        <button class="btn w-100 border px-3 py-2" :class="{ 'dropdown-button__active': hasValue }">
             <slot name="label"></slot>
             <i class="bi bi-chevron-down"></i>
         </button>
-        <FilterDropdown v-show="show" class="position-absolute" :options="options" />
+        <FilterDropdown v-show="show" class="position-absolute" :options="options"
+            @update:pet-filters="savePetFilters" />
     </li>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import FilterDropdown from '@/components/search/FilterDropdown.vue'
+import { OptionInter, FilterValue } from '@/types/option'
+import { AreaInter } from '@/../data/areas'
 
-defineProps(['options'])
+const props = defineProps<{
+    options: AreaInter | string[] | OptionInter,
+    modelValue: FilterValue,
+}>()
+
+const emit = defineEmits<{
+    (event: 'update:modelValue', filter: FilterValue): void
+}>()
 
 const show = ref(false)
+
+const hasValue = computed(() => props.modelValue !== '')
+
+function savePetFilters(filter: FilterValue) {
+    emit('update:modelValue', filter)
+}
 </script>
 
 <style scoped>
@@ -35,4 +51,7 @@ const show = ref(false)
     color: #7f7f7f;
 }
 
+.dropdown-button__active {
+    color: #000 !important;
+}
 </style>

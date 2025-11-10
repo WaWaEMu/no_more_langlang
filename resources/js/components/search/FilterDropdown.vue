@@ -12,7 +12,7 @@
                             {{ area }}
                             <hr>
                             <ul v-for="(districts, city) in cities" class="list-unstyled">
-                                <li class="filter-dropdown__option">
+                                <li class="filter-dropdown__option" @click="updatePetFilters(city as string)">
                                     {{ city }}
                                 </li>
                             </ul>
@@ -24,7 +24,7 @@
                 <template v-if="isPetColor(options)">
                     <ul class="list-unstyled">
                         <li v-for="(color, index) in options" :key="index"
-                            class="filter-dropdown__option py-2 rounded-md">
+                            class="filter-dropdown__option py-2 rounded-md" @click="updatePetFilters(color as string)">
                             {{ color }}
                         </li>
                     </ul>
@@ -34,7 +34,8 @@
                 <template v-if="isOption(options)">
                     <ul class="list-unstyled">
                         <template v-for="item in options.items" :key="String(item.value)">
-                            <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md">
+                            <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md"
+                                @click="updatePetFilters(item.label)">
                                 {{ item.label }}
                             </li>
                         </template>
@@ -48,12 +49,14 @@
 <script setup lang="ts">
 import { AreaInter } from '@/../data/areas'
 import { PetColorMapInter } from '@/types/pet'
-import { OptionInter, OptionItem } from '@/types/option'
-
-type FilterOptionsInter = OptionItem[] | AreaInter | PetColorMapInter
+import { OptionInter, FilterValue } from '@/types/option'
 
 defineProps<{
-    options: FilterOptionsInter
+    options: AreaInter | string[] | OptionInter,
+}>()
+
+const emit = defineEmits<{
+    (event: 'update:pet-filters', items: FilterValue): void
 }>()
 
 function isCity(group: unknown): group is AreaInter {
@@ -81,6 +84,10 @@ function isOption(group: unknown): group is OptionInter {
         'items' in group &&
         Array.isArray((group as OptionInter).items)
     )
+}
+
+function updatePetFilters(items: FilterValue) {
+    emit('update:pet-filters', items)
 }
 
 </script>
