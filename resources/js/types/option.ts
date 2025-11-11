@@ -1,5 +1,5 @@
 export interface OptionItem {
-    value: string | number | boolean
+    value: string | boolean
     label: string
     disabled?: boolean
 }
