@@ -3,7 +3,7 @@
     <Content title="動物認養">
         <template #content>
             <div class="pet-search__wrapper mx-auto">
-                <PetSearch @update:pet-list="savePetList" />
+                <PetSearch @change:pet-type="handlePetTypeChange" @change:pet-filters="handlePetFiltersChange"/>
                 <PetList :pet-list="activePets" />
             </div>
         </template>
@@ -18,6 +18,7 @@
     import { ref, onMounted, computed } from 'vue'
     import { PetInter } from '@/types/pet'
     import axios from 'axios'
+    import { PetFiltersInter } from '@/types/option'
 
     const adopts = ref<PetInter[]>([])
     const activeType = ref('貓咪')
@@ -40,8 +41,12 @@
         }
     })
 
-    function savePetList(petType: string) {
+    function handlePetTypeChange(petType: string) {
         activeType.value = petType
+    }
+
+    function handlePetFiltersChange(petFilters: PetFiltersInter) {
+        console.log('From PetFilter.vue!!', petFilters)
     }
 </script>
 

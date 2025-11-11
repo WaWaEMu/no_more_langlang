@@ -1,28 +1,34 @@
 <template>
     <ul class="list-unstyled d-flex gap-5">
         <li v-for="(colors, petType) in pets" :key="petType" class="pet-search__item"
-            :class="{ 'active': activePet === petType }" @click="updatePetList(petType)">
+            :class="{ 'active': activePet === petType }" @click="changePetType(petType as string)">
             {{ petType }}
         </li>
     </ul>
 
-    <PetFilter :pet-colors="pets[activePet]" />
+    <PetFilter :pet-colors="pets[activePet]" @change:pet-filters="handlePetFiltersChange" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import PetFilter from '@/components/search/PetFilter.vue'
 import { pets } from '@/../data/pets'
+import { PetFiltersInter } from '@/types/option'
 
 const emit = defineEmits<{
-    (event: 'update:pet-list', value: string): void
+    (event: 'change:pet-type', value: string): void
+    (event: 'change:pet-filters', filters: PetFiltersInter): void
 }>()
 const activePet = ref<string | number>('貓咪')
 
-function updatePetList(petType: string) {
+function changePetType(petType: string) {
     activePet.value = petType
 
-    emit('update:pet-list', petType)
+    emit('change:pet-type', petType)
+}
+
+function handlePetFiltersChange(petFilters: PetFiltersInter) {
+    emit('change:pet-filters', petFilters)
 }
 </script>
 

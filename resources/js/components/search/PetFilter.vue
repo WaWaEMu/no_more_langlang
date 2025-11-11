@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import DropdownButton from '@/components/search/DropdownButton.vue'
 import { areas } from '@/../data/areas'
 import options from '@/../data/options'
@@ -64,6 +64,10 @@ import { PetFiltersInter } from '@/types/option'
 
 const props = defineProps<{
     petColors: string[]
+}>()
+
+const emit = defineEmits<{
+    (event: 'change:pet-filters', petFilters: PetFiltersInter): void
 }>()
 
 const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
@@ -76,6 +80,10 @@ const petFilters = reactive<PetFiltersInter>({
     age: '',
     is_neuter: ''
 })
+
+watch(() => petFilters, (newVal) => {
+    emit('change:pet-filters', newVal)
+}, { deep: true, immediate: true })
 
 function resetPetFilters() {
     for (const key in petFilters) {
