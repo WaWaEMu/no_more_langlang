@@ -35,7 +35,7 @@
                     <ul class="list-unstyled">
                         <template v-for="item in options.items" :key="String(item.value)">
                             <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md"
-                                @click="updatePetFilters(item.label)">
+                                @click="updatePetFilters(item.value)">
                                 {{ item.label }}
                             </li>
                         </template>
@@ -68,12 +68,8 @@ function isCity(group: unknown): group is AreaInter {
         )
 }
 
-function isPetColor(group: unknown): group is PetColorMapInter {
-    return typeof group !== null
-        && Array.isArray(group)
-        && Object.values(group).every(
-            color => typeof color === 'string'
-        )
+function isPetColor(group: unknown): group is string[] {
+    return Array.isArray(group) && group.every(color => typeof color === 'string')
 }
 
 function isOption(group: unknown): group is OptionInter {
