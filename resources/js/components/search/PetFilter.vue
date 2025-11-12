@@ -3,37 +3,37 @@
         <ul class="list-unstyled d-flex flex-wrap w-75 gap-2">
             <DropdownButton :options="areas" v-model="petFilters.city">
                 <template #label>
-                    {{ petFilters.city || '縣市' }}
+                    {{ petFilters.city['label'] || '縣市' }}
                 </template>
             </DropdownButton>
 
             <DropdownButton :options="petColors" v-model="petFilters.color">
                 <template #label>
-                    {{ petFilters.color || '花紋' }}
+                    {{ petFilters.color['label'] || '花紋' }}
                 </template>
             </DropdownButton>
 
             <DropdownButton :options="furTypeOptions" v-model="petFilters.fur_type">
                 <template #label>
-                    {{ petFilters.fur_type || '毛型' }}
+                    {{ petFilters.fur_type['label'] || '毛型' }}
                 </template>
             </DropdownButton>
 
             <DropdownButton :options="genderOptions" v-model="petFilters.gender">
                 <template #label>
-                    {{ petFilters.gender || '性別' }}
+                    {{ petFilters.gender['label'] || '性別' }}
                 </template>
             </DropdownButton>
 
             <DropdownButton :options="ageOptions" v-model="petFilters.age">
                 <template #label>
-                    {{ petFilters.age || '年紀' }}
+                    {{ petFilters.age['label'] || '年紀' }}
                 </template>
             </DropdownButton>
 
             <DropdownButton :options="isNeuterOptions" v-model="petFilters.is_neuter">
                 <template #label>
-                    {{ petFilters.is_neuter || '是否結紮' }}
+                    {{ petFilters.is_neuter['label'] || '是否結紮' }}
                 </template>
             </DropdownButton>
 
@@ -71,14 +71,14 @@ const emit = defineEmits<{
 }>()
 
 const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
-
+const defaultFilterValue = { label: '', value: '' }
 const petFilters = reactive<PetFiltersInter>({
-    city: '',
-    color: '',
-    fur_type: '',
-    gender: '',
-    age: '',
-    is_neuter: ''
+    city: { ...defaultFilterValue },
+    color: { ...defaultFilterValue },
+    fur_type: { ...defaultFilterValue },
+    gender: { ...defaultFilterValue },
+    age: { ...defaultFilterValue },
+    is_neuter: { ...defaultFilterValue },
 })
 
 watch(() => petFilters, (newVal) => {
@@ -87,7 +87,7 @@ watch(() => petFilters, (newVal) => {
 
 function resetPetFilters() {
     for (const key in petFilters) {
-        petFilters[key as keyof PetFiltersInter] = ''
+        petFilters[key as keyof PetFiltersInter] = { ...defaultFilterValue }
     }
 }
 </script>

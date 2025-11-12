@@ -15,21 +15,38 @@
     import PetSearch from '@/components/search/PetSearch.vue'
     import Content from '@/components/Content.vue'
     import PetList from '@/components/adopt/PetList.vue'
-    import { ref, onMounted, computed } from 'vue'
+    import { ref, reactive, onMounted, computed } from 'vue'
     import { PetInter } from '@/types/pet'
     import axios from 'axios'
     import { PetFiltersInter } from '@/types/option'
 
     const adopts = ref<PetInter[]>([])
     const activeType = ref('貓咪')
-
-    const cats = computed(() => adopts.value.filter(pet => pet.type === '貓咪'))
-    const dogs = computed(() => adopts.value.filter(pet => pet.type === '狗狗'))
+    const defaultFilterValue = { label: '', value: '' }
+    const petFilters = reactive<PetFiltersInter>({
+        city: { ...defaultFilterValue },
+        color: { ...defaultFilterValue },
+        fur_type: { ...defaultFilterValue },
+        gender: { ...defaultFilterValue },
+        age: { ...defaultFilterValue },
+        is_neuter: { ...defaultFilterValue },
+    })
 
     const activePets = computed(() => {
-        if (activeType.value === '貓咪') return cats.value
-        if (activeType.value === '狗狗') return dogs.value
-        return adopts.value
+        let list = adopts.value
+        if (activeType.value === '貓咪') list = adopts.value.filter(pet => pet.type === '貓咪')
+        else if (activeType.value === '狗狗') list = adopts.value.filter(pet => pet.type === '狗狗')
+
+        return list.filter(pet => {
+            const f = petFilters
+            if (f.city['value'] && pet.city !== f.city['value']) return false
+            if (f.color['value'] && pet.color !== f.color['value']) return false
+            if (f.fur_type['value'] && pet.fur_type !== f.fur_type['value']) return false
+            if (f.gender['value'] && pet.gender !== f.gender['value']) return false
+            if (f.age['value'] && pet.age !== f.age['value']) return false
+            if (f.is_neuter['value'] !== '' && pet.is_neuter !== (f.is_neuter.value ? 1 : 0)) return false
+            return true
+        })
     })
 
     onMounted(async () => {
@@ -45,8 +62,8 @@
         activeType.value = petType
     }
 
-    function handlePetFiltersChange(petFilters: PetFiltersInter) {
-        console.log('From PetFilter.vue!!', petFilters)
+    function handlePetFiltersChange(filters: PetFiltersInter) {
+        Object.assign(petFilters, filters)
     }
 </script>
 

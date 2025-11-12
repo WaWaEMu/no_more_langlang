@@ -12,24 +12,24 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import FilterDropdown from '@/components/search/FilterDropdown.vue'
-import { OptionInter, FilterValue } from '@/types/option'
+import { OptionInter, OptionItem } from '@/types/option'
 import { AreaInter } from '@/../data/areas'
 
 const props = defineProps<{
     options: AreaInter | string[] | OptionInter,
-    modelValue: FilterValue,
+    modelValue: OptionItem,
 }>()
 
 const emit = defineEmits<{
-    (event: 'update:modelValue', filter: FilterValue): void
+    (event: 'update:modelValue', payload: { label: string, value: string | boolean }): void
 }>()
 
 const show = ref(false)
 
-const hasValue = computed(() => props.modelValue !== '')
+const hasValue = computed(() => !!props.modelValue?.value)
 
-function savePetFilters(filter: FilterValue) {
-    emit('update:modelValue', filter)
+function savePetFilters(payload: { label: string, value: string | boolean }) {
+    emit('update:modelValue', payload)
 }
 </script>
 

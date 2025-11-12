@@ -35,7 +35,7 @@
                     <ul class="list-unstyled">
                         <template v-for="item in options.items" :key="String(item.value)">
                             <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md"
-                                @click="updatePetFilters(item.value)">
+                                @click="updatePetFilters(item.label, item.value)">
                                 {{ item.label }}
                             </li>
                         </template>
@@ -48,15 +48,14 @@
 
 <script setup lang="ts">
 import { AreaInter } from '@/../data/areas'
-import { PetColorMapInter } from '@/types/pet'
-import { OptionInter, FilterValue } from '@/types/option'
+import { OptionInter } from '@/types/option'
 
 defineProps<{
     options: AreaInter | string[] | OptionInter,
 }>()
 
 const emit = defineEmits<{
-    (event: 'update:pet-filters', items: FilterValue): void
+    (event: 'update:pet-filters', payload: { label: string, value: string | boolean }): void
 }>()
 
 function isCity(group: unknown): group is AreaInter {
@@ -82,8 +81,8 @@ function isOption(group: unknown): group is OptionInter {
     )
 }
 
-function updatePetFilters(items: FilterValue) {
-    emit('update:pet-filters', items)
+function updatePetFilters(label: string, value?: string | boolean) {
+    emit('update:pet-filters', { label, value: value ?? label })
 }
 
 </script>
