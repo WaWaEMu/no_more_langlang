@@ -10,7 +10,7 @@
     </Content>
 </template>
 
-<script setup lang="ts" name="Home">
+<script setup lang="ts" name="PetBrowse">
     import Navbar from '@/components/Navbar.vue'
     import PetSearch from '@/components/search/PetSearch.vue'
     import Content from '@/components/Content.vue'
