@@ -16,11 +16,12 @@
     import Content from '@/components/Content.vue'
     import PetList from '@/components/adopt/PetList.vue'
     import { ref, reactive, onMounted, computed } from 'vue'
-    import { PetInter } from '@/types/pet'
-    import axios from 'axios'
     import { PetFiltersInter } from '@/types/option'
+    import { usePetStore } from '@/stores/petBrowse'
 
-    const adopts = ref<PetInter[]>([])
+    const petStore = usePetStore()
+    const { fetchPets } = petStore
+
     const activeType = ref('貓咪')
     const defaultFilterValue = { label: '', value: '' }
     const petFilters = reactive<PetFiltersInter>({
@@ -33,9 +34,9 @@
     })
 
     const activePets = computed(() => {
-        let list = adopts.value
-        if (activeType.value === '貓咪') list = adopts.value.filter(pet => pet.type === '貓咪')
-        else if (activeType.value === '狗狗') list = adopts.value.filter(pet => pet.type === '狗狗')
+        let list = petStore.pets
+        if (activeType.value === '貓咪') list = petStore.pets.filter(pet => pet.type === '貓咪')
+        else if (activeType.value === '狗狗') list = petStore.pets.filter(pet => pet.type === '狗狗')
 
         return list.filter(pet => {
             const f = petFilters
@@ -50,12 +51,7 @@
     })
 
     onMounted(async () => {
-        try {
-            const res = await axios.get('/api/adopt')
-            adopts.value = res.data
-        } catch (error) {
-          console.error('Failed to fetch adopts:', error)
-        }
+        await fetchPets()
     })
 
     function handlePetTypeChange(petType: string) {
