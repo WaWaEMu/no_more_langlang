@@ -38,7 +38,7 @@
             </DropdownButton>
 
             <li class="d-flex align-items-center mx-3">
-                <a href="#" class="pet-filter__reset underline" @click.prevent="resetPetFilters()">
+                <a href="#" class="pet-filter__reset underline" @click.prevent="resetFilters">
                     重設篩選
                 </a>
             </li>
@@ -70,10 +70,7 @@ const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptio
 
 const petStore = usePetStore()
 const { petFilters } = storeToRefs(petStore)
-
-function resetPetFilters() {
-
-}
+const { resetFilters } = petStore
 </script>
 
 <style>

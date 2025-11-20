@@ -11,14 +11,16 @@ export const usePetStore = defineStore('browse', () => {
     const loading = ref(false)
     const error = ref<string | null>(null)
 
-    const petFilters = reactive<PetFiltersInter>({
+    const emptyFilters: PetFiltersInter = {
         city: { label: '', value: '' },
         color: { label: '', value: '' },
         fur_type: { label: '', value: '' },
         gender: { label: '', value: '' },
         age: { label: '', value: '' },
         is_neuter: { label: '', value: '' },
-    })
+    }
+
+    const petFilters = reactive<PetFiltersInter>({ ...emptyFilters })
 
     const activePets = computed(() => {
         let list = pets.value
@@ -60,6 +62,10 @@ export const usePetStore = defineStore('browse', () => {
         petFilters[key] = item
     }
 
+    function resetFilters() {
+        Object.assign(petFilters, emptyFilters)
+    }
+
     return {
         pets,
         loading,
@@ -69,6 +75,7 @@ export const usePetStore = defineStore('browse', () => {
         activeType,
         activePets,
         petFilters,
-        updateFilters
+        updateFilters,
+        resetFilters
     }
 })
