@@ -12,7 +12,8 @@
                             {{ area }}
                             <hr>
                             <ul v-for="(districts, city) in cities" class="list-unstyled">
-                                <li class="filter-dropdown__option" @click="updatePetFilters(city as string)">
+                                <li class="filter-dropdown__option"
+                                    @click="updatePetFilters(props.filterKey, city as string)">
                                     {{ city }}
                                 </li>
                             </ul>
@@ -24,7 +25,8 @@
                 <template v-if="isPetColor(options)">
                     <ul class="list-unstyled">
                         <li v-for="(color, index) in options" :key="index"
-                            class="filter-dropdown__option py-2 rounded-md" @click="updatePetFilters(color as string)">
+                            class="filter-dropdown__option py-2 rounded-md"
+                            @click="updatePetFilters(props.filterKey, color as string)">
                             {{ color }}
                         </li>
                     </ul>
@@ -35,7 +37,7 @@
                     <ul class="list-unstyled">
                         <template v-for="item in options.items" :key="String(item.value)">
                             <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md"
-                                @click="updatePetFilters(item.label, item.value)">
+                                @click="updatePetFilters(props.filterKey, item)">
                                 {{ item.label }}
                             </li>
                         </template>
@@ -48,15 +50,16 @@
 
 <script setup lang="ts">
 import { AreaInter } from '@/../data/areas'
-import { OptionInter } from '@/types/option'
+import { OptionInter, OptionItem, PetFiltersInter } from '@/types/option'
+import { usePetStore } from '@/stores/petBrowse';
 
-defineProps<{
+const props = defineProps<{
     options: AreaInter | string[] | OptionInter,
+    filterKey: keyof PetFiltersInter,
 }>()
 
-const emit = defineEmits<{
-    (event: 'update:pet-filters', payload: { label: string, value: string | boolean }): void
-}>()
+const petStore = usePetStore()
+const { updateFilters } = petStore
 
 function isCity(group: unknown): group is AreaInter {
     return typeof group === 'object'
@@ -81,8 +84,19 @@ function isOption(group: unknown): group is OptionInter {
     )
 }
 
-function updatePetFilters(label: string, value?: string | boolean) {
-    emit('update:pet-filters', { label, value: value ?? label })
+function updatePetFilters(key: keyof PetFiltersInter, item: OptionItem | string) {
+    let normalized: OptionItem
+
+    if (key === 'city' || key === 'color') {
+        normalized = {
+            'label': item as string,
+            'value': item as string
+        }
+    } else {
+        normalized = item as OptionItem
+    }
+
+    updateFilters(key, normalized)
 }
 
 </script>

@@ -6,28 +6,18 @@
         </li>
     </ul>
 
-    <PetFilter :pet-colors="pets[activeType]" @change:pet-filters="handlePetFiltersChange" />
+    <PetFilter :pet-colors="pets[activeType]" />
 </template>
 
 <script setup lang="ts">
 import PetFilter from '@/components/search/PetFilter.vue'
 import { pets } from '@/../data/pets'
-import { PetFiltersInter } from '@/types/option'
 import { usePetStore } from '@/stores/petBrowse'
 import { storeToRefs } from 'pinia'
 
 const petStore = usePetStore()
 const { activeType } = storeToRefs(petStore)
 const { changeType } = petStore
-
-const emit = defineEmits<{
-    (event: 'change:pet-filters', filters: PetFiltersInter): void
-}>()
-
-
-function handlePetFiltersChange(petFilters: PetFiltersInter) {
-    emit('change:pet-filters', petFilters)
-}
 </script>
 
 <style>

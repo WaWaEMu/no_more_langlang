@@ -4,33 +4,35 @@
             <slot name="label"></slot>
             <i class="bi bi-chevron-down"></i>
         </button>
-        <FilterDropdown v-show="show" class="position-absolute" :options="options"
-            @update:pet-filters="savePetFilters" />
+        <FilterDropdown v-show="show" class="position-absolute" :options="options" :filterKey="filterKey" />
     </li>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
 import FilterDropdown from '@/components/search/FilterDropdown.vue'
-import { OptionInter, OptionItem } from '@/types/option'
+import { OptionInter, PetFiltersInter } from '@/types/option'
 import { AreaInter } from '@/../data/areas'
+import { usePetStore } from '@/stores/petBrowse';
 
 const props = defineProps<{
     options: AreaInter | string[] | OptionInter,
-    modelValue: OptionItem,
-}>()
-
-const emit = defineEmits<{
-    (event: 'update:modelValue', payload: { label: string, value: string | boolean }): void
+    filterKey: keyof PetFiltersInter,
 }>()
 
 const show = ref(false)
+const petStore = usePetStore()
+const { petFilters } = petStore
 
-const hasValue = computed(() => !!props.modelValue?.value)
+const hasValue = computed(() => {
+    const val = petFilters[props.filterKey]?.value
 
-function savePetFilters(payload: { label: string, value: string | boolean }) {
-    emit('update:modelValue', payload)
-}
+    if (props.filterKey === 'is_neuter') {
+        return typeof val === 'boolean' || val !== ''
+    }
+
+    return !!val
+})
 </script>
 
 <style scoped>

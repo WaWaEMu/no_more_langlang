@@ -1,37 +1,37 @@
 <template>
     <div class="pet-filter__wrapper d-flex justify-content-between">
         <ul class="list-unstyled d-flex flex-wrap w-75 gap-2">
-            <DropdownButton :options="areas" v-model="petFilters.city">
+            <DropdownButton :options="areas" filterKey="city">
                 <template #label>
                     {{ petFilters.city['label'] || '縣市' }}
                 </template>
             </DropdownButton>
 
-            <DropdownButton :options="petColors" v-model="petFilters.color">
+            <DropdownButton :options="petColors" filterKey="color">
                 <template #label>
                     {{ petFilters.color['label'] || '花紋' }}
                 </template>
             </DropdownButton>
 
-            <DropdownButton :options="furTypeOptions" v-model="petFilters.fur_type">
+            <DropdownButton :options="furTypeOptions" filterKey="fur_type">
                 <template #label>
                     {{ petFilters.fur_type['label'] || '毛型' }}
                 </template>
             </DropdownButton>
 
-            <DropdownButton :options="genderOptions" v-model="petFilters.gender">
+            <DropdownButton :options="genderOptions" filterKey="gender">
                 <template #label>
                     {{ petFilters.gender['label'] || '性別' }}
                 </template>
             </DropdownButton>
 
-            <DropdownButton :options="ageOptions" v-model="petFilters.age">
+            <DropdownButton :options="ageOptions" filterKey="age">
                 <template #label>
                     {{ petFilters.age['label'] || '年紀' }}
                 </template>
             </DropdownButton>
 
-            <DropdownButton :options="isNeuterOptions" v-model="petFilters.is_neuter">
+            <DropdownButton :options="isNeuterOptions" filterKey="is_neuter">
                 <template #label>
                     {{ petFilters.is_neuter['label'] || '是否結紮' }}
                 </template>
@@ -56,39 +56,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
 import DropdownButton from '@/components/search/DropdownButton.vue'
 import { areas } from '@/../data/areas'
 import options from '@/../data/options'
-import { PetFiltersInter } from '@/types/option'
+import { usePetStore } from '@/stores/petBrowse'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
     petColors: string[]
 }>()
 
-const emit = defineEmits<{
-    (event: 'change:pet-filters', petFilters: PetFiltersInter): void
-}>()
-
 const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
-const defaultFilterValue = { label: '', value: '' }
-const petFilters = reactive<PetFiltersInter>({
-    city: { ...defaultFilterValue },
-    color: { ...defaultFilterValue },
-    fur_type: { ...defaultFilterValue },
-    gender: { ...defaultFilterValue },
-    age: { ...defaultFilterValue },
-    is_neuter: { ...defaultFilterValue },
-})
 
-watch(() => petFilters, (newVal) => {
-    emit('change:pet-filters', newVal)
-}, { deep: true, immediate: true })
+const petStore = usePetStore()
+const { petFilters } = storeToRefs(petStore)
 
 function resetPetFilters() {
-    for (const key in petFilters) {
-        petFilters[key as keyof PetFiltersInter] = { ...defaultFilterValue }
-    }
+
 }
 </script>
 
