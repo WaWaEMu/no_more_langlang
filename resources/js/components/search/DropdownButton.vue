@@ -13,7 +13,7 @@ import { ref, computed } from 'vue'
 import FilterDropdown from '@/components/search/FilterDropdown.vue'
 import { OptionInter, PetFiltersInter } from '@/types/option'
 import { AreaInter } from '@/../data/areas'
-import { usePetStore } from '@/stores/petBrowse';
+import { usePetStore } from '@/stores/adopt';
 
 const props = defineProps<{
     options: AreaInter | string[] | OptionInter,

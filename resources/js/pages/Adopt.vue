@@ -10,13 +10,13 @@
     </Content>
 </template>
 
-<script setup lang="ts" name="PetBrowse">
+<script setup lang="ts" name="Adopt">
     import Navbar from '@/components/Navbar.vue'
     import PetSearch from '@/components/search/PetSearch.vue'
     import Content from '@/components/Content.vue'
     import PetList from '@/components/adopt/PetList.vue'
     import { onMounted } from 'vue'
-    import { usePetStore } from '@/stores/petBrowse'
+    import { usePetStore } from '@/stores/adopt'
     import { storeToRefs } from 'pinia'
 
     const petStore = usePetStore()

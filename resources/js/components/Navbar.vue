@@ -20,8 +20,8 @@
     const route = useRoute();
 
     const navList = ref<{id: string; label: string; path: string}[]>([
-        { id: '00', label: '首頁', path: '/' },
-        { id: '01', label: '動物認養', path: '/adopt' },
+        { id: '00', label: '動物認養', path: '/adopt' },
+        { id: '01', label: '登記送養', path: '/adopt/new' },
         { id: '02', label: '免費API', path: '/freeApi' },
         { id: '03', label: '網站理念', path: '/about' }
     ])

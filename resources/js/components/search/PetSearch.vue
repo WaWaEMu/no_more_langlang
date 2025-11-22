@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import PetFilter from '@/components/search/PetFilter.vue'
 import { pets } from '@/../data/pets'
-import { usePetStore } from '@/stores/petBrowse'
+import { usePetStore } from '@/stores/adopt'
 import { storeToRefs } from 'pinia'
 
 const petStore = usePetStore()

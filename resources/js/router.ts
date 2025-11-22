@@ -2,13 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 const routes = [
     {
-        path: '/pets',
-        component: () => import('@/pages/PetBrowse.vue'),
-        meta: { title: 'PetBrowse' }
-    },
-    {
         path: '/adopt',
-        component: () => import('@/pages/AdoptIndex.vue'),
+        component: () => import('@/pages/Adopt.vue'),
         meta: { title: 'Adopt List' }
     },
     {

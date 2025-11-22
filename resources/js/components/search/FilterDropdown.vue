@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { AreaInter } from '@/../data/areas'
 import { OptionInter, OptionItem, PetFiltersInter } from '@/types/option'
-import { usePetStore } from '@/stores/petBrowse';
+import { usePetStore } from '@/stores/adopt';
 
 const props = defineProps<{
     options: AreaInter | string[] | OptionInter,

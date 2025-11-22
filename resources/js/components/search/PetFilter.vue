@@ -59,7 +59,7 @@
 import DropdownButton from '@/components/search/DropdownButton.vue'
 import { areas } from '@/../data/areas'
 import options from '@/../data/options'
-import { usePetStore } from '@/stores/petBrowse'
+import { usePetStore } from '@/stores/adopt'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
