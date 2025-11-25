@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Contracts\PetCreatorInterface;
 use Illuminate\Support\Facades\Log;
 use App\Models\Pet;
+use Illuminate\Support\Facades\Auth;
 
 class AdoptController extends Controller
 {
@@ -21,8 +22,14 @@ class AdoptController extends Controller
     }
 
     public function store(Request $request) {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
         $data = $request->all();
         $blobs = $request->file('blobs', []);
+        $data['user_id'] = $user->id;
 
         try {
             $this->petCreatorInterface->create($data, $blobs);
