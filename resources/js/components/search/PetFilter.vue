@@ -73,13 +73,14 @@ const { petFilters } = storeToRefs(petStore)
 const { resetFilters } = petStore
 </script>
 
-<style>
+<style scoped>
 .pet-filter__reset {
-    color: #7f7f7f;
+    color: #6b7280;
+    transition: color 0.2s ease;
 }
 
 .pet-filter__reset:hover {
-    color: #000000;
+    color: #3182ce;
 }
 
 .pet-filter__form .input-group {
@@ -92,14 +93,22 @@ const { resetFilters } = petStore
 }
 
 .pet-filter__form button {
-    color: #fff2cc;
-    background-color: #3d3d5c;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
     border-radius: 5% !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.pet-filter__form button:hover {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(44, 82, 130, 0.3);
 }
 
 .form-control:focus {
     box-shadow: none;
     outline: none;
-    border-color: #000;
+    border-color: #3182ce;
 }
 </style>
