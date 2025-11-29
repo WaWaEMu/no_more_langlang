@@ -2,13 +2,14 @@
     <div class="container">
         <h2 class="mb-5 fs-4">送養動物表單</h2>
         <div class="apply-form__wrapper d-flex justify-content-center">
-            <form id="adopt-form" class="m-5 d-flex flex-column gap-4" @submit.prevent="submit()">
+            <form id="adopt-form" class="m-2 d-flex flex-column gap-4" @submit.prevent="submit()">
                 <div>
                     <label for="title">
                         <span class="text-danger">*</span>
                         送養標題
                     </label>
-                    <input type="text" id="title" class="form-control" placeholder="" v-model="formState.title" required>
+                    <input type="text" id="title" class="form-control" placeholder="" v-model="formState.title"
+                        required>
                 </div>
                 <div class="d-flex gap-4">
                     <div class="w-100">
@@ -71,7 +72,8 @@
                         <select id="color" class="form-select" v-model="formState.color" required>
                             <option v-if="!formState.type" disabled>請先選擇動物種類</option>
                             <option v-if="formState.type" disabled>請選擇花紋</option>
-                            <option v-if="formState.type" v-for="color in pets[formState.type]" :key="color" :value="color">
+                            <option v-if="formState.type" v-for="color in pets[formState.type]" :key="color"
+                                :value="color">
                                 {{ color }}
                             </option>
                         </select>
@@ -94,7 +96,8 @@
                             <span class="text-danger">*</span>
                             動物名字
                         </label>
-                        <input type="text" id="name" class="form-control" placeholder="" v-model="formState.name" required>
+                        <input type="text" id="name" class="form-control" placeholder="" v-model="formState.name"
+                            required>
                     </div>
                     <div class="w-100">
                         <label for="gender">
@@ -158,44 +161,44 @@
                         <span class="text-danger">*</span>
                         送養說明
                     </label>
-                    <textarea id="adoption-description" class="form-control" rows="4" v-model="formState.adoption_description" required></textarea>
+                    <textarea id="adoption-description" class="form-control" rows="4"
+                        v-model="formState.adoption_description" required></textarea>
                 </div>
                 <div>
                     <label for="health-description">
                         <span class="text-danger">*</span>
                         健康狀態說明
                     </label>
-                    <textarea id="health-description" class="form-control" rows="4" v-model="formState.health_description" required></textarea>
+                    <textarea id="health-description" class="form-control" rows="4"
+                        v-model="formState.health_description" required></textarea>
                 </div>
                 <div>
                     <label for="adoption-condition">
                         <span class="text-danger">*</span>
                         領養條件
                     </label>
-                    <textarea id="adoption-condition" class="form-control" rows="4" v-model="formState.adoption_condition" required></textarea>
+                    <textarea id="adoption-condition" class="form-control" rows="4"
+                        v-model="formState.adoption_condition" required></textarea>
                 </div>
                 <div>
                     <label>送養相關圖片</label>
                     <div class="d-flex gap-4 flex-wrap">
                         <div v-for="(url, index) in imgUrls" :key="index" class="d-flex flex-column w-25">
-                            <div v-if="url === ''" class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
+                            <div v-if="url === ''"
+                                class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <img src="@public/icons/image.svg" alt="" class="w-50">
                             </div>
                             <img v-else :src="url" class="apply-form__upload--img">
-                            <button type="button"
-                                    @click="updateImg(index, url)"
-                                    class="apply-form__btn apply-form__btn--img btn fw-medium"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#update-img-modal">
-                                    更新圖檔
+                            <button type="button" @click="updateImg(index, url)"
+                                class="apply-form__btn apply-form__btn--img btn fw-medium" data-bs-toggle="modal"
+                                data-bs-target="#update-img-modal">
+                                更新圖檔
                             </button>
                         </div>
                     </div>
-                    <UpdateImg v-show="showModal"
-                        @update:confirm-img="saveConfirmImg"
-                    />
+                    <UpdateImg v-show="showModal" @update:confirm-img="saveConfirmImg" />
                 </div>
-                <div class="text-end">
+                <div class="text-end mt-4">
                     <button type="submit" class="apply-form__btn btn px-5 py-2">確定送出</button>
                 </div>
             </form>
@@ -204,182 +207,251 @@
 </template>
 
 <script setup lang="ts" name="ApplyForm">
-    import { ref, reactive, watch, computed } from 'vue'
-    import { areas } from '@/../data/areas'
-    import { pets } from '@/../data/pets'
-    import UpdateImg from '@/components/modals/UpdateImg.vue'
-    import { PetFormInter } from '@/types/pet'
-    import { Modal } from 'bootstrap'
-    import axios from 'axios'
+import { ref, reactive, watch, computed } from 'vue'
+import { areas } from '@/../data/areas'
+import { pets } from '@/../data/pets'
+import UpdateImg from '@/components/modals/UpdateImg.vue'
+import { PetFormInter } from '@/types/pet'
+import { Modal } from 'bootstrap'
+import axios from 'axios'
 
-    const showModal = ref<boolean>(false)
-    // Use snake_case keys to match backend expectations
-    const formState = reactive<PetFormInter>({
-        title: '',
-        city: '',
-        town: '',
-        is_stray: null,
-        type: '',
-        color: '',
-        fur_type: '',
-        name: '',
-        gender: '',
-        age: '',
-        is_neuter: null,
-        sendable_city: [],
-        adoption_description: '',
-        health_description: '',
-        adoption_condition: '',
-        blobs: []
+const showModal = ref<boolean>(false)
+// Use snake_case keys to match backend expectations
+const formState = reactive<PetFormInter>({
+    title: '',
+    city: '',
+    town: '',
+    is_stray: null,
+    type: '',
+    color: '',
+    fur_type: '',
+    name: '',
+    gender: '',
+    age: '',
+    is_neuter: null,
+    sendable_city: [],
+    adoption_description: '',
+    health_description: '',
+    adoption_condition: '',
+    blobs: []
+})
+const imgUrls = ref<string[]>(['', '', ''])
+const selectedImg = ref<{ index: number | null, url: string }>({
+    index: null,
+    url: ''
+})
+
+const initTown = watch(
+    () => formState.city,
+    () => {
+        formState.town = ''
     })
-    const imgUrls = ref<string[]>(['', '', ''])
-    const selectedImg = ref<{ index: number | null, url: string }>({
-        index: null ,
-        url: ''
-    })
 
-    const initTown = watch(
-        () => formState.city,
-        () => {
-            formState.town = ''
-        })
+const initColor = watch(
+    () => formState.type,
+    () => {
+        formState.color
+    }
+)
 
-    const initColor = watch(
-        () => formState.type,
-        () => {
-            formState.color
-        }
-    )
-
-    const districtsForCity = computed(() => {
-      for (const region in areas) {
+const districtsForCity = computed(() => {
+    for (const region in areas) {
         if (formState.city in areas[region]) {
-          return areas[region][formState.city]
+            return areas[region][formState.city]
         }
-      }
-      return []
-    })
-
-    // Opens the image update modal
-    function updateImg(index: number, url: string) {
-        // Fill in the empty preview field
-        let resolvedIndex = index
-        if (url === '') {
-            const emptyIndex = imgUrls.value.slice(0, index).findIndex(p => p === '')
-            if (emptyIndex !== -1) {
-                resolvedIndex = emptyIndex
-            }
-        }
-
-        // Prevent out-of-range index
-        if (resolvedIndex < 0 || resolvedIndex >= imgUrls.value.length) return
-
-        selectedImg.value = {
-            index: resolvedIndex,
-            url,
-        }
-        showModal.value = true
     }
+    return []
+})
 
-    // Update the form with the preview image selected from the image update modal
-    function saveConfirmImg(payload: { previewUrl: string, blob: Blob }) {
-        const { previewUrl, blob } = payload
-        const index = selectedImg.value.index
-
-        if (index !== null) {
-            imgUrls.value[index] = previewUrl
-            formState.blobs[index] = blob
-        }
-
-        showModal.value = false
-        closeModal()
-    }
-
-    function closeModal() {
-        const modalElement = document.getElementById('update-img-modal') as HTMLElement
-        if (modalElement) {
-            const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement)
-            modalInstance.hide()
+// Opens the image update modal
+function updateImg(index: number, url: string) {
+    // Fill in the empty preview field
+    let resolvedIndex = index
+    if (url === '') {
+        const emptyIndex = imgUrls.value.slice(0, index).findIndex(p => p === '')
+        if (emptyIndex !== -1) {
+            resolvedIndex = emptyIndex
         }
     }
 
-    // Convert formState to FormData format for submission
-    function toFormData() {
-        const form = new FormData()
-        for (const [key, value] of Object.entries(formState)) {
-            // If the value is an array, append each item with an indexed key (e.g., ('sendable_city[0]', '台北市'), ('sendable_city[1]', '新北市'))
-            if (Array.isArray(value)) {
-                value.forEach((v, i) => {
-                    form.append(`${key}[${i}]`, v)
-                })
-            }
-            // If the value is a boolean, convert it to '1' or '0'
-            else if (typeof value === 'boolean') {
-                form.append(key, value ? '1' : '0')
-            }
-            // For other types (e.g., string, Blob), append as is (if not null/undefined)
-            else if (value !== null && value !== undefined) {
-                form.append(key, value as string | Blob)
-            }
+    // Prevent out-of-range index
+    if (resolvedIndex < 0 || resolvedIndex >= imgUrls.value.length) return
+
+    selectedImg.value = {
+        index: resolvedIndex,
+        url,
+    }
+    showModal.value = true
+}
+
+// Update the form with the preview image selected from the image update modal
+function saveConfirmImg(payload: { previewUrl: string, blob: Blob }) {
+    const { previewUrl, blob } = payload
+    const index = selectedImg.value.index
+
+    if (index !== null) {
+        imgUrls.value[index] = previewUrl
+        formState.blobs[index] = blob
+    }
+
+    showModal.value = false
+    closeModal()
+}
+
+function closeModal() {
+    const modalElement = document.getElementById('update-img-modal') as HTMLElement
+    if (modalElement) {
+        const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement)
+        modalInstance.hide()
+    }
+}
+
+// Convert formState to FormData format for submission
+function toFormData() {
+    const form = new FormData()
+    for (const [key, value] of Object.entries(formState)) {
+        // If the value is an array, append each item with an indexed key (e.g., ('sendable_city[0]', '台北市'), ('sendable_city[1]', '新北市'))
+        if (Array.isArray(value)) {
+            value.forEach((v, i) => {
+                form.append(`${key}[${i}]`, v)
+            })
         }
-        return form
+        // If the value is a boolean, convert it to '1' or '0'
+        else if (typeof value === 'boolean') {
+            form.append(key, value ? '1' : '0')
+        }
+        // For other types (e.g., string, Blob), append as is (if not null/undefined)
+        else if (value !== null && value !== undefined) {
+            form.append(key, value as string | Blob)
+        }
     }
+    return form
+}
 
-    // Submit the form
-    function submit() {
-        const realForm = toFormData()
+// Submit the form
+function submit() {
+    const realForm = toFormData()
 
-        axios.post('/api/adopt/store', realForm)
-            .then()
-            .catch()
-    }
+    axios.post('/api/adopt/store', realForm)
+        .then()
+        .catch()
+}
 </script>
 
 <style scoped>
-    label {
-        margin-bottom: 0.5rem;
-    }
+.apply-form__title {
+    color: #1c1917;
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    letter-spacing: 0.025em;
+    text-shadow: none;
+}
 
-    .apply-form__wrapper {
-        background-color: #fff2cc;
-        width: 85%;
-    }
+label {
+    margin-bottom: 0.5rem;
+    color: #1c1917;
+    font-weight: 400;
+    font-size: 0.95rem;
+}
 
-    .apply-form__upload--placeholder {
-        background-color: #fff;
-        width: 150px;
-        height: 150px;
-        aspect-ratio: 1 / 1;
-        border-radius: 5px 5px 0 0;
-    }
+.apply-form__wrapper {
+    /* Warm Mist Gradient: Gentle Beige/Warm Gray */
+    background: linear-gradient(135deg, #f5f5f4 0%, #e7e5e4 100%);
+    width: 85%;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #d6d3d1;
+    padding: 3rem;
+}
 
-    .apply-form__upload--img {
-        border-radius: 5px 5px 0 0;
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
-    }
+.apply-form__upload--placeholder {
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 150px;
+    height: 150px;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px 6px 0 0;
+    border: 2px dashed #a8a29e;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .apply-form__btn {
-        background-color: #d79f64;
-        color: #fff;
-        border: none;
-        outline: none;
-        transition: background-color 0.2s ease;
-        &&:hover {
-            background-color: #b37d41;
-        }
-        &&:active {
-            color: #fff;
-        }
-    }
+.apply-form__upload--img {
+    border-radius: 6px 6px 0 0;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
 
-    .apply-form__btn--img {
-        border-radius: 0 0 5px 5px;
-    }
+/* Base Button Style */
+.apply-form__btn {
+    border: none;
+    outline: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+}
 
-    #sendable-city hr {
-        margin: 0.25rem 0;
-        height: 2px;
-        background-color: black;
-    }
+/* Update Image Button (Secondary) - Dark Warm Gray */
+.apply-form__btn--img {
+    background-color: #57534e;
+    color: #ffffff;
+    border: 1px solid #57534e;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.apply-form__btn--img:hover {
+    background-color: #44403c;
+    color: #ffffff;
+}
+
+/* Submit Button (Primary) - Muted Clay/Latte Gradient */
+button[type="submit"].apply-form__btn {
+    background: #2c5282;
+    color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(156, 102, 68, 0.2);
+    padding: 0.75rem 3rem;
+    font-size: 1.1rem;
+}
+
+button[type="submit"].apply-form__btn:hover {
+    background: #4a5568;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px rgba(156, 102, 68, 0.25);
+}
+
+button[type="submit"].apply-form__btn:active {
+    transform: translateY(0);
+}
+
+#sendable-city hr {
+    margin: 0.5rem 0;
+    height: 1px;
+    background-color: #a8a29e;
+    opacity: 0.5;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #d6d3d1;
+    color: #1c1917;
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    transition: all 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #ffffff;
+    border-color: #b08968;
+    box-shadow: 0 0 0 3px rgba(176, 137, 104, 0.15);
+}
 </style>
