@@ -83,18 +83,18 @@ function formatDate(dateStr: string) {
 .pet-list__card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: all 0.3s ease;
-    border: 1px solid #e0e7ff;
+    border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
 }
 
 .pet-list__card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
-    border-color: #818cf8;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.08);
+    border-color: #3182ce;
 }
 
 .pet-list__card--image-wrapper {
@@ -102,7 +102,7 @@ function formatDate(dateStr: string) {
     padding-top: 100%;
     /* 1:1 Aspect Ratio (Square) */
     overflow: hidden;
-    background-color: #f3f4f6;
+    background-color: #f7fafc;
 }
 
 .pet-list__card--image {
@@ -123,13 +123,13 @@ function formatDate(dateStr: string) {
     position: absolute;
     top: 0.75rem;
     right: 0.75rem;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(4px);
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #4f46e5;
+    color: #2c5282;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -150,7 +150,7 @@ function formatDate(dateStr: string) {
 .pet-list__card--title {
     font-size: 1rem;
     font-weight: 700;
-    color: #1f2937;
+    color: #2d3748;
     margin: 0;
     line-height: 1.4;
     display: -webkit-box;
@@ -166,13 +166,13 @@ function formatDate(dateStr: string) {
     align-items: center;
     gap: 0.25rem;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #718096;
     white-space: nowrap;
     align-self: flex-end;
 }
 
 .pet-list__card--location i {
-    color: #818cf8;
+    color: #3182ce;
 }
 
 .pet-list__card--info {
@@ -180,8 +180,8 @@ function formatDate(dateStr: string) {
     grid-template-columns: repeat(3, 1fr);
     gap: 0.25rem;
     padding: 0.5rem 0;
-    border-top: 1px solid #e0e7ff;
-    border-bottom: 1px solid #e0e7ff;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .pet-list__card--info-item {
@@ -193,13 +193,13 @@ function formatDate(dateStr: string) {
 
 .pet-list__card--label {
     font-size: 0.7rem;
-    color: #6b7280;
+    color: #718096;
 }
 
 .pet-list__card--value {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #2d3748;
     white-space: nowrap;
 }
 
@@ -210,8 +210,8 @@ function formatDate(dateStr: string) {
 }
 
 .pet-list__card--tag {
-    background: #f3f4f6;
-    color: #4b5563;
+    background: #f7fafc;
+    color: #4a5568;
     padding: 0.125rem 0.5rem;
     border-radius: 12px;
     font-size: 0.75rem;
@@ -219,8 +219,8 @@ function formatDate(dateStr: string) {
 }
 
 .pet-list__card--tag-highlight {
-    background: #e0e7ff;
-    color: #4f46e5;
+    background: #ebf8ff;
+    color: #2c5282;
 }
 
 .pet-list__card--footer {
@@ -238,18 +238,18 @@ function formatDate(dateStr: string) {
 }
 
 .pet-list__card--user-link {
-    color: #6366f1;
+    color: #3182ce;
     font-weight: 600;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .pet-list__card--user-link:hover {
-    color: #f59e0b;
+    color: #2c5282;
 }
 
 .pet-list__card--date {
-    color: #9ca3af;
+    color: #a0aec0;
     font-size: 0.8125rem;
 }
 </style>
