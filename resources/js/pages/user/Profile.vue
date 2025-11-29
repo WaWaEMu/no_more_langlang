@@ -164,12 +164,12 @@ onMounted(() => {
 .profile__card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
 }
 
 .profile__header {
-    background: linear-gradient(135deg, #818cf8 0%, #a5b4fc 100%);
+    background: linear-gradient(135deg, #b8c5d6 0%, #d1d9e6 100%);
     padding: 2rem;
     display: flex;
     align-items: center;
@@ -178,12 +178,12 @@ onMounted(() => {
 
 .profile__avatar {
     font-size: 5rem;
-    color: white;
+    color: #2c5282;
     line-height: 1;
 }
 
 .profile__avatar i {
-    filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
+    filter: drop-shadow(0 2px 4px rgba(44, 82, 130, 0.3));
 }
 
 .profile__info {
@@ -191,28 +191,28 @@ onMounted(() => {
 }
 
 .profile__name {
-    color: white;
+    color: #2c5282;
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
-    text-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+    text-shadow: 0 1px 2px rgba(44, 82, 130, 0.1);
 }
 
 .profile__badge {
     display: inline-flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(44, 82, 130, 0.15);
     backdrop-filter: blur(10px);
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
-    color: white;
+    color: #2c5282;
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .profile__details {
     padding: 1.5rem 2rem 2rem;
-    background: linear-gradient(to bottom, #faf5ff 0%, #ffffff 100%);
+    background: linear-gradient(to bottom, #f7fafc 0%, #ffffff 100%);
 }
 
 .profile__detail-item {
@@ -220,7 +220,7 @@ onMounted(() => {
     align-items: flex-start;
     gap: 1rem;
     padding: 1rem 0;
-    border-bottom: 1px solid #e9d5ff;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .profile__detail-item:last-child {
@@ -229,7 +229,7 @@ onMounted(() => {
 
 .profile__detail-item>i {
     font-size: 1.5rem;
-    color: #818cf8;
+    color: #3182ce;
     margin-top: 0.25rem;
 }
 
@@ -248,7 +248,7 @@ onMounted(() => {
 
 .profile__value {
     font-size: 1rem;
-    color: #1f2937;
+    color: #2d3748;
     font-weight: 600;
 }
 
@@ -259,57 +259,71 @@ onMounted(() => {
 
 .profile__stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
 }
 
 .profile__stat-card {
     background: #fff;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    text-decoration: none;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    transition: all 0.3s ease;
-    border-left: 4px solid;
 }
 
 .profile__stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    border-color: #3182ce;
 }
 
 .profile__stat-card--adopt {
-    border-left-color: #818cf8;
-    background: linear-gradient(to bottom right, #ffffff 0%, #f5f3ff 100%);
+    border-left: 4px solid #2c5282;
+    background: linear-gradient(to bottom right, #ffffff 0%, #e6f0f7 100%);
+}
+
+.profile__stat-card--adopt:hover {
+    background: linear-gradient(to bottom right, #f0f9ff 0%, #dbeafe 100%);
 }
 
 .profile__stat-card--adopted {
-    border-left-color: #a5b4fc;
-    background: linear-gradient(to bottom right, #ffffff 0%, #ede9fe 100%);
+    border-left: 4px solid #4a7ba7;
+    background: linear-gradient(to bottom right, #ffffff 0%, #f0f6fa 100%);
+}
+
+.profile__stat-card--adopted:hover {
+    background: linear-gradient(to bottom right, #f8fbfd 0%, #e8f2f7 100%);
 }
 
 .profile__stat-card--saved {
-    border-left-color: #c4b5fd;
-    background: linear-gradient(to bottom right, #ffffff 0%, #faf5ff 100%);
+    border-left: 4px solid #7ba3c5;
+    background: linear-gradient(to bottom right, #ffffff 0%, #f5f9fc 100%);
+}
+
+.profile__stat-card--saved:hover {
+    background: linear-gradient(to bottom right, #fafcfe 0%, #f0f6fa 100%);
 }
 
 .profile__stat-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
     line-height: 1;
 }
 
 .profile__stat-card--adopt .profile__stat-icon {
-    color: #6366f1;
+    color: #2c5282;
 }
 
 .profile__stat-card--adopted .profile__stat-icon {
-    color: #818cf8;
+    color: #4a7ba7;
 }
 
 .profile__stat-card--saved .profile__stat-icon {
-    color: #a5b4fc;
+    color: #7ba3c5;
 }
 
 .profile__stat-info {
@@ -319,7 +333,7 @@ onMounted(() => {
 .profile__stat-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #1f2937;
+    color: #2d3748;
     line-height: 1.2;
 }
 
@@ -334,7 +348,7 @@ onMounted(() => {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: #6366f1;
+    color: #3182ce;
     text-decoration: none;
     font-size: 0.875rem;
     font-weight: 600;
