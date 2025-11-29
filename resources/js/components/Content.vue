@@ -11,15 +11,17 @@
 </template>
 
 <script setup lang="ts" name="Content">
-    defineProps(['title'])
+defineProps(['title'])
 </script>
 
 <style scoped>
-    .content {
-        max-width: 1140px;
-    }
+.content {
+    max-width: 1140px;
+}
 
-    .content__title {
-        max-width: 1140px;
-    }
+.content__title {
+    max-width: 1140px;
+    color: #2d3748;
+    font-weight: 700;
+}
 </style>
