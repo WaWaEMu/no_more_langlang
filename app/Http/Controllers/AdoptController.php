@@ -17,7 +17,7 @@ class AdoptController extends Controller
     }
 
     public function index() {
-        $pets = Pet::with(['sendableCities', 'images', 'detail'])->get();
+        $pets = Pet::with(['sendableCities', 'images', 'detail', 'user'])->get();
         return response()->json($pets);
     }
 

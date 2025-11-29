@@ -27,6 +27,10 @@ class Pet extends Model
         return $this->hasOne(PetDetail::class);
     }
 
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
     public function attachSendableCities(array $cities):void {
         foreach ($cities as $city) {
             $this->sendableCities()->create([

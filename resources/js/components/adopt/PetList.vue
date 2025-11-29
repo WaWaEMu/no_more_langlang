@@ -15,6 +15,10 @@
                         <span class="me-1">刊登日期</span>
                         <span>{{ formatDate(pet.created_at) }}</span>
                     </div>
+                    <div class="pet-list__date me-2 my-1 text-end">
+                        <span class="me-1">發文者</span>
+                        <span>{{ pet.user.name }}</span>
+                    </div>
                 </div>
                 <div class="pet-list__profile">
                     <div class="d-flex">
@@ -69,7 +73,7 @@ defineProps<{
 }>()
 
 function formatDate(dateStr: string) {
-  return dateStr ? dateStr.split('T')[0] : ''
+    return dateStr ? dateStr.split('T')[0] : ''
 }
 
 </script>
