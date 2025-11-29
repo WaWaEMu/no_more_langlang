@@ -40,12 +40,17 @@ const routes = [
         path: '/bye',
         component: () => import('@/pages/auth/Bye.vue'),
         meta: { title: 'Goodbye' }
+    },
+    {
+        path: '/user/profile/:id',
+        component: () => import('@/pages/user/Profile.vue'),
+        meta: { title: 'Profile' }
     }
 ]
 
 const router = createRouter({
-        history: createWebHashHistory(),
-        routes
-    })
+    history: createWebHashHistory(),
+    routes
+})
 
 export default router

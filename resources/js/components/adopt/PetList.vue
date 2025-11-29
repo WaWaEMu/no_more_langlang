@@ -17,7 +17,7 @@
                     </div>
                     <div class="pet-list__date me-2 my-1 text-end">
                         <span class="me-1">發文者</span>
-                        <span>{{ pet.user.name }}</span>
+                        <RouterLink :to="`/user/profile/${pet.user.id}`">{{ pet.user.name }}</RouterLink>
                     </div>
                 </div>
                 <div class="pet-list__profile">

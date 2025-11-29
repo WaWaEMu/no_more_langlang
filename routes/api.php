@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdoptController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,5 +20,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Todo RESTful API structure
 Route::get('/adopt', [AdoptController::class, 'index']); 
 Route::post('/adopt/store', [AdoptController::class, 'store']); 
+
+// RESTful API Routes
+Route::get('/users/{id}', [UserController::class, 'show']);
