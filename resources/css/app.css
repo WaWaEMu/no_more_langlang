@@ -1,3 +1,11 @@
+:root {
+    --color-fog-gray: #E6E9EF;
+    --color-denim-blue: #425B76;
+    --color-denim-blue-dark: #34495E;
+    --color-white: #FFFFFF;
+}
+
 body {
-    margin: 0;
+    background-color: var(--color-fog-gray);
+    font-family: 'Inter', sans-serif;
 }
