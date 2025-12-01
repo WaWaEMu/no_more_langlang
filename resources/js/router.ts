@@ -23,12 +23,12 @@ const routes = [
     },
     {
         path: '/auth/forgot',
-        component: () => import('@/pages/auth/ForgotPassword.vue'),
+        component: () => import('@/pages/auth/Forgot.vue'),
         meta: { title: 'Forgot Password' }
     },
     {
         path: '/auth/reset',
-        component: () => import('@/pages/auth/ResetPassword.vue'),
+        component: () => import('@/pages/auth/Reset.vue'),
         meta: { title: 'Reset Password' }
     },
     {
