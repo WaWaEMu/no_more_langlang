@@ -43,6 +43,7 @@
 import { reactive } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 
@@ -57,11 +58,27 @@ async function register() {
     try {
         await axios.get('/sanctum/csrf-cookie')
         await axios.post('/register', form)
+
+        // Show success message
+        await Swal.fire({
+            icon: 'success',
+            title: '註冊成功！',
+            text: '即將前往登入頁面...',
+            timer: 1500,
+            showConfirmButton: false
+        })
+
         // Redirect to login page after register successfully
         router.push('/auth/login')
     }
     catch (error) {
         console.error('註冊失敗:', error)
+        // Optional: Show error message
+        Swal.fire({
+            icon: 'error',
+            title: '註冊失敗',
+            text: '請檢查您的輸入資料是否正確',
+        })
     }
 }
 </script>
