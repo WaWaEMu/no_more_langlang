@@ -33,10 +33,11 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
+const route = useRoute()
 
 const form = reactive({
     email: '',
@@ -47,7 +48,18 @@ async function login() {
     try {
         await axios.get('/sanctum/csrf-cookie')
         await axios.post('/login', form)
-        router.push('/welcome')
+
+        // Pass redirect and token query params to Welcome page
+        const redirect = route.query.redirect as string | undefined
+        const token = route.query.token as string | undefined
+
+        router.push({
+            path: '/welcome',
+            query: {
+                ...(redirect && { redirect }),
+                ...(token && { token })
+            }
+        })
     }
     catch (error) {
         console.error('登入失敗:', error)

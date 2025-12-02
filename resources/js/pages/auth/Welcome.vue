@@ -24,9 +24,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 const countdown = ref(3)
 let timer: number | undefined
 
@@ -45,7 +46,17 @@ onUnmounted(() => {
 
 function jumpNow() {
     if (timer) clearInterval(timer)
-    router.push('/adopt')
+
+    // Check if there's a redirect query parameter
+    const redirect = route.query.redirect as string | undefined
+
+    if (redirect) {
+        // Redirect to the original destination
+        router.push(redirect)
+    } else {
+        // Default to /adopt
+        router.push('/adopt')
+    }
 }
 </script>
 
