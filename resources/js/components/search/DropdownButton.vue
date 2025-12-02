@@ -47,13 +47,25 @@ const hasValue = computed(() => {
     justify-content: space-between;
     align-items: center;
     color: #7f7f7f;
+    background-color: #fff;
+    border-color: #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.dropdown-button__list button:hover {
+    background-color: #f8f9fa;
+    border-color: var(--color-denim-blue);
 }
 
 .dropdown-button__list button:focus {
     color: #7f7f7f;
+    background-color: #fff;
 }
 
 .dropdown-button__active {
     color: #000 !important;
+    background-color: #fff !important;
+    border-color: var(--color-denim-blue) !important;
+    font-weight: 500;
 }
 </style>
