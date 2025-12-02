@@ -10,27 +10,29 @@ const whiteList = [
     '/auth/reset',
     '/404',
     '/401',
-    '/500'
+    '/500',
+    '/adopt'
 ]
 
 router.beforeEach(async (to, from, next) => {
     // Set page title
-    document.title = getPageTitle(to.meta.title)
+    document.title = getPageTitle(to.meta.title as string | undefined)
 
-    // White list routes are always allowed
+    const loggedIn = await isLoggedIn();
+
+    // If logged in and trying to access login page, redirect to home
+    if (loggedIn && to.path === '/auth/login') {
+        return next({ path: '/adopt' })
+    }
+
+    // White list routes are always allowed (for non-logged-in users or other auth routes)
     if (whiteList.includes(to.path)) {
         return next()
     }
 
-    const loggedIn = await isLoggedIn();
-
+    // For protected routes
     if (loggedIn) {
-        if (to.path === '/auth/login') {
-            // If is logged in, redirect to the home page
-            return next({ path: '/' })
-        } else {
-            return next()
-        }
+        return next()
     } else {
         // If not logged in, redirect to login page with redirect query
         if (to.query.token) {
