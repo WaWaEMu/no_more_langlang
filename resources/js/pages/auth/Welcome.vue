@@ -1,25 +1,76 @@
 <template>
-    LOGIN Successfully!!!
-    <!-- Logout -->
-    <div>
-        <button @click="logout()">Logout</button>
+    <div class="welcome__container d-flex align-items-center justify-content-center min-vh-100">
+        <div class="card shadow-lg border-0 welcome__card">
+            <div class="card-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h2 class="mb-3 fw-bold welcome__title">登入成功！</h2>
+                <p class="text-secondary mb-4">歡迎回來，我們正在為您準備頁面...</p>
+
+                <div class="alert alert-light border mb-4">
+                    將在 <span class="fw-bold text-primary">{{ countdown }}</span> 秒後自動跳轉
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button @click="jumpNow()" class="btn welcome__btn btn-lg text-white fw-bold">
+                        點我立即跳轉 <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    import axios from 'axios'
-    import { useRouter } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-    const router = useRouter()
+const router = useRouter()
+const countdown = ref(3)
+let timer: number | undefined
 
-    async function logout() {
-        try {
-            await axios.get('/sanctum/csrf-cookie') // Make sure the CSRF token is set
-            await axios.post('/logout')
-            router.push('/bye')
+onMounted(() => {
+    timer = setInterval(() => {
+        countdown.value--
+        if (countdown.value <= 0) {
+            jumpNow()
         }
-        catch (error) {
-            console.error('登入失敗:', error)
-        }
-    }
+    }, 1000)
+})
+
+onUnmounted(() => {
+    if (timer) clearInterval(timer)
+})
+
+function jumpNow() {
+    if (timer) clearInterval(timer)
+    router.push('/adopt')
+}
 </script>
+
+<style scoped>
+.welcome__container {
+    background-color: var(--color-fog-gray);
+}
+
+.welcome__card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 1rem;
+}
+
+.welcome__title {
+    color: var(--color-denim-blue);
+}
+
+.welcome__btn {
+    background-color: var(--color-denim-blue);
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.welcome__btn:hover {
+    background-color: var(--color-denim-blue-dark);
+}
+</style>
