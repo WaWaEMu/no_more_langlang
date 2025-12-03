@@ -34,7 +34,7 @@ function isActive(path: string) {
 .navbar {
     background: linear-gradient(135deg, #d1d9e6 0%, #b8c5d6 100%);
     color: #4a5568;
-    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.15);
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.25), 0 2px 4px rgba(107, 114, 128, 0.15);
 }
 
 .navbar__title {
