@@ -68,4 +68,16 @@ function isActive(path: string) {
         transform: translateY(-5px);
     }
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 1rem;
+    }
+
+    .navbar__title {
+        margin: 0 50px;
+        font-size: 1.25rem;
+    }
+}
 </style>
