@@ -1,20 +1,27 @@
 <template>
-    <div class="fw-semibold justify-content-start navbar">
-        <h1 class="my-4 navbar__title">諾摸浪浪</h1>
-        <ul class="d-flex list-unstyled align-items-center mb-0">
-            <li v-for="navItem in navList" :key="navItem.id" class="me-5">
-                <RouterLink :to="navItem.path" active-class="text-decoration-none d-inline-block pb-2 navbar__isActive"
-                    :class="!isActive(navItem.path) && 'navbar__link'">
-                    {{ navItem.label }}
-                </RouterLink>
-            </li>
-        </ul>
+    <div class="fw-semibold justify-content-between navbar pe-4">
+        <div class="d-flex align-items-center">
+            <h1 class="my-4 navbar__title">諾摸浪浪</h1>
+            <ul class="d-flex list-unstyled align-items-center mb-0">
+                <li v-for="navItem in navList" :key="navItem.id" class="me-5">
+                    <RouterLink :to="navItem.path"
+                        active-class="text-decoration-none d-inline-block pb-2 navbar__isActive"
+                        :class="!isActive(navItem.path) && 'navbar__link'">
+                        {{ navItem.label }}
+                    </RouterLink>
+                </li>
+            </ul>
+        </div>
+
+        <!-- User Menu -->
+        <UserMenu />
     </div>
 </template>
 
 <script setup lang="ts" name="Navbar">
 import { ref } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import UserMenu from '@/components/user/UserMenu.vue'
 
 const route = useRoute();
 
