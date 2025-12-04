@@ -45,7 +45,8 @@
 
                     <ul class="user-menu__dropdown-list">
                         <li>
-                            <RouterLink :to="`/user/${user?.id}`" class="user-menu__dropdown-item" @click="closeMenu">
+                            <RouterLink :to="`/user/profile/${user?.id}`" class="user-menu__dropdown-item"
+                                @click="closeMenu">
                                 <i class="bi bi-person-fill"></i>
                                 <span>個人資料</span>
                             </RouterLink>
