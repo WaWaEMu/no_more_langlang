@@ -3,12 +3,12 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 const routes = [
     {
         path: '/adopt',
-        component: () => import('@/pages/Adopt.vue'),
+        component: () => import('@/pages/adopt/Index.vue'),
         meta: { title: 'Adopt List' }
     },
     {
         path: '/adopt/new',
-        component: () => import('@/pages/AdoptCreate.vue'),
+        component: () => import('@/pages/adopt/Create.vue'),
         meta: { title: 'New Adoption' }
     },
     {
