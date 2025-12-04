@@ -8,19 +8,27 @@
         <div class="card shadow-lg border-0 login__card">
             <div class="card-body p-5">
                 <h2 class="text-center mb-4 fw-bold login__title">登入</h2>
-                <form @submit.prevent="login()">
+                <form @submit.prevent="handleLogin">
                     <div class="mb-3">
                         <label for="login-email" class="form-label text-secondary">帳號(Email)</label>
-                        <input type="text" id="login-email" v-model="form.email"
-                            class="form-control form-control-lg login__input" placeholder="請輸入帳號">
+                        <input type="text" id="login-email" v-model.trim="form.email" :disabled="isLoading"
+                            class="form-control form-control-lg login__input" placeholder="請輸入電子信箱"
+                            :class="{ 'is-invalid': errors.email }">
+                        <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                     <div class="mb-4">
                         <label for="login-password" class="form-label text-secondary">密碼</label>
-                        <input type="password" id="login-password" v-model="form.password"
-                            class="form-control form-control-lg login__input" placeholder="請輸入密碼">
+                        <input type="password" id="login-password" v-model="form.password" :disabled="isLoading"
+                            class="form-control form-control-lg login__input" placeholder="請輸入密碼"
+                            :class="{ 'is-invalid': errors.password }">
+                        <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
                     </div>
                     <div class="d-grid gap-2 mb-4">
-                        <button type="submit" class="btn login__btn btn-lg text-white fw-bold">登入</button>
+                        <button type="submit" class="btn login__btn btn-lg text-white fw-bold" :disabled="isLoading">
+                            <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                                aria-hidden="true"></span>
+                            {{ isLoading ? '登入中...' : '登入' }}
+                        </button>
                     </div>
                     <div class="d-flex justify-content-between align-items-center text-sm">
                         <RouterLink to="/auth/register" class="text-decoration-none login__link">
@@ -37,9 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter, useRoute, RouterLink } from 'vue-router'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const route = useRoute()
@@ -49,7 +58,45 @@ const form = reactive({
     password: ''
 })
 
-async function login() {
+const errors = reactive<Record<string, string>>({})
+const isLoading = ref(false)
+
+// Validate form
+function validateForm(): boolean {
+    // Clear previous errors
+    Object.keys(errors).forEach(key => delete errors[key])
+
+    let isValid = true
+
+    // Validate email
+    if (!form.email) {
+        errors.email = '請輸入電子信箱'
+        isValid = false
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+        errors.email = '請輸入有效的電子信箱格式'
+        isValid = false
+    }
+
+    // Validate password
+    if (!form.password) {
+        errors.password = '請輸入密碼'
+        isValid = false
+    } else if (form.password.length < 6) {
+        errors.password = '密碼至少需要 6 個字元'
+        isValid = false
+    }
+
+    return isValid
+}
+
+async function handleLogin() {
+    // Validate form first
+    if (!validateForm()) {
+        return
+    }
+
+    isLoading.value = true
+
     try {
         await axios.get('/sanctum/csrf-cookie')
         await axios.post('/login', form)
@@ -68,6 +115,43 @@ async function login() {
     }
     catch (error) {
         console.error('登入失敗:', error)
+
+        // Handle error messages
+        let errorMessage = '登入失敗，請稍後再試'
+
+        if (axios.isAxiosError(error)) {
+            const axiosError = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
+            const backendMessage = axiosError.response?.data?.message || ''
+
+            // Prioritize checking for login credential errors (regardless of status code 401 or 422)
+            if (backendMessage.includes('credentials') || backendMessage.includes('do not match')) {
+                // Laravel login failure message
+                errorMessage = '帳號或密碼錯誤'
+            } else if (axiosError.response?.status === 422) {
+                // Other validation errors
+                const validationErrors = axiosError.response.data.errors
+                if (validationErrors) {
+                    // Display first error
+                    const firstError = Object.values(validationErrors)[0]
+                    errorMessage = firstError ? firstError[0] : '請檢查輸入的資料'
+                }
+            } else if (axiosError.response?.status === 419) {
+                // CSRF token expired
+                errorMessage = '頁面已過期，請重新整理後再試'
+            } else if (backendMessage) {
+                // Use backend message for other errors
+                errorMessage = backendMessage
+            }
+        }
+
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: errorMessage,
+        })
+    }
+    finally {
+        isLoading.value = false
     }
 }
 </script>
@@ -105,6 +189,12 @@ async function login() {
 
 .login__btn:hover {
     background-color: var(--color-denim-blue-dark);
+}
+
+.login__btn:disabled {
+    background-color: var(--color-denim-blue);
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .login__input:focus {
