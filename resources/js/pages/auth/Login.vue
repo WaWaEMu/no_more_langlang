@@ -1,5 +1,10 @@
 <template>
     <div class="login__container d-flex align-items-center justify-content-center min-vh-100">
+        <!-- Home Button -->
+        <RouterLink to="/adopt" class="login__home-btn position-fixed top-0 start-0 m-4 btn btn-lg">
+            <i class="bi bi-house-door-fill me-2"></i>返回首頁
+        </RouterLink>
+
         <div class="card shadow-lg border-0 login__card">
             <div class="card-body p-5">
                 <h2 class="text-center mb-4 fw-bold login__title">登入</h2>
@@ -105,5 +110,30 @@ async function login() {
 .login__input:focus {
     border-color: var(--color-denim-blue);
     box-shadow: 0 0 0 0.25rem rgba(66, 91, 118, 0.25);
+}
+
+.login__home-btn {
+    background-color: var(--color-denim-blue);
+    border: 2px solid var(--color-denim-blue);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.login__home-btn:hover {
+    background-color: var(--color-denim-blue-dark);
+    border-color: var(--color-denim-blue-dark);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.login__home-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 </style>
