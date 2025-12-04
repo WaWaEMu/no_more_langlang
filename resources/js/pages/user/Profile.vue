@@ -111,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import Navbar from '@/components/Navbar.vue'
@@ -123,15 +123,15 @@ const userProfile = ref<UserProfileInter | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// Get user id from route params
-const userId = route.params.id
+// Use computed to make userId reactive to route changes
+const userId = computed(() => route.params.id)
 
 async function fetchUserProfile() {
     loading.value = true
     error.value = null
 
     try {
-        const response = await axios.get(`/api/users/${userId}`)
+        const response = await axios.get(`/api/users/${userId.value}`)
         userProfile.value = response.data
     } catch (err: any) {
         error.value = err.response?.data?.message || '無法載入使用者資料'
@@ -148,6 +148,13 @@ function formatDate(dateStr: string): string {
         day: 'numeric'
     })
 }
+
+// Watch for route param changes
+watch(() => route.params.id, (newId, oldId) => {
+    if (newId && newId !== oldId) {
+        fetchUserProfile()
+    }
+})
 
 onMounted(() => {
     fetchUserProfile()
