@@ -153,11 +153,9 @@ function formatDate(dateStr: string) {
     color: #2d3748;
     margin: 0;
     line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     width: 100%;
 }
 
