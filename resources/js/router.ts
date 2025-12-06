@@ -50,6 +50,11 @@ const routes = [
         path: '/user/profile/:id',
         component: () => import('@/pages/user/Profile.vue'),
         meta: { title: 'Profile' }
+    },
+    {
+        path: '/user/my-pets',
+        component: () => import('@/pages/user/MyPets.vue'),
+        meta: { title: 'My Pets' }
     }
 ]
 

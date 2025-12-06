@@ -81,6 +81,10 @@ export const useAdoptStore = defineStore('adopt', () => {
         Object.assign(petFilters, emptyFilters)
     }
 
+    function getMyPets(userid: number) {
+        return pets.value.filter(pet => pet.user.id === userid)
+    }
+
     return {
         pets,
         loading,
@@ -92,6 +96,7 @@ export const useAdoptStore = defineStore('adopt', () => {
         activePets,
         petFilters,
         updateFilters,
-        resetFilters
+        resetFilters,
+        getMyPets
     }
 })

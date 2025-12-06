@@ -52,7 +52,7 @@
                             </RouterLink>
                         </li>
                         <li>
-                            <RouterLink to="/my-pets" class="user-menu__dropdown-item" @click="closeMenu">
+                            <RouterLink to="/user/my-pets" class="user-menu__dropdown-item" @click="closeMenu">
                                 <i class="bi bi-heart-fill"></i>
                                 <span>我的送養</span>
                             </RouterLink>
