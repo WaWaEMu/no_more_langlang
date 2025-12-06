@@ -12,12 +12,12 @@
 <script setup lang="ts">
 import PetFilter from '@/components/search/PetFilter.vue'
 import { pets } from '@/../data/pets'
-import { usePetStore } from '@/stores/adopt'
+import { useAdoptStore } from '@/stores/adopt'
 import { storeToRefs } from 'pinia'
 
-const petStore = usePetStore()
-const { activeType } = storeToRefs(petStore)
-const { changeType } = petStore
+const adoptStore = useAdoptStore()
+const { activeType } = storeToRefs(adoptStore)
+const { changeType } = adoptStore
 </script>
 
 <style>

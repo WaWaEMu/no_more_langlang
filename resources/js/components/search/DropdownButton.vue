@@ -13,7 +13,7 @@ import { ref, computed } from 'vue'
 import FilterDropdown from '@/components/search/FilterDropdown.vue'
 import { OptionInter, PetFiltersInter } from '@/types/option'
 import { AreaInter } from '@/../data/areas'
-import { usePetStore } from '@/stores/adopt';
+import { useAdoptStore } from '@/stores/adopt';
 
 const props = defineProps<{
     options: AreaInter | string[] | OptionInter,
@@ -21,8 +21,8 @@ const props = defineProps<{
 }>()
 
 const show = ref(false)
-const petStore = usePetStore()
-const { petFilters } = petStore
+const adoptStore = useAdoptStore()
+const { petFilters } = adoptStore
 
 const hasValue = computed(() => {
     const val = petFilters[props.filterKey]?.value

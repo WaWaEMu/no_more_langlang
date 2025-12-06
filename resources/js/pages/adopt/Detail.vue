@@ -245,13 +245,13 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import { usePetStore } from '@/stores/adopt'
+import { useAdoptStore } from '@/stores/adopt'
 import { PetInter } from '@/types/pet'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 
 const route = useRoute()
-const petStore = usePetStore()
+const adoptStore = useAdoptStore()
 
 const pet = ref<PetInter | null>(null)
 const loading = ref(false)
@@ -268,7 +268,7 @@ async function fetchPetDetail() {
     currentImageIndex.value = 0
 
     try {
-        const data = await petStore.fetchPetById(petId.value)
+        const data = await adoptStore.fetchPetById(petId.value)
         pet.value = data
     } catch (err: any) {
         error.value = err.response?.data?.message || '無法載入寵物詳細資料'

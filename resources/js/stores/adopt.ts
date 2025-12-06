@@ -4,7 +4,7 @@ import axios from 'axios'
 import { PetInter } from '@/types/pet'
 import { OptionItem, PetFiltersInter } from "@/types/option"
 
-export const usePetStore = defineStore('browse', () => {
+export const useAdoptStore = defineStore('adopt', () => {
     const pets = ref<PetInter[]>([])
     const activeType = ref('貓咪')
 

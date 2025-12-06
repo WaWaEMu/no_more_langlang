@@ -59,7 +59,7 @@
 import DropdownButton from '@/components/search/DropdownButton.vue'
 import { areas } from '@/../data/areas'
 import options from '@/../data/options'
-import { usePetStore } from '@/stores/adopt'
+import { useAdoptStore } from '@/stores/adopt'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
@@ -68,9 +68,9 @@ const props = defineProps<{
 
 const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
 
-const petStore = usePetStore()
-const { petFilters } = storeToRefs(petStore)
-const { resetFilters } = petStore
+const adoptStore = useAdoptStore()
+const { petFilters } = storeToRefs(adoptStore)
+const { resetFilters } = adoptStore
 </script>
 
 <style scoped>

@@ -51,15 +51,15 @@
 <script setup lang="ts">
 import { AreaInter } from '@/../data/areas'
 import { OptionInter, OptionItem, PetFiltersInter } from '@/types/option'
-import { usePetStore } from '@/stores/adopt';
+import { useAdoptStore } from '@/stores/adopt';
 
 const props = defineProps<{
     options: AreaInter | string[] | OptionInter,
     filterKey: keyof PetFiltersInter,
 }>()
 
-const petStore = usePetStore()
-const { updateFilters } = petStore
+const adoptStore = useAdoptStore()
+const { updateFilters } = adoptStore
 
 function isCity(group: unknown): group is AreaInter {
     return typeof group === 'object'

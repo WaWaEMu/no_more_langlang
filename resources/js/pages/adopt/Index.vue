@@ -11,25 +11,25 @@
 </template>
 
 <script setup lang="ts" name="Adopt">
-    import Navbar from '@/components/Navbar.vue'
-    import PetSearch from '@/components/search/PetSearch.vue'
-    import Content from '@/components/Content.vue'
-    import PetList from '@/components/adopt/PetList.vue'
-    import { onMounted } from 'vue'
-    import { usePetStore } from '@/stores/adopt'
-    import { storeToRefs } from 'pinia'
+import Navbar from '@/components/Navbar.vue'
+import PetSearch from '@/components/search/PetSearch.vue'
+import Content from '@/components/Content.vue'
+import PetList from '@/components/adopt/PetList.vue'
+import { onMounted } from 'vue'
+import { useAdoptStore } from '@/stores/adopt'
+import { storeToRefs } from 'pinia'
 
-    const petStore = usePetStore()
-    const { activePets } = storeToRefs(petStore)
-    const { fetchPets } = petStore
+const adoptStore = useAdoptStore()
+const { activePets } = storeToRefs(adoptStore)
+const { fetchPets } = adoptStore
 
-    onMounted(async () => {
-        await fetchPets()
-    })
+onMounted(async () => {
+    await fetchPets()
+})
 </script>
 
 <style>
-    .pet-search__wrapper {
-        max-width: 900px;
-    }
+.pet-search__wrapper {
+    max-width: 900px;
+}
 </style>
