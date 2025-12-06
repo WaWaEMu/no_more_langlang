@@ -1,6 +1,6 @@
 <template>
     <div class="pet-list">
-        <div v-for="pet in petList" :key="pet.id" class="pet-list__card">
+        <RouterLink v-for="pet in petList" :key="pet.id" :to="`/adopt/${pet.id}`" class="pet-list__card">
             <div class="pet-list__card--image-wrapper">
                 <img :src="`/storage/${pet.images[0].path}`" :alt="pet.name" class="pet-list__card--image">
                 <div class="pet-list__card--badge">
@@ -47,16 +47,14 @@
                 <div class="pet-list__card--footer">
                     <div class="pet-list__card--user">
                         <span class="pet-list__card--label">發文者</span>
-                        <RouterLink :to="`/user/profile/${pet.user.id}`" class="pet-list__card--user-link">
-                            {{ pet.user.name }}
-                        </RouterLink>
+                        <span class="pet-list__card--user-name">{{ pet.user.name }}</span>
                     </div>
                     <div class="pet-list__card--date">
                         {{ formatDate(pet.created_at) }}
                     </div>
                 </div>
             </div>
-        </div>
+        </RouterLink>
     </div>
 </template>
 
@@ -89,6 +87,8 @@ function formatDate(dateStr: string) {
     border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
+    text-decoration: none;
+    color: inherit;
 }
 
 .pet-list__card:hover {
@@ -237,15 +237,9 @@ function formatDate(dateStr: string) {
     gap: 0.5rem;
 }
 
-.pet-list__card--user-link {
+.pet-list__card--user-name {
     color: #3182ce;
     font-weight: 600;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.pet-list__card--user-link:hover {
-    color: #2c5282;
 }
 
 .pet-list__card--date {

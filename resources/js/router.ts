@@ -12,6 +12,11 @@ const routes = [
         meta: { title: 'New Adoption' }
     },
     {
+        path: '/adopt/:id',
+        component: () => import('@/pages/adopt/Detail.vue'),
+        meta: { title: 'Pet Details' }
+    },
+    {
         path: '/auth/login',
         component: () => import('@/pages/auth/Login.vue'),
         meta: { title: 'Login' }

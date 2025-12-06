@@ -17,7 +17,7 @@ class AdoptController extends Controller
     }
 
     public function index() {
-        $pets = Pet::with(['sendableCities', 'images', 'detail', 'user'])->get();
+        $pets = Pet::with(['images', 'detail', 'user'])->get();
         return response()->json($pets);
     }
 
@@ -44,5 +44,11 @@ class AdoptController extends Controller
                 'success' => false
             ]);
         }
+    }
+
+    public function show($id)
+    {
+        $pet = Pet::with(['images', 'detail', 'user'])->find($id);
+        return response()->json($pet);
     }
 }

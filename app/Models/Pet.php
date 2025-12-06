@@ -14,6 +14,13 @@ class Pet extends Model
         'fur_type', 'name', 'gender', 'age', 'is_neuter'
     ];
 
+    protected $appends = ['sendable_cities'];
+
+    public function getSendableCitiesAttribute()
+    {
+        return $this->sendableCities()->pluck('city')->toArray();
+    }
+
     public function sendableCities() {
         return $this->hasMany(PetSendableCity::class);
     }

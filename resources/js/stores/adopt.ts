@@ -62,6 +62,21 @@ export const usePetStore = defineStore('browse', () => {
         petFilters[key] = item
     }
 
+    async function fetchPetById(id: string | number): Promise<PetInter> {
+        loading.value = true
+        error.value = null
+
+        try {
+            const res = await axios.get(`/api/adopt/${id}`)
+            return res.data
+        } catch (err: any) {
+            error.value = err.message ?? 'Failed to fetch pet details'
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
     function resetFilters() {
         Object.assign(petFilters, emptyFilters)
     }
@@ -71,6 +86,7 @@ export const usePetStore = defineStore('browse', () => {
         loading,
         error,
         fetchPets,
+        fetchPetById,
         changeType,
         activeType,
         activePets,
