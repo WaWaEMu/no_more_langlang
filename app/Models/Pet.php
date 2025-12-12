@@ -67,4 +67,9 @@ class Pet extends Model
     public function storeDetail(array $details):void {
         $this->detail()->create($details);
     }
+
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
 }

@@ -17,7 +17,14 @@ class AdoptController extends Controller
     }
 
     public function index() {
-        $pets = Pet::with(['images', 'detail', 'user'])->get();
+        $userId = Auth::id();
+        $pets = Pet::with(['images', 'detail', 'user'])
+            ->withExists([
+                'favoritedBy as is_favorite' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ])
+            ->get();
         return response()->json($pets);
     }
 
@@ -48,7 +55,35 @@ class AdoptController extends Controller
 
     public function show($id)
     {
-        $pet = Pet::with(['images', 'detail', 'user'])->find($id);
+        $userId = Auth::id();
+        $pet = Pet::with(['images', 'detail', 'user'])
+            ->withExists([
+                'favoritedBy as is_favorite' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ])
+            ->find($id);
         return response()->json($pet);
+    }
+
+    public function toggleFavorite($id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+        $pet = Pet::findOrFail($id);
+
+        // Toggle the favorite status
+        $attached = $user->favorites()->toggle($id);
+
+        // Determine if currently favorited based on toggle result
+        $isFavorited = count($attached['attached']) > 0;
+
+        return response()->json([
+            'success' => true,
+            'is_favorite' => $isFavorited
+        ]);
     }
 }

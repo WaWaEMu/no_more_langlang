@@ -21,9 +21,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 // Todo RESTful API structure
-Route::get('/adopt', [AdoptController::class, 'index']); 
-Route::post('/adopt/store', [AdoptController::class, 'store']); 
+Route::get('/adopt', [AdoptController::class, 'index']);
+Route::post('/adopt/store', [AdoptController::class, 'store']);
 Route::get('/adopt/{id}', [AdoptController::class, 'show']);
+Route::post('/adopt/{id}/favorite', [AdoptController::class, 'toggleFavorite']);
 
 // RESTful API Routes
 Route::get('/users/{id}', [UserController::class, 'show']);

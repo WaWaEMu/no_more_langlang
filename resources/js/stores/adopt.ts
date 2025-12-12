@@ -85,6 +85,34 @@ export const useAdoptStore = defineStore('adopt', () => {
         return pets.value.filter(pet => pet.user.id === userid)
     }
 
+    // Favorites Logic
+    async function toggleFavorite(petId: number) {
+        // Optimistic update
+        const pet = pets.value.find(p => p.id === petId)
+        if (pet) {
+            pet.is_favorite = !pet.is_favorite
+        }
+
+        try {
+            const res = await axios.post(`/api/adopt/${petId}/favorite`)
+            // Sync with server response
+            if (pet) {
+                pet.is_favorite = res.data.is_favorite
+            }
+        } catch (err) {
+            // Revert on error
+            if (pet) {
+                pet.is_favorite = !pet.is_favorite
+            }
+            console.error('Failed to toggle favorite', err)
+        }
+    }
+
+    function isFavorite(petId: number): boolean {
+        const pet = pets.value.find(p => p.id === petId)
+        return !!pet?.is_favorite
+    }
+
     return {
         pets,
         loading,
@@ -97,6 +125,9 @@ export const useAdoptStore = defineStore('adopt', () => {
         petFilters,
         updateFilters,
         resetFilters,
-        getMyPets
+        getMyPets,
+        // Favorites exports
+        toggleFavorite,
+        isFavorite
     }
 })

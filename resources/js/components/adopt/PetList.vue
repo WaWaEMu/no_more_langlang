@@ -6,6 +6,10 @@
                 <div class="pet-list__card--badge">
                     {{ pet.type }}
                 </div>
+                <button class="pet-list__card--favorite" @click.prevent.stop="toggleFavorite(pet.id)"
+                    :class="{ 'active': isFavorite(pet.id) }">
+                    <i class="bi" :class="isFavorite(pet.id) ? 'bi-heart-fill' : 'bi-heart'"></i>
+                </button>
             </div>
 
             <div class="pet-list__card--content">
@@ -60,6 +64,10 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useAdoptStore } from '@/stores/adopt'
+
+const adoptStore = useAdoptStore()
+const { toggleFavorite, isFavorite } = adoptStore
 
 defineProps<{
     petList: any[]
@@ -131,6 +139,43 @@ function formatDate(dateStr: string) {
     font-weight: 600;
     color: #2c5282;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pet-list__card--favorite {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #a0aec0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+
+.pet-list__card--favorite:hover {
+    transform: scale(1.1);
+    background: #fff;
+    color: #e53e3e;
+}
+
+.pet-list__card--favorite.active {
+    color: #e53e3e;
+    background: #fff;
+}
+
+.pet-list__card--favorite i {
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pet-list__card--content {

@@ -46,6 +46,7 @@ export interface PetInter {
   user: { id: number; name: string }
   created_at: string
   updated_at: string
+  is_favorite?: boolean
 }
 
 export interface PetColorMapInter {
