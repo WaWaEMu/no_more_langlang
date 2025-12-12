@@ -6,7 +6,7 @@
                 <div class="pet-list__card--badge">
                     {{ pet.type }}
                 </div>
-                <button class="pet-list__card--favorite" @click.prevent.stop="toggleFavorite(pet.id)"
+                <button class="pet-list__card--favorite" @click.prevent.stop="handleToggleFavorite(pet.id)"
                     :class="{ 'active': isFavorite(pet.id) }">
                     <i class="bi" :class="isFavorite(pet.id) ? 'bi-heart-fill' : 'bi-heart'"></i>
                 </button>
@@ -65,6 +65,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useAdoptStore } from '@/stores/adopt'
+import Swal from 'sweetalert2'
 
 const adoptStore = useAdoptStore()
 const { toggleFavorite, isFavorite } = adoptStore
@@ -75,6 +76,27 @@ defineProps<{
 
 function formatDate(dateStr: string) {
     return dateStr ? dateStr.split('T')[0] : ''
+}
+
+function handleToggleFavorite(petId: number) {
+    if (isFavorite(petId)) {
+        Swal.fire({
+            title: '移除收藏？',
+            text: "確定要將此寵物從收藏清單中移除嗎？",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '是的，移除！',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                toggleFavorite(petId)
+            }
+        })
+    } else {
+        toggleFavorite(petId)
+    }
 }
 </script>
 
