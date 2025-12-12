@@ -113,6 +113,10 @@ export const useAdoptStore = defineStore('adopt', () => {
         return !!pet?.is_favorite
     }
 
+    const favoritePets = computed(() => {
+        return pets.value.filter(pet => pet.is_favorite)
+    })
+
     return {
         pets,
         loading,
@@ -128,6 +132,7 @@ export const useAdoptStore = defineStore('adopt', () => {
         getMyPets,
         // Favorites exports
         toggleFavorite,
-        isFavorite
+        isFavorite,
+        favoritePets
     }
 })

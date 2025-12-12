@@ -58,7 +58,7 @@
                             </RouterLink>
                         </li>
                         <li>
-                            <RouterLink to="/favorites" class="user-menu__dropdown-item" @click="closeMenu">
+                            <RouterLink to="/user/favorites" class="user-menu__dropdown-item" @click="closeMenu">
                                 <i class="bi bi-bookmark-heart-fill"></i>
                                 <span>收藏清單</span>
                             </RouterLink>

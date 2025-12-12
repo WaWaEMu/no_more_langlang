@@ -55,6 +55,11 @@ const routes = [
         path: '/user/my-pets',
         component: () => import('@/pages/user/MyPets.vue'),
         meta: { title: 'My Pets' }
+    },
+    {
+        path: '/user/favorites',
+        component: () => import('@/pages/user/Favorites.vue'),
+        meta: { title: 'Favorites' }
     }
 ]
 
