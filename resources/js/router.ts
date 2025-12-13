@@ -60,6 +60,11 @@ const routes = [
         path: '/user/favorites',
         component: () => import('@/pages/user/Favorites.vue'),
         meta: { title: 'Favorites' }
+    },
+    {
+        path: '/user/settings',
+        component: () => import('@/pages/user/Settings.vue'),
+        meta: { title: 'Settings' }
     }
 ]
 

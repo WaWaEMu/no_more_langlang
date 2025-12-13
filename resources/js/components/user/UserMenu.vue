@@ -64,7 +64,7 @@
                             </RouterLink>
                         </li>
                         <li>
-                            <RouterLink to="/settings" class="user-menu__dropdown-item" @click="closeMenu">
+                            <RouterLink to="/user/settings" class="user-menu__dropdown-item" @click="closeMenu">
                                 <i class="bi bi-gear-fill"></i>
                                 <span>帳號設定</span>
                             </RouterLink>
