@@ -29,7 +29,7 @@
                         <img src="@public/icons/arrow-right.svg" class="update-img__icon--arrow">
                     </div>
                     <div class="update-img__preview d-flex justify-content-center align-items-center overflow-hidden">
-                        <img v-if="!imgUrl.preview" src="`@public/icons/image.svg`" class="update-img__icon--img">
+                        <img v-if="!imgUrl.preview" src="@public/icons/image.svg" class="update-img__icon--img">
                         <img v-if="imgUrl.preview" :src="imgUrl.preview" class="w-100 h-100 object-fit-contain">
                     </div>
                 </div>
