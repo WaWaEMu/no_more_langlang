@@ -11,7 +11,7 @@ import axios from 'axios';
 import { createPinia } from 'pinia'
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = import.meta.env.VITE_APP_URL || 'http://localhost:8000';
 
 const app = createApp(App);
 const pinia = createPinia();
