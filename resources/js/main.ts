@@ -1,10 +1,10 @@
 import './bootstrap';
-import '../css/app.css';
 import { createApp } from 'vue';
 import App from './App.vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap';
+import '../css/app.css';
 import router from '@/router'
 import './permission';
 import axios from 'axios';
