@@ -25,6 +25,7 @@ Route::get('/adopt', [AdoptController::class, 'index']);
 Route::post('/adopt/store', [AdoptController::class, 'store']);
 Route::get('/adopt/{id}', [AdoptController::class, 'show']);
 Route::post('/adopt/{id}/favorite', [AdoptController::class, 'toggleFavorite']);
+Route::delete('/adopt/{id}', [AdoptController::class, 'destroy']);
 
 // RESTful API Routes
 Route::get('/users/{id}', [UserController::class, 'show']);

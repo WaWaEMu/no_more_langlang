@@ -86,4 +86,27 @@ class AdoptController extends Controller
             'is_favorite' => $isFavorited
         ]);
     }
+
+    public function destroy($id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+        $pet = Pet::findOrFail($id);
+
+        // Check if user is the owner
+        if ($pet->user_id !== $user->id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        try {
+            $pet->delete();
+            return response()->json(['success' => true, 'message' => 'Pet deleted successfully']);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete pet: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to delete pet'], 500);
+        }
+    }
 }
