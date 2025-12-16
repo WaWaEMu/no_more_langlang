@@ -199,7 +199,11 @@
                     <UpdateImg v-show="showModal" @update:confirm-img="saveConfirmImg" />
                 </div>
                 <div class="text-end mt-4">
-                    <button type="submit" class="apply-form__btn btn px-5 py-2">確定送出</button>
+                    <button type="submit" class="apply-form__btn btn px-5 py-2" :disabled="isSubmitting">
+                        <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+                        {{ isSubmitting ? '送出中...' : '確定送出' }}
+                    </button>
                 </div>
             </form>
         </div>
@@ -214,6 +218,11 @@ import UpdateImg from '@/components/modals/UpdateImg.vue'
 import { PetFormInter } from '@/types/pet'
 import { Modal } from 'bootstrap'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
+
+const router = useRouter()
+const isSubmitting = ref(false)
 
 const showModal = ref<boolean>(false)
 // Use snake_case keys to match backend expectations
@@ -328,13 +337,38 @@ function toFormData() {
     return form
 }
 
+
+
 // Submit the form
-function submit() {
+async function submit() {
+    if (isSubmitting.value) return
+
+    isSubmitting.value = true
     const realForm = toFormData()
 
-    axios.post('/api/adopt/store', realForm)
-        .then()
-        .catch()
+    try {
+        await axios.post('/api/adopt/store', realForm)
+
+        await Swal.fire({
+            icon: 'success',
+            title: '發布成功',
+            text: '您的送養資訊已成功發布！',
+            confirmButtonText: '前往我的送養清單',
+            confirmButtonColor: '#2c5282'
+        })
+
+        router.push('/user/my-pets')
+    } catch (error: any) {
+        console.error('Submit failed:', error)
+        Swal.fire({
+            icon: 'error',
+            title: '發布失敗',
+            text: error.response?.data?.message || '發生未知錯誤，請稍後再試',
+            confirmButtonColor: '#d33'
+        })
+    } finally {
+        isSubmitting.value = false
+    }
 }
 </script>
 
