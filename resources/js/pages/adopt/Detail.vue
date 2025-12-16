@@ -64,9 +64,20 @@
                             <RouterLink to="/adopt" class="btn btn-outline-secondary flex-fill py-2 fw-semibold">
                                 <i class="bi bi-arrow-left me-2"></i>返回列表
                             </RouterLink>
-                            <button class="btn btn-primary flex-fill py-2 fw-semibold" disabled>
-                                <i class="bi bi-envelope-heart me-2"></i>申請領養
-                            </button>
+
+                            <!-- Owner Actions -->
+                            <template v-if="isOwner">
+                                <button @click="handleDelete" class="btn btn-danger flex-fill py-2 fw-semibold">
+                                    <i class="bi bi-trash me-2"></i>刪除
+                                </button>
+                            </template>
+
+                            <!-- Visitor Actions -->
+                            <template v-else>
+                                <button class="btn btn-primary flex-fill py-2 fw-semibold" disabled>
+                                    <i class="bi bi-envelope-heart me-2"></i>申請領養
+                                </button>
+                            </template>
                         </div>
                     </div>
 
@@ -244,19 +255,29 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useAdoptStore } from '@/stores/adopt'
 import { PetInter } from '@/types/pet'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 
 const route = useRoute()
+const router = useRouter()
 const adoptStore = useAdoptStore()
 
 const pet = ref<PetInter | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const currentImageIndex = ref(0)
+const currentUser = ref<{ id: number } | null>(null)
+
+// Check if current user is the owner
+const isOwner = computed(() => {
+    if (!pet.value || !currentUser.value) return false
+    return pet.value.user.id === currentUser.value.id
+})
 
 // Use computed to make petId reactive to route changes
 const petId = computed(() => route.params.id as string)
@@ -278,6 +299,57 @@ async function fetchPetDetail() {
     }
 }
 
+async function fetchCurrentUser() {
+    try {
+        const response = await axios.get('/api/user')
+        currentUser.value = response.data
+    } catch (error) {
+        currentUser.value = null
+    }
+}
+
+async function handleDelete() {
+    if (!pet.value) return
+
+    const result = await Swal.fire({
+        title: '確定要刪除嗎？',
+        text: "刪除後將無法復原！",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '是的，刪除它！',
+        cancelButtonText: '取消'
+    })
+
+    if (result.isConfirmed) {
+        try {
+            await axios.delete(`/api/adopt/${pet.value.id}`)
+
+            await Swal.fire({
+                icon: 'success',
+                title: '刪除成功',
+                text: '寵物資料已刪除',
+                timer: 1500,
+                showConfirmButton: false
+            })
+
+            if (window.history.state?.back) {
+                router.back()
+            } else {
+                router.push('/adopt')
+            }
+        } catch (error) {
+            console.error('Delete failed:', error)
+            Swal.fire({
+                icon: 'error',
+                title: '刪除失敗',
+                text: '請稍後再試',
+            })
+        }
+    }
+}
+
 function formatDate(dateStr: string): string {
     return new Date(dateStr).toLocaleDateString('zh-TW', {
         year: 'numeric',
@@ -294,6 +366,7 @@ watch(() => route.params.id, (newId, oldId) => {
 })
 
 onMounted(() => {
+    fetchCurrentUser()
     fetchPetDetail()
 })
 </script>
