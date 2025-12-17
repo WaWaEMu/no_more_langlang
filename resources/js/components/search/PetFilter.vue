@@ -1,6 +1,6 @@
 <template>
-    <div class="pet-filter__wrapper d-flex justify-content-between">
-        <ul class="list-unstyled d-flex flex-wrap w-75 gap-2">
+    <div class="pet-filter__wrapper d-flex flex-column flex-lg-row justify-content-between gap-3">
+        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
             <DropdownButton :options="areas" filterKey="city">
                 <template #label>
                     {{ petFilters.city['label'] || '縣市' }}
@@ -37,7 +37,7 @@
                 </template>
             </DropdownButton>
 
-            <li class="d-flex align-items-center mx-3">
+            <li class="d-flex align-items-center ms-2">
                 <a href="#" class="pet-filter__reset underline" @click.prevent="resetFilters">
                     重設篩選
                 </a>

@@ -2,7 +2,7 @@
     <Navbar />
     <Content title="動物認養">
         <template #content>
-            <div class="pet-search__wrapper">
+            <div>
                 <PetSearch />
                 <PetList :pet-list="activePets" />
             </div>
@@ -28,8 +28,4 @@ onMounted(async () => {
 })
 </script>
 
-<style>
-.pet-search__wrapper {
-    max-width: 900px;
-}
-</style>
+<style></style>
