@@ -2,7 +2,7 @@
     <Navbar />
     <Content title="動物認養">
         <template #content>
-            <div class="pet-search__wrapper mx-auto">
+            <div class="pet-search__wrapper">
                 <PetSearch />
                 <PetList :pet-list="activePets" />
             </div>
