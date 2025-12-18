@@ -379,8 +379,8 @@ onMounted(() => {
 
 .pet-detail {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    grid-template-columns: 380px 1fr;
+    gap: 3rem;
     align-items: start;
 }
 
