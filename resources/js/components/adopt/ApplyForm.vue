@@ -5,20 +5,20 @@
             <form id="adopt-form" class="d-flex flex-column gap-5" @submit.prevent="submit()">
 
                 <!-- Section 1: Basic Info -->
-                <section class="form-section">
-                    <h3 class="form-section__title">基本資料</h3>
+                <section class="apply-form__section">
+                    <h3 class="apply-form__section-title">基本資料</h3>
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="title" class="form-label required">送養標題</label>
+                            <label for="title" class="form-label apply-form__label required">送養標題</label>
                             <input type="text" id="title" class="form-control" placeholder="請輸入吸引人的標題"
                                 v-model="formState.title" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="name" class="form-label required">動物名字</label>
+                            <label for="name" class="form-label apply-form__label required">動物名字</label>
                             <input type="text" id="name" class="form-control" v-model="formState.name" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="gender" class="form-label required">動物性別</label>
+                            <label for="gender" class="form-label apply-form__label required">動物性別</label>
                             <select id="gender" class="form-select" v-model="formState.gender" required>
                                 <option disabled value="">請選擇性別</option>
                                 <option value="male">男生</option>
@@ -26,7 +26,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="age" class="form-label required">大約年紀</label>
+                            <label for="age" class="form-label apply-form__label required">大約年紀</label>
                             <select id="age" class="form-select" v-model="formState.age" required>
                                 <option disabled value="">請選擇年紀範圍</option>
                                 <option value="0-1">0 ~ 1歲</option>
@@ -39,7 +39,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="is-stray" class="form-label required">是否為浪浪</label>
+                            <label for="is-stray" class="form-label apply-form__label required">是否為浪浪</label>
                             <select id="is-stray" class="form-select" v-model="formState.is_stray" required>
                                 <option disabled :value="null">請選擇</option>
                                 <option :value="true">是</option>
@@ -47,7 +47,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="is-neuter" class="form-label required">結紮狀態</label>
+                            <label for="is-neuter" class="form-label apply-form__label required">結紮狀態</label>
                             <select id="is-neuter" class="form-select" v-model="formState.is_neuter" required>
                                 <option disabled :value="null">請選擇結紮狀態</option>
                                 <option :value="true">已結紮</option>
@@ -58,11 +58,11 @@
                 </section>
 
                 <!-- Section 2: Appearance -->
-                <section class="form-section">
-                    <h3 class="form-section__title">外觀特徵</h3>
+                <section class="apply-form__section">
+                    <h3 class="apply-form__section-title">外觀特徵</h3>
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label for="type" class="form-label required">動物種類</label>
+                            <label for="type" class="form-label apply-form__label required">動物種類</label>
                             <select id="type" class="form-select" v-model="formState.type" required>
                                 <option disabled value="">請選擇種類</option>
                                 <option v-for="pet in Object.keys(pets)" :key="pet" :value="pet">
@@ -71,7 +71,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="color" class="form-label required">花紋</label>
+                            <label for="color" class="form-label apply-form__label required">花紋</label>
                             <select id="color" class="form-select" v-model="formState.color" required>
                                 <option v-if="!formState.type" disabled value="">請先選擇動物種類</option>
                                 <option v-if="formState.type" disabled value="">請選擇花紋</option>
@@ -82,7 +82,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="fur-type" class="form-label required">毛型</label>
+                            <label for="fur-type" class="form-label apply-form__label required">毛型</label>
                             <select id="fur-type" class="form-select" v-model="formState.fur_type" required>
                                 <option disabled value="">請選擇毛型</option>
                                 <option value="短毛">短毛</option>
@@ -93,11 +93,11 @@
                 </section>
 
                 <!-- Section 3: Location -->
-                <section class="form-section">
-                    <h3 class="form-section__title">位置資訊</h3>
+                <section class="apply-form__section">
+                    <h3 class="apply-form__section-title">位置資訊</h3>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="city" class="form-label required">所在縣市</label>
+                            <label for="city" class="form-label apply-form__label required">所在縣市</label>
                             <select id="city" class="form-select" v-model="formState.city" required>
                                 <option disabled value="">請選擇縣市</option>
                                 <optgroup v-for="(cities, region) in areas" :key="region" :label="String(region)">
@@ -108,7 +108,7 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="town" class="form-label required">鄉鎮區</label>
+                            <label for="town" class="form-label apply-form__label required">鄉鎮區</label>
                             <select id="town" class="form-select" v-model="formState.town" required>
                                 <option v-if="!formState.city" disabled value="">請先選擇縣市</option>
                                 <option v-if="formState.city" disabled value="">請選擇鄉鎮區</option>
@@ -119,8 +119,8 @@
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label required">可送養地區 (複選)</label>
-                            <div class="sendable-city__container p-3 rounded">
+                            <label class="form-label apply-form__label required">可送養地區 (複選)</label>
+                            <div class="apply-form__city-container p-3 rounded">
                                 <div class="row g-3">
                                     <div v-for="(cities, region) in areas" :key="region" class="col-md-6 col-lg-3">
                                         <h6 class="text-muted mb-2 border-bottom pb-1">{{ region }}</h6>
@@ -141,23 +141,23 @@
                 </section>
 
                 <!-- Section 4: Details -->
-                <section class="form-section">
-                    <h3 class="form-section__title">詳細說明</h3>
+                <section class="apply-form__section">
+                    <h3 class="apply-form__section-title">詳細說明</h3>
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="adoption-description" class="form-label required">送養說明</label>
+                            <label for="adoption-description" class="form-label apply-form__label required">送養說明</label>
                             <textarea id="adoption-description" class="form-control" rows="4"
                                 v-model="formState.adoption_description" required
                                 placeholder="請詳細描述動物的個性、習慣等..."></textarea>
                         </div>
                         <div class="col-12">
-                            <label for="health-description" class="form-label required">健康狀態說明</label>
+                            <label for="health-description" class="form-label apply-form__label required">健康狀態說明</label>
                             <textarea id="health-description" class="form-control" rows="4"
                                 v-model="formState.health_description" required
                                 placeholder="是否有打疫苗、驅蟲、或是其他健康狀況..."></textarea>
                         </div>
                         <div class="col-12">
-                            <label for="adoption-condition" class="form-label required">領養條件</label>
+                            <label for="adoption-condition" class="form-label apply-form__label required">領養條件</label>
                             <textarea id="adoption-condition" class="form-control" rows="4"
                                 v-model="formState.adoption_condition" required
                                 placeholder="例如：需年滿20歲、需簽署認養切結書..."></textarea>
@@ -166,10 +166,11 @@
                 </section>
 
                 <!-- Section 5: Images -->
-                <section class="form-section">
-                    <h3 class="form-section__title">送養相關圖片</h3>
+                <section class="apply-form__section">
+                    <h3 class="apply-form__section-title">送養相關圖片</h3>
                     <div class="d-flex gap-4 flex-wrap">
-                        <div v-for="(url, index) in imgUrls" :key="index" class="d-flex flex-column img-upload-card">
+                        <div v-for="(url, index) in imgUrls" :key="index"
+                            class="d-flex flex-column apply-form__upload-card">
                             <div v-if="url === ''"
                                 class="apply-form__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
                                 <i class="bi bi-image text-secondary fs-1"></i>
@@ -371,7 +372,7 @@ async function submit() {
     padding: 3rem;
 }
 
-.form-section {
+.apply-form__section {
     /* Keep the user's preferred gradient */
     background: var(--color-fog-gray);
     border-radius: 16px;
@@ -380,7 +381,7 @@ async function submit() {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.form-section__title {
+.apply-form__section-title {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--color-denim-blue);
@@ -390,25 +391,25 @@ async function submit() {
     display: inline-block;
 }
 
-.form-label {
+.apply-form__label {
     font-weight: 600;
     color: #2d3748;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
 
-.form-label.required::after {
+.apply-form__label.required::after {
     content: "*";
     color: #e53e3e;
     margin-left: 0.25rem;
 }
 
-.sendable-city__container {
+.apply-form__city-container {
     background-color: #fff;
     border: 1px solid #e2e8f0;
 }
 
-.img-upload-card {
+.apply-form__upload-card {
     width: 150px;
 }
 
