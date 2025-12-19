@@ -361,31 +361,32 @@ async function submit() {
 
 <style scoped>
 .apply-form__wrapper {
-    /* Warm Mist Gradient: Gentle Beige/Warm Gray */
-    background: linear-gradient(135deg, #f5f5f4 0%, #e7e5e4 100%);
+    /* Swap: Now using the Fog Gray color for the wrapper */
+    background: linear-gradient(135deg, #d1d9e6 0%, #b8c5d6 100%);
     width: 100%;
     max-width: 960px;
-    /* Limit max width for readability */
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #d6d3d1;
-    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #d1d9e6;
+    padding: 3rem;
 }
 
 .form-section {
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    /* Keep the user's preferred gradient */
+    background: var(--color-fog-gray);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .form-section__title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: #4a5568;
-    margin-bottom: 1.25rem;
+    color: var(--color-denim-blue);
+    margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #cbd5e0;
+    border-bottom: 2px solid var(--color-denim-blue);
     display: inline-block;
 }
 
