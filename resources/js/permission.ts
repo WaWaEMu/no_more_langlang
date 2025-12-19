@@ -26,7 +26,8 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // White list routes are always allowed (for non-logged-in users or other auth routes)
-    if (whiteList.includes(to.path)) {
+    const isWhitelisted = whiteList.includes(to.path) || /^\/adopt\/\d+$/.test(to.path);
+    if (isWhitelisted) {
         return next()
     }
 
