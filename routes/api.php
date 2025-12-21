@@ -29,3 +29,7 @@ Route::delete('/adopt/{id}', [AdoptController::class, 'destroy']);
 
 // RESTful API Routes
 Route::get('/users/{id}', [UserController::class, 'show']);
+
+// Pet Comments
+Route::get('/adopt/{id}/comments', [\App\Http\Controllers\PetCommentController::class, 'index']);
+Route::post('/adopt/{id}/comments', [\App\Http\Controllers\PetCommentController::class, 'store'])->middleware('auth:sanctum');

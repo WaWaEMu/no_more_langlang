@@ -72,4 +72,9 @@ class Pet extends Model
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
     }
+
+    public function comments()
+    {
+        return $this->hasMany(PetComment::class)->orderBy('created_at', 'desc');
+    }
 }

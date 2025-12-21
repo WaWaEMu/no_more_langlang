@@ -74,7 +74,7 @@
 
                             <!-- Visitor Actions -->
                             <template v-else>
-                                <button class="btn btn-primary flex-fill py-2 fw-semibold" disabled>
+                                <button class="btn btn-primary flex-fill py-2 fw-semibold">
                                     <i class="bi bi-envelope-heart me-2"></i>申請領養
                                 </button>
                             </template>
@@ -248,6 +248,80 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Comment Section -->
+                <div v-if="pet" class="mt-5 pet-detail__comment-section">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h3 class="fs-5 fw-bold text-primary mb-4 d-flex align-items-center">
+                                <i class="bi bi-chat-dots-fill me-2"></i>問與答 ({{ comments.length }})
+                            </h3>
+
+                            <!-- Post Comment Form -->
+                            <div v-if="currentUser" class="mb-5">
+                                <div class="d-flex gap-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="rounded-circle pet-detail__comment-avatar d-flex align-items-center justify-content-center"
+                                            style="width: 48px; height: 48px;">
+                                            <i class="bi bi-person-fill text-secondary fs-4"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <textarea v-model="newComment"
+                                            class="form-control border-0 pet-detail__comment-input p-3" rows="3"
+                                            placeholder="對這隻動物感興趣嗎？留言詢問送養者吧..." style="resize: none;"></textarea>
+                                        <div class="d-flex justify-content-end mt-2">
+                                            <button @click="handlePostComment"
+                                                :disabled="!newComment.trim() || postingComment"
+                                                class="btn btn-primary px-4 py-2 fw-semibold rounded-pill">
+                                                <span v-if="postingComment"
+                                                    class="spinner-border spinner-border-sm me-2"></span>
+                                                發布留言
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="pet-detail__comment-login-prompt text-center py-4 mb-5">
+                                <i class="bi bi-lock-fill text-primary fs-2 mb-3 d-block opacity-50"></i>
+                                <p class="text-secondary mb-3 fw-medium">登入後即可留言詢問送養者</p>
+                                <RouterLink :to="`/auth/login?redirect=${route.fullPath}`"
+                                    class="btn btn-primary px-4 rounded-pill fw-semibold">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>立即登入
+                                </RouterLink>
+                            </div>
+
+                            <!-- Comment List -->
+                            <div class="d-flex flex-column gap-4">
+                                <div v-for="comment in comments" :key="comment.id" class="d-flex gap-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="rounded-circle pet-detail__comment-avatar d-flex align-items-center justify-content-center"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="bi bi-person text-secondary fs-5"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <span class="fw-bold text-dark">{{ comment.user.name }}</span>
+                                            <span v-if="comment.user_id === pet.user.id"
+                                                class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill"
+                                                style="font-size: 0.7rem;">送養者</span>
+                                            <span class="text-muted small ms-auto">{{ formatDate(comment.created_at)
+                                                }}</span>
+                                        </div>
+                                        <div class="pet-detail__comment-bubble p-3 rounded-3 text-secondary"
+                                            style="white-space: pre-wrap;">{{
+                                                comment.content }}</div>
+                                    </div>
+                                </div>
+                                <div v-if="comments.length === 0" class="text-center py-5 text-muted">
+                                    <i class="bi bi-chat-left-text d-block fs-1 mb-3 opacity-25"></i>
+                                    目前還沒有留言，快來成為第一個詢問的人吧！
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
     </Content>
@@ -271,7 +345,10 @@ const pet = ref<PetInter | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const currentImageIndex = ref(0)
-const currentUser = ref<{ id: number } | null>(null)
+const currentUser = ref<{ id: number, name: string } | null>(null)
+const comments = ref<any[]>([])
+const newComment = ref('')
+const postingComment = ref(false)
 
 // Check if current user is the owner
 const isOwner = computed(() => {
@@ -305,6 +382,43 @@ async function fetchCurrentUser() {
         currentUser.value = response.data
     } catch (error) {
         currentUser.value = null
+    }
+}
+
+async function fetchComments() {
+    try {
+        const response = await axios.get(`/api/adopt/${petId.value}/comments`)
+        comments.value = response.data
+    } catch (error) {
+        console.error('Failed to fetch comments:', error)
+    }
+}
+
+async function handlePostComment() {
+    if (!newComment.value.trim() || postingComment.value) return
+
+    postingComment.value = true
+    try {
+        const response = await axios.post(`/api/adopt/${petId.value}/comments`, {
+            content: newComment.value
+        })
+        comments.value.unshift(response.data)
+        newComment.value = ''
+        Swal.fire({
+            icon: 'success',
+            title: '留言成功',
+            timer: 1500,
+            showConfirmButton: false
+        })
+    } catch (error: any) {
+        console.error('Failed to post comment:', error)
+        Swal.fire({
+            icon: 'error',
+            title: '留言失敗',
+            text: error.response?.data?.message || '請稍後再試'
+        })
+    } finally {
+        postingComment.value = false
     }
 }
 
@@ -368,6 +482,7 @@ watch(() => route.params.id, (newId, oldId) => {
 onMounted(() => {
     fetchCurrentUser()
     fetchPetDetail()
+    fetchComments()
 })
 </script>
 
@@ -462,6 +577,41 @@ onMounted(() => {
 .pet-detail__owner-link:hover {
     color: var(--color-denim-blue-dark);
     transform: translateX(4px);
+}
+
+/* Comment Section */
+.pet-detail__comment-section {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pet-detail__comment-input {
+    background-color: var(--color-fog-gray);
+    border-radius: 12px;
+}
+
+.pet-detail__comment-input:focus {
+    background-color: var(--color-fog-gray);
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(66, 91, 118, 0.15);
+}
+
+.pet-detail__comment-bubble {
+    background-color: var(--color-fog-gray);
+}
+
+.pet-detail__comment-avatar {
+    background-color: var(--color-fog-gray);
+}
+
+.pet-detail__comment-login-prompt {
+    background-color: var(--color-fog-gray);
+    border-radius: 12px;
+}
+
+.bg-primary-subtle {
+    background-color: #ebf8ff !important;
 }
 
 /* Responsive */
