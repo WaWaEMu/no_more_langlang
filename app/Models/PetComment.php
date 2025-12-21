@@ -9,7 +9,7 @@ class PetComment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pet_id', 'user_id', 'content'];
+    protected $fillable = ['pet_id', 'user_id', 'parent_id', 'content'];
 
     public function pet()
     {
@@ -19,5 +19,15 @@ class PetComment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(PetComment::class, 'parent_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(PetComment::class, 'parent_id')->with('user:id,name')->orderBy('created_at', 'asc');
     }
 }
