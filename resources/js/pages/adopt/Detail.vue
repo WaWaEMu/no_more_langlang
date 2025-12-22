@@ -74,9 +74,10 @@
 
                             <!-- Visitor Actions -->
                             <template v-else>
-                                <button class="btn btn-primary flex-fill py-2 fw-semibold">
+                                <RouterLink :to="`/adopt/${pet.id}/apply`"
+                                    class="btn btn-primary flex-fill py-2 fw-semibold">
                                     <i class="bi bi-envelope-heart me-2"></i>申請領養
-                                </button>
+                                </RouterLink>
                             </template>
                         </div>
                     </div>

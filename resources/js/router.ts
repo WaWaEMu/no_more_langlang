@@ -12,6 +12,11 @@ const routes = [
         meta: { title: 'New Adoption' }
     },
     {
+        path: '/adopt/:id/apply',
+        component: () => import('@/pages/adopt/Application.vue'),
+        meta: { title: 'Apply for Adoption' }
+    },
+    {
         path: '/adopt/:id',
         component: () => import('@/pages/adopt/Detail.vue'),
         meta: { title: 'Pet Details' }
