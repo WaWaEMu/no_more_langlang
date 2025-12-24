@@ -128,7 +128,13 @@ async function handleLogin() {
                 const validationErrors = axiosError.response.data.errors
                 if (validationErrors) {
                     const firstError = Object.values(validationErrors)[0]
-                    errorMessage = firstError ? firstError[0] : '請檢查輸入的資料'
+                    const errorMsg = firstError ? firstError[0] : '請檢查輸入的資料'
+                    // Translate specific backend error
+                    if (errorMsg === 'These credentials do not match our records.') {
+                        errorMessage = '帳號或密碼錯誤'
+                    } else {
+                        errorMessage = errorMsg
+                    }
                 }
             } else if (axiosError.response?.status === 419) {
                 errorMessage = '頁面已過期，請重新整理後再試'
