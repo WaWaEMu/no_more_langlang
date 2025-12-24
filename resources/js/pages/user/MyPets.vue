@@ -49,15 +49,16 @@
 </template>
 
 <script setup lang="ts" name="MyPets">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import PetList from '@/components/adopt/PetList.vue'
 import { useAdoptStore } from '@/stores/adopt'
-import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import { PetInter } from '@/types/pet'
 
-const user = ref<{ id: number; name: string; email: string } | null>(null)
+const authStore = useAuthStore()
+const user = computed(() => authStore.user)
 const pets = ref<PetInter[]>([])
 
 const adoptStore = useAdoptStore()
@@ -69,15 +70,17 @@ const authLoading = ref(true)
 onMounted(async () => {
     authLoading.value = true
     try {
-        // Ensure pets are fetched first
-        await fetchPets()
+        // Ensure user and pets are fetched
+        await Promise.all([
+            authStore.fetchUser(),
+            fetchPets()
+        ])
 
-        const response = await axios.get('/api/user')
-        user.value = response.data
-        pets.value = getMyPets(user.value?.id as number)
+        if (user.value) {
+            pets.value = getMyPets(user.value.id)
+        }
     } catch (error) {
         console.error('Failed to load user pets:', error)
-        user.value = null
     } finally {
         authLoading.value = false
     }

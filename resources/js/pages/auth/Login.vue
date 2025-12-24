@@ -48,10 +48,12 @@
 import { reactive, ref } from 'vue'
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import axios, { AxiosError } from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
 const form = reactive({
     email: '',
@@ -98,8 +100,7 @@ async function handleLogin() {
     isLoading.value = true
 
     try {
-        await axios.get('/sanctum/csrf-cookie')
-        await axios.post('/login', form)
+        await authStore.login(form)
 
         // Pass redirect and token query params to Welcome page
         const redirect = route.query.redirect as string | undefined
@@ -117,29 +118,21 @@ async function handleLogin() {
         console.error('登入失敗:', error)
 
         // Handle error messages
-        let errorMessage = '登入失敗，請稍後再試'
+        let errorMessage = '帳號或密碼錯誤'
 
         if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
             const backendMessage = axiosError.response?.data?.message || ''
 
-            // Prioritize checking for login credential errors (regardless of status code 401 or 422)
-            if (backendMessage.includes('credentials') || backendMessage.includes('do not match')) {
-                // Laravel login failure message
-                errorMessage = '帳號或密碼錯誤'
-            } else if (axiosError.response?.status === 422) {
-                // Other validation errors
+            if (axiosError.response?.status === 422) {
                 const validationErrors = axiosError.response.data.errors
                 if (validationErrors) {
-                    // Display first error
                     const firstError = Object.values(validationErrors)[0]
                     errorMessage = firstError ? firstError[0] : '請檢查輸入的資料'
                 }
             } else if (axiosError.response?.status === 419) {
-                // CSRF token expired
                 errorMessage = '頁面已過期，請重新整理後再試'
             } else if (backendMessage) {
-                // Use backend message for other errors
                 errorMessage = backendMessage
             }
         }

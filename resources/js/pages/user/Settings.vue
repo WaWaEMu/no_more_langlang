@@ -66,14 +66,15 @@
 </template>
 
 <script setup lang="ts" name="Settings">
-import { ref, onMounted, reactive } from 'vue'
+import { onMounted, reactive, computed } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
-import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 
-const loading = ref(false)
-const user = ref<any>(null)
+const authStore = useAuthStore()
+const user = computed(() => authStore.user)
+const loading = computed(() => authStore.loading)
 
 const profileForm = reactive({
     name: ''
@@ -86,22 +87,15 @@ const passwordForm = reactive({
 })
 
 onMounted(async () => {
-    try {
-        const res = await axios.get('/api/user')
-        user.value = res.data
-        profileForm.name = res.data.name
-    } catch (error) {
-        console.error('Failed to fetch user', error)
+    await authStore.fetchUser()
+    if (authStore.user) {
+        profileForm.name = authStore.user.name
     }
 })
 
 async function updateProfile() {
-    loading.value = true
     try {
-        // TODO: Implement API endpoint
-        // await axios.put('/api/user/profile', profileForm)
-
-        await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
+        await authStore.updateProfile(profileForm)
 
         await Swal.fire({
             icon: 'success',
@@ -114,10 +108,8 @@ async function updateProfile() {
         Swal.fire({
             icon: 'error',
             title: '更新失敗',
-            text: '請稍後再試'
+            text: authStore.error || '請稍後再試'
         })
-    } finally {
-        loading.value = false
     }
 }
 
@@ -131,12 +123,8 @@ async function updatePassword() {
         return
     }
 
-    loading.value = true
     try {
-        // TODO: Implement API endpoint
-        // await axios.put('/api/user/password', passwordForm)
-
-        await new Promise(resolve => setTimeout(resolve, 1000)) // Mock delay
+        await authStore.updatePassword(passwordForm)
 
         await Swal.fire({
             icon: 'success',
@@ -154,10 +142,8 @@ async function updatePassword() {
         Swal.fire({
             icon: 'error',
             title: '修改失敗',
-            text: '請確認您的目前密碼是否正確'
+            text: authStore.error || '請確認您的目前密碼是否正確'
         })
-    } finally {
-        loading.value = false
     }
 }
 </script>

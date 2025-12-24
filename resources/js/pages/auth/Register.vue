@@ -40,12 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const form = reactive({
     email: '',
@@ -54,10 +55,12 @@ const form = reactive({
     password_confirmation: ''
 })
 
+const isLoading = ref(false)
+
 async function register() {
+    isLoading.value = true
     try {
-        await axios.get('/sanctum/csrf-cookie')
-        await axios.post('/register', form)
+        await authStore.register(form)
 
         // Show success message
         await Swal.fire({
@@ -79,6 +82,8 @@ async function register() {
             title: '註冊失敗',
             text: '請檢查您的輸入資料是否正確',
         })
+    } finally {
+        isLoading.value = false
     }
 }
 </script>

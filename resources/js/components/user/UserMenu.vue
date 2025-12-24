@@ -1,12 +1,12 @@
 <template>
     <div class="user-menu">
         <!-- Loading State -->
-        <div v-if="authLoading" class="spinner-border spinner-border-sm text-primary" role="status">
+        <div v-if="authStore.loading" class="spinner-border spinner-border-sm text-primary" role="status">
             <span class="visually-hidden">載入中...</span>
         </div>
 
         <!-- Not Logged In -->
-        <div v-else-if="!isLoggedIn" class="user-menu__auth-buttons">
+        <div v-else-if="!authStore.isAuthenticated" class="user-menu__auth-buttons">
             <RouterLink to="/auth/login" class="user-menu__btn user-menu__btn--login">
                 <i class="bi bi-box-arrow-in-right me-2"></i>
                 登入
@@ -23,7 +23,7 @@
                 <div class="user-menu__avatar">
                     <i class="bi bi-person-circle"></i>
                 </div>
-                <span class="user-menu__name">{{ user?.name || '使用者' }}</span>
+                <span class="user-menu__name">{{ authStore.user?.name || '使用者' }}</span>
                 <i class="bi bi-chevron-down user-menu__chevron"
                     :class="{ 'user-menu__chevron--open': isMenuOpen }"></i>
             </button>
@@ -36,8 +36,8 @@
                             <i class="bi bi-person-circle"></i>
                         </div>
                         <div class="user-menu__dropdown-info">
-                            <div class="user-menu__dropdown-name">{{ user?.name }}</div>
-                            <div class="user-menu__dropdown-email">{{ user?.email }}</div>
+                            <div class="user-menu__dropdown-name">{{ authStore.user?.name }}</div>
+                            <div class="user-menu__dropdown-email">{{ authStore.user?.email }}</div>
                         </div>
                     </div>
 
@@ -45,7 +45,7 @@
 
                     <ul class="user-menu__dropdown-list">
                         <li>
-                            <RouterLink :to="`/user/profile/${user?.id}`" class="user-menu__dropdown-item"
+                            <RouterLink :to="`/user/profile/${authStore.user?.id}`" class="user-menu__dropdown-item"
                                 @click="closeMenu">
                                 <i class="bi bi-person-fill"></i>
                                 <span>個人資料</span>
@@ -86,33 +86,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 
 const router = useRouter()
-
-// Auth state
-const isLoggedIn = ref(false)
-const authLoading = ref(true)
-const user = ref<{ id: number; name: string; email: string } | null>(null)
+const authStore = useAuthStore()
 
 // Menu state
 const isMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
-
-async function checkAuthStatus() {
-    authLoading.value = true
-    try {
-        const response = await axios.get('/api/user')
-        user.value = response.data
-        isLoggedIn.value = true
-    } catch (error) {
-        isLoggedIn.value = false
-        user.value = null
-    } finally {
-        authLoading.value = false
-    }
-}
 
 function toggleUserMenu() {
     isMenuOpen.value = !isMenuOpen.value
@@ -126,7 +108,7 @@ async function handleLogout() {
     closeMenu()
 
     try {
-        await axios.post('/logout')
+        await authStore.logout()
 
         await Swal.fire({
             icon: 'success',
@@ -136,8 +118,6 @@ async function handleLogout() {
             showConfirmButton: false
         })
 
-        isLoggedIn.value = false
-        user.value = null
         router.push('/adopt')
     } catch (error) {
         await Swal.fire({
@@ -156,7 +136,7 @@ function handleClickOutside(event: MouseEvent) {
 }
 
 onMounted(() => {
-    checkAuthStatus()
+    authStore.fetchUser()
     document.addEventListener('click', handleClickOutside)
 })
 
