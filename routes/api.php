@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdoptController;
+use App\Http\Controllers\PetController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -20,12 +20,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Todo RESTful API structure
-Route::get('/adopt', [AdoptController::class, 'index']);
-Route::post('/adopt/store', [AdoptController::class, 'store']);
-Route::get('/adopt/{id}', [AdoptController::class, 'show']);
-Route::post('/adopt/{id}/favorite', [AdoptController::class, 'toggleFavorite']);
-Route::delete('/adopt/{id}', [AdoptController::class, 'destroy']);
+// Pets
+Route::get('/adopt', [PetController::class, 'index']);
+Route::post('/adopt', [PetController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/adopt/{id}', [PetController::class, 'show']);
+Route::post('/adopt/{id}/favorite', [PetController::class, 'toggleFavorite'])->middleware('auth:sanctum');
+Route::delete('/adopt/{id}', [PetController::class, 'destroy'])->middleware('auth:sanctum');
 
 // RESTful API Routes
 Route::get('/users/{id}', [UserController::class, 'show']);

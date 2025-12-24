@@ -7,16 +7,19 @@ use App\Contracts\PetCreatorInterface;
 use Illuminate\Support\Facades\Log;
 use App\Models\Pet;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
-class AdoptController extends Controller
+class PetController extends Controller
 {
     protected PetCreatorInterface $petCreatorInterface;
 
-    public function __construct(PetCreatorInterface $petCreatorInterface) {
+    public function __construct(PetCreatorInterface $petCreatorInterface)
+    {
         $this->petCreatorInterface = $petCreatorInterface;
     }
 
-    public function index() {
+    public function index()
+    {
         $userId = Auth::id();
         $pets = Pet::with(['images', 'detail', 'user'])
             ->withExists([
@@ -28,7 +31,8 @@ class AdoptController extends Controller
         return response()->json($pets);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         if (!Auth::check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -44,7 +48,7 @@ class AdoptController extends Controller
             return response()->json([
                 'success' => true
             ]);
-        } catch(Throwable $error) {
+        } catch (Throwable $error) {
             \Log::error('新增寵物失敗：' . $error->getMessage());
 
             return response()->json([
