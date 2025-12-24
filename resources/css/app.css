@@ -1,11 +1,41 @@
 :root {
     --color-fog-gray: #E6E9EF;
-    --color-denim-blue: #425B76;
-    --color-denim-blue-dark: #34495E;
+    --color-denim-blue: #2c5282;
+    --color-denim-blue-dark: #1a365d;
     --color-white: #FFFFFF;
 }
 
 body {
     background-color: var(--color-fog-gray);
     font-family: 'Inter', sans-serif;
+}
+
+/* Bootstrap Overrides */
+.btn-primary {
+    background-color: var(--color-denim-blue) !important;
+    border-color: var(--color-denim-blue) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--color-denim-blue-dark) !important;
+    border-color: var(--color-denim-blue-dark) !important;
+}
+
+.text-primary {
+    color: var(--color-denim-blue) !important;
+}
+
+.bg-primary {
+    background-color: var(--color-denim-blue) !important;
+}
+
+/* Custom Brand Classes */
+.bg-brand {
+    background-color: var(--color-denim-blue);
+}
+
+.text-brand {
+    color: var(--color-denim-blue);
 }
