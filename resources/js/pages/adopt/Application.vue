@@ -191,11 +191,7 @@ async function submitApplication() {
 
     isSubmitting.value = true
     try {
-        // TODO: Implement API endpoint
-        // await axios.post(`/api/adopt/${petId.value}/apply`, form)
-
-        // Mock success for now
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await axios.post(`/api/adopt/${petId.value}/apply`, form)
 
         await Swal.fire({
             icon: 'success',

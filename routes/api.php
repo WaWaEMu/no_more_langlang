@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -33,3 +34,6 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 // Pet Comments
 Route::get('/adopt/{id}/comments', [\App\Http\Controllers\PetCommentController::class, 'index']);
 Route::post('/adopt/{id}/comments', [\App\Http\Controllers\PetCommentController::class, 'store'])->middleware('auth:sanctum');
+
+// Pet Adoption
+Route::post('/adopt/{id}/apply', [AdoptionController::class, 'store'])->middleware('auth:sanctum');
