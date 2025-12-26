@@ -21,8 +21,11 @@
             </ul>
         </div>
 
-        <!-- User Menu -->
-        <UserMenu />
+        <!-- Notification & User Menu -->
+        <div class="d-flex align-items-center gap-3">
+            <NotificationDropdown />
+            <UserMenu />
+        </div>
     </div>
 </template>
 
@@ -30,6 +33,7 @@
 import { ref } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import UserMenu from '@/components/user/UserMenu.vue'
+import NotificationDropdown from '@/components/user/NotificationDropdown.vue'
 
 const route = useRoute();
 const isMenuOpen = ref(false);
