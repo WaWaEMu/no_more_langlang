@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Notification;
 use App\Models\Pet;
+use App\Models\PetComment;
 use Illuminate\Support\Facades\Log;
 
 class NotificationService
@@ -15,42 +16,80 @@ class NotificationService
      * @param int $commentId
      * @param int $commenterId
      * @param int|null $parentCommentId
-     * @return Notification|null
+     * @return array Array of created notifications
      */
     public function createCommentNotification(
         int $petId,
         int $commentId,
         int $commenterId,
         ?int $parentCommentId = null
-    ): ?Notification {
+    ): array {
+        $notifications = [];
+
         try {
             $pet = Pet::findOrFail($petId);
             $ownerId = $pet->user_id;
+            $petName = $pet->name;
 
-            // Don't notify if the commenter is the pet owner
-            if ($ownerId === $commenterId) {
-                return null;
+            // Case 1: New comment (no parent) - notify pet owner
+            if (!$parentCommentId) {
+                // Don't notify if the commenter is the pet owner
+                if ($ownerId !== $commenterId) {
+                    $notifications[] = Notification::create([
+                        'user_id' => $ownerId,
+                        'type' => 'new_comment',
+                        'message' => "有人在「{$petName}」的頁面留言",
+                        'data' => [
+                            'pet_id' => $petId,
+                            'pet_name' => $petName,
+                            'comment_id' => $commentId,
+                        ],
+                    ]);
+                }
             }
+            // Case 2: Reply to a comment - notify the parent comment author
+            else {
+                $parentComment = PetComment::find($parentCommentId);
 
-            $type = $parentCommentId ? 'comment_reply' : 'new_comment';
-            $message = $parentCommentId
-                ? '有人回覆了您寵物的留言'
-                : '有人在您的寵物頁面留言';
+                if ($parentComment) {
+                    $parentAuthorId = $parentComment->user_id;
 
-            return Notification::create([
-                'user_id' => $ownerId,
-                'type' => $type,
-                'message' => $message,
-                'data' => [
-                    'pet_id' => $petId,
-                    'comment_id' => $commentId,
-                    'parent_comment_id' => $parentCommentId,
-                ],
-            ]);
+                    // Notify the parent comment author (if not replying to themselves)
+                    if ($parentAuthorId !== $commenterId) {
+                        $notifications[] = Notification::create([
+                            'user_id' => $parentAuthorId,
+                            'type' => 'comment_reply',
+                            'message' => "有人回覆了您在「{$petName}」的留言",
+                            'data' => [
+                                'pet_id' => $petId,
+                                'pet_name' => $petName,
+                                'comment_id' => $commentId,
+                                'parent_comment_id' => $parentCommentId,
+                            ],
+                        ]);
+                    }
+
+                    // Also notify pet owner if they're not the commenter or parent author
+                    if ($ownerId !== $commenterId && $ownerId !== $parentAuthorId) {
+                        $notifications[] = Notification::create([
+                            'user_id' => $ownerId,
+                            'type' => 'comment_reply',
+                            'message' => "有人在「{$petName}」的頁面回覆了留言",
+                            'data' => [
+                                'pet_id' => $petId,
+                                'pet_name' => $petName,
+                                'comment_id' => $commentId,
+                                'parent_comment_id' => $parentCommentId,
+                            ],
+                        ]);
+                    }
+                }
+            }
         } catch (\Exception $e) {
             Log::error('Failed to create comment notification: ' . $e->getMessage());
-            return null;
         }
+
+        return $notifications;
     }
 
     /**
@@ -69,6 +108,7 @@ class NotificationService
         try {
             $pet = Pet::findOrFail($petId);
             $ownerId = $pet->user_id;
+            $petName = $pet->name;
 
             // Don't notify if the applicant is the pet owner
             if ($ownerId === $applicantId) {
@@ -78,9 +118,10 @@ class NotificationService
             return Notification::create([
                 'user_id' => $ownerId,
                 'type' => 'new_adoption_application',
-                'message' => '有人提交了領養申請',
+                'message' => "有人提交了「{$petName}」的領養申請",
                 'data' => [
                     'pet_id' => $petId,
+                    'pet_name' => $petName,
                     'application_id' => $applicationId,
                 ],
             ]);

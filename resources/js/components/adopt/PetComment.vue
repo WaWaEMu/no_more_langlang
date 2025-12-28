@@ -39,7 +39,8 @@
 
                 <!-- Comment List -->
                 <div class="d-flex flex-column gap-4">
-                    <div v-for="comment in comments" :key="comment.id" class="d-flex gap-3">
+                    <div v-for="comment in comments" :key="comment.id" :id="`comment-${comment.id}`"
+                        class="d-flex gap-3">
                         <div class="flex-shrink-0">
                             <div class="rounded-circle pet-comment__avatar d-flex align-items-center justify-content-center"
                                 style="width: 40px; height: 40px;">
@@ -97,7 +98,7 @@
 
                             <!-- Nested Replies -->
                             <div v-if="comment.replies && comment.replies.length > 0" class="mt-3">
-                                <div v-for="reply in comment.replies" :key="reply.id"
+                                <div v-for="reply in comment.replies" :key="reply.id" :id="`comment-${reply.id}`"
                                     class="pet-comment__reply d-flex gap-2">
                                     <div class="flex-shrink-0">
                                         <div class="rounded-circle pet-comment__avatar d-flex align-items-center justify-content-center"

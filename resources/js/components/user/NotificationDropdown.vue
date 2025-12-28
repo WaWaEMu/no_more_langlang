@@ -32,15 +32,14 @@
                     <div v-else v-for="notification in notifications" :key="notification.id"
                         @click="handleNotificationClick(notification)" class="notification-dropdown__item"
                         :class="{ 'notification-dropdown__item--unread': !notification.is_read }">
-                        <div class="notification-dropdown__item-icon"
-                            :class="`notification-dropdown__item-icon--${notification.type}`">
+                        <div class="notification-dropdown__item-icon" :class="getIconTypeClass(notification.type)">
                             <i class="bi" :class="getIconClass(notification.type)"></i>
                         </div>
 
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
                             <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>
@@ -52,69 +51,74 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 interface Notification {
     id: number
-    type: 'adoption_application' | 'comment'
+    type: 'new_adoption_application' | 'new_comment' | 'comment_reply'
     message: string
     is_read: boolean
+    read_at?: string
     created_at: string
     data?: {
         pet_id?: number
+        pet_name?: string
         application_id?: number
         comment_id?: number
+        parent_comment_id?: number
     }
 }
+
+const router = useRouter()
 
 // State
 const isOpen = ref(false)
 const notificationRef = ref<HTMLElement | null>(null)
-
-// Mock data for demonstration
-const notifications = ref<Notification[]>([
-    {
-        id: 1,
-        type: 'adoption_application',
-        message: '小明申請領養您的寵物「小白」',
-        is_read: false,
-        created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
-        data: { pet_id: 1, application_id: 1 }
-    },
-    {
-        id: 2,
-        type: 'comment',
-        message: '小華在「小黑」留言：請問這隻貓咪有結紮嗎？',
-        is_read: false,
-        created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
-        data: { pet_id: 2, comment_id: 5 }
-    },
-    {
-        id: 3,
-        type: 'adoption_application',
-        message: '阿美申請領養您的寵物「花花」',
-        is_read: true,
-        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        data: { pet_id: 3, application_id: 2 }
-    },
-    {
-        id: 4,
-        type: 'comment',
-        message: '大華在「小橘」留言：這隻狗狗真可愛！還在嗎？',
-        is_read: true,
-        created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        data: { pet_id: 4, comment_id: 8 }
-    }
-])
+const notifications = ref<Notification[]>([])
+const isLoading = ref(false)
+const unreadCountOnly = ref(0) // For showing badge before loading full list
 
 // Computed
 const unreadCount = computed(() => {
-    return notifications.value.filter(n => !n.is_read).length
+    // If notifications are loaded, use actual count
+    if (notifications.value.length > 0) {
+        return notifications.value.filter(n => !n.is_read).length
+    }
+    // Otherwise use the count-only value
+    return unreadCountOnly.value
 })
 
 // Methods
+async function fetchUnreadCount() {
+    try {
+        const response = await axios.get('/api/notifications/unread-count')
+        unreadCountOnly.value = response.data.count
+    } catch (error) {
+        console.error('Failed to fetch unread count:', error)
+    }
+}
+
+async function fetchNotifications() {
+    try {
+        isLoading.value = true
+        const response = await axios.get('/api/notifications')
+        notifications.value = response.data
+        // Update count based on actual data
+        unreadCountOnly.value = response.data.filter((n: Notification) => !n.is_read).length
+    } catch (error) {
+        console.error('Failed to fetch notifications:', error)
+    } finally {
+        isLoading.value = false
+    }
+}
+
 function toggleDropdown() {
     isOpen.value = !isOpen.value
+    if (isOpen.value && notifications.value.length === 0) {
+        fetchNotifications()
+    }
 }
 
 function closeDropdown() {
@@ -122,7 +126,17 @@ function closeDropdown() {
 }
 
 function getIconClass(type: string): string {
-    return type === 'adoption_application' ? 'bi-heart-fill' : 'bi-chat-fill'
+    if (type === 'new_adoption_application') {
+        return 'bi-heart-fill'
+    }
+    return 'bi-chat-fill' // for new_comment and comment_reply
+}
+
+function getIconTypeClass(type: string): string {
+    if (type === 'new_adoption_application') {
+        return 'notification-dropdown__item-icon--adoption_application'
+    }
+    return 'notification-dropdown__item-icon--comment'
 }
 
 function formatTime(timestamp: string): string {
@@ -141,20 +155,75 @@ function formatTime(timestamp: string): string {
     return new Date(timestamp).toLocaleDateString('zh-TW')
 }
 
-function handleNotificationClick(notification: Notification) {
-    // Mark as read
-    notification.is_read = true
-
-    // TODO: Navigate to related page based on notification type
-    console.log('Clicked notification:', notification)
+async function handleNotificationClick(notification: Notification) {
+    // Mark as read if not already
+    if (!notification.is_read) {
+        await markAsRead(notification.id)
+    }
 
     closeDropdown()
+
+    // Navigate based on notification type
+    if (notification.data?.pet_id) {
+        const petId = notification.data.pet_id
+        const commentId = notification.data.comment_id
+
+        // Navigate to pet detail page
+        await router.push(`/adopt/${petId}`)
+
+        // If there's a comment_id, scroll to the comment after a delay
+        if (commentId) {
+            await nextTick()
+            // Wait for page load and comments to render
+            setTimeout(() => {
+                const commentElement = document.getElementById(`comment-${commentId}`)
+                if (commentElement) {
+                    commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                    // Add highlight effect
+                    commentElement.style.transition = 'background-color 0.3s ease'
+                    commentElement.style.backgroundColor = 'rgba(66, 91, 118, 0.15)'
+                    setTimeout(() => {
+                        commentElement.style.backgroundColor = ''
+                    }, 2000)
+                }
+            }, 500)
+        }
+    }
 }
 
-function markAllAsRead() {
-    notifications.value.forEach(n => {
-        n.is_read = true
-    })
+async function markAsRead(notificationId: number) {
+    try {
+        await axios.post(`/api/notifications/${notificationId}/read`)
+
+        // Update local state
+        const notification = notifications.value.find(n => n.id === notificationId)
+        if (notification) {
+            notification.is_read = true
+            notification.read_at = new Date().toISOString()
+        }
+
+        // Update count
+        unreadCountOnly.value = Math.max(0, unreadCountOnly.value - 1)
+    } catch (error) {
+        console.error('Failed to mark notification as read:', error)
+    }
+}
+
+async function markAllAsRead() {
+    try {
+        await axios.post('/api/notifications/read-all')
+
+        // Update local state
+        notifications.value.forEach(n => {
+            n.is_read = true
+            n.read_at = new Date().toISOString()
+        })
+
+        // Reset count to 0
+        unreadCountOnly.value = 0
+    } catch (error) {
+        console.error('Failed to mark all notifications as read:', error)
+    }
 }
 
 // Click outside to close
@@ -166,6 +235,8 @@ function handleClickOutside(event: MouseEvent) {
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside)
+    // Fetch unread count immediately to show badge
+    fetchUnreadCount()
 })
 
 onUnmounted(() => {

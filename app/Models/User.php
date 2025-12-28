@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Pet::class, 'favorites')->withTimestamps();
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

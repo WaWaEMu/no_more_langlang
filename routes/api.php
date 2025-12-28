@@ -37,3 +37,11 @@ Route::post('/adopt/{id}/comments', [\App\Http\Controllers\PetCommentController:
 
 // Pet Adoption
 Route::post('/adopt/{id}/apply', [AdoptionController::class, 'store'])->middleware('auth:sanctum');
+
+// Notifications
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [\App\Http\Controllers\NotificationController::class, 'unreadCount']);
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+});
