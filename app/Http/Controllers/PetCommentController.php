@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\PetComment;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PetCommentController extends Controller
 {
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     public function index($petId)
     {
         $comments = PetComment::with(['user:id,name', 'replies.user:id,name'])
@@ -40,6 +48,14 @@ class PetCommentController extends Controller
             'parent_id' => $request->input('parent_id'),
             'content' => $request->input('content'),
         ]);
+
+        // Create notification for pet owner
+        $this->notificationService->createCommentNotification(
+            $petId,
+            $comment->id,
+            Auth::id(),
+            $request->input('parent_id')
+        );
 
         return response()->json($comment->load('user:id,name'));
     }
