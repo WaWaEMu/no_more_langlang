@@ -58,6 +58,12 @@
                             </RouterLink>
                         </li>
                         <li>
+                            <RouterLink to="/user/applications" class="user-menu__dropdown-item" @click="closeMenu">
+                                <i class="bi bi-clipboard-heart-fill"></i>
+                                <span>領養申請</span>
+                            </RouterLink>
+                        </li>
+                        <li>
                             <RouterLink to="/user/favorites" class="user-menu__dropdown-item" @click="closeMenu">
                                 <i class="bi bi-bookmark-heart-fill"></i>
                                 <span>收藏清單</span>
