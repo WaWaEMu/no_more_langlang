@@ -77,4 +77,9 @@ class Pet extends Model
     {
         return $this->hasMany(PetComment::class)->orderBy('created_at', 'desc');
     }
+
+    public function adoptionApplications()
+    {
+        return $this->hasMany(AdoptionApplication::class);
+    }
 }

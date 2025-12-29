@@ -39,7 +39,7 @@
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
                             <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>
@@ -164,7 +164,13 @@ async function handleNotificationClick(notification: Notification) {
     closeDropdown()
 
     // Navigate based on notification type
-    if (notification.data?.pet_id) {
+    if (notification.type === 'new_adoption_application' && notification.data?.application_id) {
+        // Navigate to applications page with highlight
+        await router.push({
+            path: '/user/applications',
+            query: { highlight: notification.data.application_id }
+        })
+    } else if (notification.data?.pet_id) {
         const petId = notification.data.pet_id
         const commentId = notification.data.comment_id
 
