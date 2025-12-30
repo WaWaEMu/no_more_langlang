@@ -2,6 +2,10 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 const routes = [
     {
+        path: '/',
+        redirect: '/adopt'
+    },
+    {
         path: '/adopt',
         component: () => import('@/pages/adopt/Index.vue'),
         meta: { title: 'Adopt List' }
