@@ -23,7 +23,7 @@
 
         <!-- Notification & User Menu -->
         <div class="d-flex align-items-center gap-3">
-            <NotificationDropdown />
+            <NotificationDropdown v-if="authStore.isAuthenticated" />
             <UserMenu />
         </div>
     </div>
@@ -34,6 +34,9 @@ import { ref } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import UserMenu from '@/components/user/UserMenu.vue'
 import NotificationDropdown from '@/components/user/NotificationDropdown.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const route = useRoute();
 const isMenuOpen = ref(false);
