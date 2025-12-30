@@ -105,4 +105,25 @@ class AdoptionApplication extends Model
                 ];
             });
     }
+
+    /**
+     * Store a new adoption application.
+     */
+    public static function store(array $data): self
+    {
+        return self::create($data);
+    }
+
+    /**
+     * Update the status and owner message of an application.
+     */
+    public static function updateStatus(int $id, string $status, ?string $ownerMessage = null): self
+    {
+        $application = self::findOrFail($id);
+        $application->update([
+            'status' => $status,
+            'owner_message' => $ownerMessage
+        ]);
+        return $application;
+    }
 }

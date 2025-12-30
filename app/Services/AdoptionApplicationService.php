@@ -7,14 +7,11 @@ use App\Contracts\AdoptionApplicationInterface;
 
 class AdoptionApplicationService implements AdoptionApplicationInterface
 {
-    protected AdoptionApplication $adoptionApplication;
     protected NotificationService $notificationService;
 
     public function __construct(
-        AdoptionApplication $adoptionApplication,
         NotificationService $notificationService
     ) {
-        $this->adoptionApplication = $adoptionApplication;
         $this->notificationService = $notificationService;
     }
 
@@ -25,7 +22,7 @@ class AdoptionApplicationService implements AdoptionApplicationInterface
         $data['pet_id'] = $petId;
 
         // Create the adoption application with status 'pending'
-        $application = $this->adoptionApplication->create($data);
+        $application = AdoptionApplication::store($data);
 
         // Create notification for pet owner
         $this->notificationService->notifyNewApplication(
@@ -39,11 +36,7 @@ class AdoptionApplicationService implements AdoptionApplicationInterface
 
     public function updateStatus(int $id, string $status, ?string $ownerMessage = null): AdoptionApplication
     {
-        $application = $this->adoptionApplication->findOrFail($id);
-        $application->update([
-            'status' => $status,
-            'owner_message' => $ownerMessage
-        ]);
+        $application = AdoptionApplication::updateStatus($id, $status, $ownerMessage);
 
         // Create notification for applicant
         $this->notificationService->notifyApplicationStatus(
