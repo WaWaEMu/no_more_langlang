@@ -18,7 +18,7 @@ class NotificationService
      * @param int|null $parentCommentId
      * @return array Array of created notifications
      */
-    public function createCommentNotification(
+    public function notifyComment(
         int $petId,
         int $commentId,
         int $commenterId,
@@ -100,7 +100,7 @@ class NotificationService
      * @param int $applicantId
      * @return Notification|null
      */
-    public function createAdoptionApplicationNotification(
+    public function notifyNewApplication(
         int $petId,
         int $applicationId,
         int $applicantId

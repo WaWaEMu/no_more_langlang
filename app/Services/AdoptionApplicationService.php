@@ -28,7 +28,7 @@ class AdoptionApplicationService implements AdoptionApplicationInterface
         $application = $this->adoptionApplication->create($data);
 
         // Create notification for pet owner
-        $this->notificationService->createAdoptionApplicationNotification(
+        $this->notificationService->notifyNewApplication(
             $petId,
             $application->id,
             $userId

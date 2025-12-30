@@ -50,7 +50,7 @@ class PetCommentController extends Controller
         ]);
 
         // Create notification for pet owner
-        $this->notificationService->createCommentNotification(
+        $this->notificationService->notifyComment(
             $petId,
             $comment->id,
             Auth::id(),
