@@ -13,14 +13,16 @@
                         <label for="login-email" class="form-label text-secondary">帳號(Email)</label>
                         <input type="text" id="login-email" v-model.trim="form.email" :disabled="isLoading"
                             class="form-control form-control-lg login__input" placeholder="請輸入電子信箱"
-                            :class="{ 'is-invalid': errors.email }">
+                            :class="{ 'is-invalid': errors.email }" @focus="delete errors.email"
+                            @input="delete errors.email">
                         <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                     <div class="mb-4">
                         <label for="login-password" class="form-label text-secondary">密碼</label>
                         <input type="password" id="login-password" v-model="form.password" :disabled="isLoading"
                             class="form-control form-control-lg login__input" placeholder="請輸入密碼"
-                            :class="{ 'is-invalid': errors.password }">
+                            :class="{ 'is-invalid': errors.password }" @focus="delete errors.password"
+                            @input="delete errors.password">
                         <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
                     </div>
                     <div class="d-grid gap-2 mb-4">
@@ -83,8 +85,8 @@ function validateForm(): boolean {
     if (!form.password) {
         errors.password = '請輸入密碼'
         isValid = false
-    } else if (form.password.length < 6) {
-        errors.password = '密碼至少需要 6 個字元'
+    } else if (form.password.length < 8) {
+        errors.password = '密碼至少需要 8 個字元'
         isValid = false
     }
 
