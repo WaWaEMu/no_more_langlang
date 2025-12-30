@@ -47,4 +47,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User Applications
     Route::get('/user/applications', [\App\Http\Controllers\AdoptionApplicationController::class, 'index']);
+    Route::put('/user/applications/{id}', [\App\Http\Controllers\AdoptionApplicationController::class, 'update']);
 });

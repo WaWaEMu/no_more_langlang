@@ -39,7 +39,7 @@
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
                             <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>
@@ -57,7 +57,7 @@ import axios from 'axios'
 
 interface Notification {
     id: number
-    type: 'new_adoption_application' | 'new_comment' | 'comment_reply'
+    type: 'new_adoption_application' | 'new_comment' | 'comment_reply' | 'adoption_application_status'
     message: string
     is_read: boolean
     read_at?: string
@@ -126,14 +126,14 @@ function closeDropdown() {
 }
 
 function getIconClass(type: string): string {
-    if (type === 'new_adoption_application') {
+    if (type === 'new_adoption_application' || type === 'adoption_application_status') {
         return 'bi-heart-fill'
     }
     return 'bi-chat-fill' // for new_comment and comment_reply
 }
 
 function getIconTypeClass(type: string): string {
-    if (type === 'new_adoption_application') {
+    if (type === 'new_adoption_application' || type === 'adoption_application_status') {
         return 'notification-dropdown__item-icon--adoption_application'
     }
     return 'notification-dropdown__item-icon--comment'

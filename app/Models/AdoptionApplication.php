@@ -19,6 +19,7 @@ class AdoptionApplication extends Model
         'experience',
         'family_agreement',
         'message',
+        'owner_message',
         'status',
     ];
 

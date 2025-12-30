@@ -187,4 +187,46 @@ class NotificationService
             ->where('is_read', false)
             ->count();
     }
+
+    /**
+     * Create a notification for adoption application status update.
+     *
+     * @param int $applicationId
+     * @param string $status
+     * @param string|null $ownerMessage
+     * @return Notification|null
+     */
+    public function notifyApplicationStatus(
+        int $applicationId,
+        string $status,
+        ?string $ownerMessage = null
+    ): ?Notification {
+        try {
+            $application = \App\Models\AdoptionApplication::with('pet')->findOrFail($applicationId);
+            $applicantId = $application->user_id;
+            $petName = $application->pet->name;
+            $statusText = $status === 'approved' ? '已通過' : '已婉拒';
+
+            $message = "您對「{$petName}」的領養申請{$statusText}";
+            if ($ownerMessage) {
+                $message .= "。送養人留言：{$ownerMessage}";
+            }
+
+            return Notification::create([
+                'user_id' => $applicantId,
+                'type' => 'adoption_application_status',
+                'message' => $message,
+                'data' => [
+                    'pet_id' => $application->pet_id,
+                    'pet_name' => $petName,
+                    'application_id' => $applicationId,
+                    'status' => $status,
+                    'owner_message' => $ownerMessage,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to create adoption application status notification: ' . $e->getMessage());
+            return null;
+        }
+    }
 }

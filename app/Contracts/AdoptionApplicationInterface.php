@@ -15,4 +15,14 @@ interface AdoptionApplicationInterface
      * @return AdoptionApplication
      */
     public function create(array $data, int $userId, int $petId): AdoptionApplication;
+
+    /**
+     * Update Adoption Application status
+     *
+     * @param int $id application ID
+     * @param string $status new status
+     * @param string|null $ownerMessage message from the pet owner
+     * @return AdoptionApplication
+     */
+    public function updateStatus(int $id, string $status, ?string $ownerMessage = null): AdoptionApplication;
 }

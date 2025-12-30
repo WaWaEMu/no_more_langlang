@@ -36,4 +36,22 @@ class AdoptionApplicationService implements AdoptionApplicationInterface
 
         return $application;
     }
+
+    public function updateStatus(int $id, string $status, ?string $ownerMessage = null): AdoptionApplication
+    {
+        $application = $this->adoptionApplication->findOrFail($id);
+        $application->update([
+            'status' => $status,
+            'owner_message' => $ownerMessage
+        ]);
+
+        // Create notification for applicant
+        $this->notificationService->notifyApplicationStatus(
+            $id,
+            $status,
+            $ownerMessage
+        );
+
+        return $application;
+    }
 }

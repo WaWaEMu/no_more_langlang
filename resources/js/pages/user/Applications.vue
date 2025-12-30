@@ -90,7 +90,27 @@
                                                 target="_blank" class="btn btn-sm btn-success text-white">
                                                 <i class="bi bi-line me-1"></i>LINE 聯繫
                                             </a>
-                                            <!-- Future: Add Approve/Reject buttons here -->
+                                            <div v-if="app.status === 'pending'" class="d-flex gap-2">
+                                                <button @click="updateStatus(app.id, 'approved')"
+                                                    class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                                    <i class="bi bi-check-lg me-1"></i>通過
+                                                </button>
+                                                <button @click="updateStatus(app.id, 'rejected')"
+                                                    class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                                    <i class="bi bi-x-lg me-1"></i>婉拒
+                                                </button>
+                                            </div>
+                                            <div v-else class="d-flex flex-column align-items-end gap-1">
+                                                <div v-if="app.owner_message"
+                                                    class="application__owner-message p-2 rounded-3 mb-1 w-100 bg-light border-start border-4 border-primary">
+                                                    <small class="text-primary fw-bold d-block mb-1">您的回覆：</small>
+                                                    <p class="mb-0 text-secondary small" style="white-space: pre-wrap;">
+                                                        {{ app.owner_message }}</p>
+                                                </div>
+                                                <div class="text-muted small">
+                                                    已於 {{ formatDate(app.updated_at) }} 處理
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -118,6 +138,7 @@ import { useRoute } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 interface Application {
     id: number
@@ -129,8 +150,10 @@ interface Application {
     experience: string
     family_agreement: boolean
     message: string
+    owner_message: string | null
     status: string
     created_at: string
+    updated_at: string
 }
 
 interface PetGroup {
@@ -159,6 +182,55 @@ async function fetchApplications() {
         console.error('Failed to fetch applications:', error)
     } finally {
         loading.value = false
+    }
+}
+
+async function updateStatus(applicationId: number, status: string) {
+    const statusText = status === 'approved' ? '通過' : '婉拒'
+    const confirmResult = await Swal.fire({
+        title: `確定要${statusText}此申請嗎？`,
+        html: `
+            <div class="text-start mb-3">
+                <p class="mb-2">${status === 'approved' ? '通過後，申請人將會收到通知。' : '婉拒後，申請人將會收到通知。'}</p>
+                <label for="swal-owner-message" class="form-label small text-muted">您可以輸入回覆訊息給申請人（選填）：</label>
+                <textarea id="swal-owner-message" class="form-control" rows="3" placeholder="例如：歡迎來電預約看貓..."></textarea>
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: status === 'approved' ? '#198754' : '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: `確定${statusText}`,
+        cancelButtonText: '取消',
+        preConfirm: () => {
+            return (document.getElementById('swal-owner-message') as HTMLTextAreaElement).value
+        }
+    })
+
+    if (confirmResult.isConfirmed) {
+        const ownerMessage = confirmResult.value
+        try {
+            await axios.put(`/api/user/applications/${applicationId}`, {
+                status,
+                owner_message: ownerMessage
+            })
+            await Swal.fire({
+                icon: 'success',
+                title: '更新成功',
+                text: `已成功${statusText}該申請`,
+                timer: 1500,
+                showConfirmButton: false
+            })
+            // Refresh data
+            await fetchApplications()
+        } catch (error) {
+            console.error('Failed to update status:', error)
+            await Swal.fire({
+                icon: 'error',
+                title: '更新失敗',
+                text: '請稍後再試'
+            })
+        }
     }
 }
 
