@@ -14,7 +14,7 @@
                 <li v-for="navItem in navList" :key="navItem.id" class="me-5 navbar__item">
                     <RouterLink :to="navItem.path"
                         active-class="text-decoration-none d-inline-block pb-2 navbar__isActive"
-                        :class="!isActive(navItem.path) && 'navbar__link'" @click="closeMenu">
+                        :class="!isActive(navItem.path) && 'navbar__link'" @click.prevent="handleNavClick(navItem)">
                         {{ navItem.label }}
                     </RouterLink>
                 </li>
@@ -31,14 +31,14 @@
 
 <script setup lang="ts" name="Navbar">
 import { ref } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import UserMenu from '@/components/user/UserMenu.vue'
 import NotificationDropdown from '@/components/user/NotificationDropdown.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
-
 const route = useRoute();
+const router = useRouter();
 const isMenuOpen = ref(false);
 
 const navList = ref<{ id: string; label: string; path: string }[]>([
@@ -58,6 +58,17 @@ function toggleMenu() {
 
 function closeMenu() {
     isMenuOpen.value = false;
+}
+
+async function handleNavClick(navItem: any) {
+    closeMenu()
+    if (navItem.path === '/adopt/new') {
+        if (await authStore.checkAuth('登入後即可登記送養，幫浪浪找新家！')) {
+            router.push(navItem.path)
+        }
+    } else {
+        router.push(navItem.path)
+    }
 }
 </script>
 

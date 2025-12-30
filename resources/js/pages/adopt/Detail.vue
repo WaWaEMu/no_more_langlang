@@ -74,10 +74,9 @@
 
                             <!-- Visitor Actions -->
                             <template v-else>
-                                <RouterLink :to="`/adopt/${pet.id}/apply`"
-                                    class="btn btn-primary flex-fill py-2 fw-semibold">
+                                <button @click="handleApply" class="btn btn-primary flex-fill py-2 fw-semibold">
                                     <i class="bi bi-envelope-heart me-2"></i>申請領養
-                                </RouterLink>
+                                </button>
                             </template>
                         </div>
                     </div>
@@ -302,6 +301,13 @@ async function fetchPetDetail() {
         console.error('Failed to fetch pet details:', err)
     } finally {
         loading.value = false
+    }
+}
+
+async function handleApply() {
+    if (!pet.value) return
+    if (await authStore.checkAuth('登入後即可提交領養申請，給浪浪一個家！')) {
+        router.push(`/adopt/${pet.value.id}/apply`)
     }
 }
 

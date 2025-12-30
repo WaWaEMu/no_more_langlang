@@ -65,9 +65,11 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useAdoptStore } from '@/stores/adopt'
+import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 
 const adoptStore = useAdoptStore()
+const authStore = useAuthStore()
 const { toggleFavorite, isFavorite } = adoptStore
 
 defineProps<{
@@ -78,7 +80,9 @@ function formatDate(dateStr: string) {
     return dateStr ? dateStr.split('T')[0] : ''
 }
 
-function handleToggleFavorite(petId: number) {
+async function handleToggleFavorite(petId: number) {
+    if (!await authStore.checkAuth('登入後即可收藏您心儀的浪浪！')) return
+
     if (isFavorite(petId)) {
         Swal.fire({
             title: '移除收藏？',

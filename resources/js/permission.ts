@@ -1,13 +1,17 @@
 import router from '@/router'
 import { isLoggedIn } from '@/utils/authStatus'
 import getPageTitle from '@/utils/getPageTitle'
+import Swal from 'sweetalert2'
 
 // No redirect whitelist
 const whiteList = [
+    '/',
     '/auth/login',
     '/auth/register',
     '/auth/forgot',
     '/auth/reset',
+    '/welcome',
+    '/bye',
     '/404',
     '/401',
     '/500',
@@ -35,10 +39,27 @@ router.beforeEach(async (to, from, next) => {
     if (loggedIn) {
         return next()
     } else {
-        // If not logged in, redirect to login page with redirect query
-        if (to.query.token) {
-            return next(`/auth/login?redirect=${encodeURIComponent(to.fullPath)}&token=${encodeURIComponent(to.query.token as string)}`)
+        // If not logged in, show a confirmation dialog
+        const result = await Swal.fire({
+            title: '需要登入',
+            text: '此功能需要登入後才能使用，是否前往登入頁面？',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: '前往登入',
+            cancelButtonText: '取消',
+            confirmButtonColor: '#2c5282',
+            cancelButtonColor: '#6c757d',
+        })
+
+        if (result.isConfirmed) {
+            // If not logged in, redirect to login page with redirect query
+            if (to.query.token) {
+                return next(`/auth/login?redirect=${encodeURIComponent(to.fullPath)}&token=${encodeURIComponent(to.query.token as string)}`)
+            }
+            return next(`/auth/login?redirect=${encodeURIComponent(to.fullPath)}`)
+        } else {
+            // Stay on the current page
+            return next(false)
         }
-        return next(`/auth/login?redirect=${encodeURIComponent(to.fullPath)}`)
     }
 })

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 interface User {
     id: number
@@ -104,6 +105,31 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    /**
+     * Check if user is authenticated. If not, show a confirmation dialog.
+     */
+    const checkAuth = async (message: string = '此功能需要登入後才能使用，是否前往登入頁面？'): Promise<boolean> => {
+        if (isAuthenticated.value) return true
+
+        const result = await Swal.fire({
+            title: '需要登入',
+            text: message,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: '前往登入',
+            cancelButtonText: '取消',
+            confirmButtonColor: '#2c5282',
+            cancelButtonColor: '#6c757d',
+        })
+
+        if (result.isConfirmed) {
+            window.location.href = `#/auth/login?redirect=${encodeURIComponent(window.location.hash.replace('#', ''))}`
+            return false
+        }
+
+        return false
+    }
+
     return {
         user,
         loading,
@@ -115,6 +141,7 @@ export const useAuthStore = defineStore('auth', () => {
         login,
         register,
         updateProfile,
-        updatePassword
+        updatePassword,
+        checkAuth
     }
 })
