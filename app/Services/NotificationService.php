@@ -35,7 +35,7 @@ class NotificationService
             if (!$parentCommentId) {
                 // Don't notify if the commenter is the pet owner
                 if ($ownerId !== $commenterId) {
-                    $notifications[] = Notification::create([
+                    $notifications[] = Notification::store([
                         'user_id' => $ownerId,
                         'type' => 'new_comment',
                         'message' => "有人在「{$petName}」的頁面留言",
@@ -56,7 +56,7 @@ class NotificationService
 
                     // Notify the parent comment author (if not replying to themselves)
                     if ($parentAuthorId !== $commenterId) {
-                        $notifications[] = Notification::create([
+                        $notifications[] = Notification::store([
                             'user_id' => $parentAuthorId,
                             'type' => 'comment_reply',
                             'message' => "有人回覆了您在「{$petName}」的留言",
@@ -71,7 +71,7 @@ class NotificationService
 
                     // Also notify pet owner if they're not the commenter or parent author
                     if ($ownerId !== $commenterId && $ownerId !== $parentAuthorId) {
-                        $notifications[] = Notification::create([
+                        $notifications[] = Notification::store([
                             'user_id' => $ownerId,
                             'type' => 'comment_reply',
                             'message' => "有人在「{$petName}」的頁面回覆了留言",
@@ -115,7 +115,7 @@ class NotificationService
                 return null;
             }
 
-            return Notification::create([
+            return Notification::store([
                 'user_id' => $ownerId,
                 'type' => 'new_adoption_application',
                 'message' => "有人提交了「{$petName}」的領養申請",
@@ -162,12 +162,7 @@ class NotificationService
     public function markAllAsRead(int $userId): bool
     {
         try {
-            Notification::where('user_id', $userId)
-                ->where('is_read', false)
-                ->update([
-                    'is_read' => true,
-                    'read_at' => now(),
-                ]);
+            Notification::markAllAsRead($userId);
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to mark all notifications as read: ' . $e->getMessage());
@@ -183,9 +178,7 @@ class NotificationService
      */
     public function getUnreadCount(int $userId): int
     {
-        return Notification::where('user_id', $userId)
-            ->where('is_read', false)
-            ->count();
+        return Notification::getUnreadCount($userId);
     }
 
     /**
@@ -212,7 +205,7 @@ class NotificationService
                 $message .= "。送養人留言：{$ownerMessage}";
             }
 
-            return Notification::create([
+            return Notification::store([
                 'user_id' => $applicantId,
                 'type' => 'adoption_application_status',
                 'message' => $message,

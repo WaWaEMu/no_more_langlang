@@ -58,4 +58,35 @@ class Notification extends Model
     {
         return $query->where('is_read', true);
     }
+
+    /**
+     * Store a new notification.
+     */
+    public static function store(array $data): self
+    {
+        return self::create($data);
+    }
+
+    /**
+     * Mark all notifications as read for a user.
+     */
+    public static function markAllAsRead(int $userId): void
+    {
+        self::where('user_id', $userId)
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'read_at' => now(),
+            ]);
+    }
+
+    /**
+     * Get unread notifications count for a user.
+     */
+    public static function getUnreadCount(int $userId): int
+    {
+        return self::where('user_id', $userId)
+            ->where('is_read', false)
+            ->count();
+    }
 }
