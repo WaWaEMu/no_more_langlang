@@ -6,14 +6,14 @@ use App\Models\Pet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Services\AdoptionApplicationService;
+use App\Contracts\AdoptionApplicationInterface;
 
 class AdoptionApplicationController extends Controller
 {
-    protected AdoptionApplicationService $adoptionApplicationService;
+    protected AdoptionApplicationInterface $adoptionApplicationService;
 
     public function __construct(
-        AdoptionApplicationService $adoptionApplicationService
+        AdoptionApplicationInterface $adoptionApplicationService
     ) {
         $this->adoptionApplicationService = $adoptionApplicationService;
     }
@@ -29,50 +29,43 @@ class AdoptionApplicationController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        // Get all pets belonging to the user with their applications
-        $pets = Pet::where('user_id', $user->id)
-            ->with([
-                'images' => function ($query) {
-                    $query->limit(1);
-                }
-            ])
-            ->withCount('adoptionApplications')
-            ->having('adoption_applications_count', '>', 0)
-            ->get();
+        $result = $this->adoptionApplicationService->getReceivedGroupedByPet($user->id);
 
-        // Build response with grouped applications
-        $result = $pets->map(function ($pet) {
-            $applications = $pet->adoptionApplications()
-                ->with('user:id,name')
-                ->orderBy('created_at', 'desc')
-                ->get();
+        return response()->json(['data' => $result]);
+    }
 
+    /**
+     * Get all adoption applications submitted by the current user.
+     */
+    public function sent(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $applications = $this->adoptionApplicationService->getSentByUser($user->id);
+
+        $result = $applications->map(function ($app) {
             return [
+                'id' => $app->id,
                 'pet' => [
-                    'id' => $pet->id,
-                    'name' => $pet->name,
-                    'image' => $pet->images->first()?->path,
+                    'id' => $app->pet->id,
+                    'name' => $app->pet->name,
+                    'image' => $app->pet->images->first()?->path,
                 ],
-                'applications' => $applications->map(function ($app) {
-                    return [
-                        'id' => $app->id,
-                        'applicant_name' => $app->name,
-                        'applicant_user' => $app->user ? [
-                            'id' => $app->user->id,
-                            'name' => $app->user->name,
-                        ] : null,
-                        'phone' => $app->phone,
-                        'line_id' => $app->line_id,
-                        'housing_type' => $app->housing_type,
-                        'experience' => $app->experience,
-                        'family_agreement' => $app->family_agreement,
-                        'message' => $app->message,
-                        'owner_message' => $app->owner_message,
-                        'status' => $app->status,
-                        'created_at' => $app->created_at,
-                        'updated_at' => $app->updated_at,
-                    ];
-                }),
+                'name' => $app->name,
+                'phone' => $app->phone,
+                'line_id' => $app->line_id,
+                'housing_type' => $app->housing_type,
+                'experience' => $app->experience,
+                'family_agreement' => $app->family_agreement,
+                'message' => $app->message,
+                'owner_message' => $app->owner_message,
+                'status' => $app->status,
+                'created_at' => $app->created_at,
+                'updated_at' => $app->updated_at,
             ];
         });
 

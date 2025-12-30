@@ -25,4 +25,20 @@ interface AdoptionApplicationInterface
      * @return AdoptionApplication
      */
     public function updateStatus(int $id, string $status, ?string $ownerMessage = null): AdoptionApplication;
+
+    /**
+     * Get applications received for the user's pets, grouped by pet.
+     *
+     * @param int $userId
+     * @return \Illuminate\Support\Collection
+     */
+    public function getReceivedGroupedByPet(int $userId): \Illuminate\Support\Collection;
+
+    /**
+     * Get applications sent by the user.
+     *
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getSentByUser(int $userId): \Illuminate\Database\Eloquent\Collection;
 }

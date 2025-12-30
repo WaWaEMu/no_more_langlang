@@ -54,4 +54,14 @@ class AdoptionApplicationService implements AdoptionApplicationInterface
 
         return $application;
     }
+
+    public function getReceivedGroupedByPet(int $userId): \Illuminate\Support\Collection
+    {
+        return AdoptionApplication::getReceivedGroupedByPet($userId);
+    }
+
+    public function getSentByUser(int $userId): \Illuminate\Database\Eloquent\Collection
+    {
+        return AdoptionApplication::getSentByUser($userId);
+    }
 }
