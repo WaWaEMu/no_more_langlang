@@ -155,7 +155,7 @@
                     <div v-else>
                         <div v-if="sentApplications.length > 0" class="d-flex flex-column gap-3">
                             <div v-for="app in sentApplications" :key="app.id"
-                                class="card border-0 shadow-sm overflow-hidden"
+                                class="card border-0 shadow-sm overflow-hidden applications__item"
                                 :class="{ 'applications__item--highlight': highlightId === app.id }"
                                 :id="`application-${app.id}`">
                                 <div class="card-body p-3">
@@ -171,7 +171,7 @@
                                                 <div>
                                                     <h5 class="mb-1 fw-bold text-dark">{{ app.pet.name }}</h5>
                                                     <small class="text-muted">申請於 {{ formatDate(app.created_at)
-                                                        }}</small>
+                                                    }}</small>
                                                 </div>
                                                 <span class="badge rounded-pill" :class="getStatusClass(app.status)">
                                                     {{ getStatusText(app.status) }}
@@ -213,7 +213,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, onMounted, computed, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
@@ -359,10 +359,7 @@ function formatDate(dateStr: string) {
     })
 }
 
-onMounted(async () => {
-    await fetchApplications()
-
-    // Handle highlight if query param exists
+async function handleHighlight() {
     const appId = route.query.highlight
     if (appId) {
         highlightId.value = Number(appId)
@@ -376,15 +373,28 @@ onMounted(async () => {
         }
 
         await nextTick()
-        const element = document.getElementById(`application-${appId}`)
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            // Remove highlight after 2 seconds
-            setTimeout(() => {
-                highlightId.value = null
-            }, 2000)
-        }
+        // Small delay to ensure tab content is rendered
+        setTimeout(() => {
+            const element = document.getElementById(`application-${appId}`)
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                // Remove highlight after 2 seconds
+                setTimeout(() => {
+                    highlightId.value = null
+                }, 2000)
+            }
+        }, 100)
     }
+}
+
+onMounted(async () => {
+    await fetchApplications()
+    handleHighlight()
+})
+
+// Watch for highlight changes (e.g. when clicking another notification while on this page)
+watch(() => route.query.highlight, () => {
+    handleHighlight()
 })
 </script>
 
