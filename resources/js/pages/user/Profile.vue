@@ -26,10 +26,10 @@
                         </div>
                         <div class="profile__info">
                             <h2 class="profile__name">{{ userProfile.name }}</h2>
-                            <div class="profile__badge">
+                            <!-- <div class="profile__badge">
                                 <i class="bi bi-patch-check-fill me-1"></i>
                                 <span>已驗證會員</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -59,7 +59,7 @@
                 </div>
 
                 <!-- Statistics Section -->
-                <div class="profile__stats-title mb-3">
+                <!-- <div class="profile__stats-title mb-3">
                     <h3 class="fs-5 fw-bold text-dark">送養統計</h3>
                 </div>
                 <div class="profile__stats">
@@ -71,7 +71,6 @@
                             <div class="profile__stat-number">0</div>
                             <div class="profile__stat-label">送養案件</div>
                         </div>
-                        <!-- TODO: Add router link -->
                         <RouterLink to="" class="profile__stat-link">
                             查看清單 <i class="bi bi-arrow-right"></i>
                         </RouterLink>
@@ -85,7 +84,6 @@
                             <div class="profile__stat-number">0</div>
                             <div class="profile__stat-label">已完成送養</div>
                         </div>
-                        <!-- TODO: Add router link -->
                         <RouterLink to="" class="profile__stat-link">
                             查看清單 <i class="bi bi-arrow-right"></i>
                         </RouterLink>
@@ -99,12 +97,11 @@
                             <div class="profile__stat-number">0</div>
                             <div class="profile__stat-label">收藏案件</div>
                         </div>
-                        <!-- TODO: Add router link -->
                         <RouterLink to="" class="profile__stat-link">
                             查看清單 <i class="bi bi-arrow-right"></i>
                         </RouterLink>
                     </div>
-                </div>
+                </div> -->
             </div>
         </template>
     </Content>
@@ -260,7 +257,7 @@ onMounted(() => {
 }
 
 /* Statistics Section */
-.profile__stats-title {
+/* .profile__stats-title {
     margin-top: 2rem;
 }
 
@@ -365,7 +362,7 @@ onMounted(() => {
 .profile__stat-link:hover {
     gap: 0.75rem;
     color: #4f46e5;
-}
+} */
 
 /* Responsive */
 @media (max-width: 768px) {
