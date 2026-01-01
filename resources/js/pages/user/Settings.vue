@@ -72,6 +72,8 @@ import Content from '@/components/Content.vue'
 import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 
+import { trans } from 'laravel-vue-i18n'
+
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
 const loading = computed(() => authStore.loading)
@@ -142,7 +144,7 @@ async function updatePassword() {
         Swal.fire({
             icon: 'error',
             title: '修改失敗',
-            text: authStore.error || '請確認您的目前密碼是否正確'
+            text: authStore.error ? trans(authStore.error) : '請確認您的目前密碼是否正確'
         })
     }
 }

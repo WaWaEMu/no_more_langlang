@@ -11,6 +11,9 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "baseUrl": ".",
+    "types": [
+      "vite/client"
+    ],
     "paths": {
       "@/*": ["resources/js/*"],
       "@public/*": ["public/*"]

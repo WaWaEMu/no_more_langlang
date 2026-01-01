@@ -56,7 +56,7 @@
         "boolean": ":attribute 必須為布林值。",
         "can": ":attribute 包含未經授權的值。",
         "confirmed": ":attribute 確認欄位不一致。",
-        "current_password": "密碼不正確。",
+        "current_password": "目前密碼不正確。",
         "date": ":attribute 並非有效的日期。",
         "date_equals": ":attribute 必須等於 :date。",
         "date_format": ":attribute 不符合 :format 的格式。",
@@ -176,7 +176,9 @@
         "attributes": {
             "email": "電子信箱",
             "password": "密碼",
-            "name": "用戶暱稱"
+            "name": "用戶暱稱",
+            "current_password": "目前密碼"
         }
-    }
+    },
+    "The password is incorrect.": "目前密碼不正確。"
 }
