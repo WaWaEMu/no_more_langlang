@@ -15,7 +15,8 @@ const whiteList = [
     '/404',
     '/401',
     '/500',
-    '/adopt'
+    '/adopt',
+    '/about'
 ]
 
 router.beforeEach(async (to, from, next) => {

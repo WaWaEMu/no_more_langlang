@@ -14,7 +14,8 @@
         "my_pets": "我的送養",
         "favorites": "我的收藏",
         "settings": "帳號設定",
-        "applications": "領養申請"
+        "applications": "領養申請",
+        "about": "網站理念"
     },
     "auth": {
         "login_title": "登入",

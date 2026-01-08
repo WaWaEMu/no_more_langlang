@@ -80,6 +80,11 @@ const routes = [
         path: '/user/applications',
         component: () => import('@/pages/user/Applications.vue'),
         meta: { title: t('router.applications') }
+    },
+    {
+        path: '/about',
+        component: () => import('@/pages/About.vue'),
+        meta: { title: t('router.about') }
     }
 ]
 
