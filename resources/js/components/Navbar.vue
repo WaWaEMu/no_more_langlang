@@ -1,5 +1,5 @@
 <template>
-    <div class="fw-semibold justify-content-between navbar pe-4">
+    <div class="fw-semibold justify-content-between navbar__wrap pe-4 d-flex align-items-center">
         <div class="d-flex align-items-center navbar__container">
             <h1 class="my-4 navbar__title">諾摩浪浪</h1>
 
@@ -73,7 +73,7 @@ async function handleNavClick(navItem: any) {
 </script>
 
 <style scoped>
-.navbar {
+.navbar__wrap {
     background: linear-gradient(135deg, #d1d9e6 0%, #b8c5d6 100%);
     color: #4a5568;
     box-shadow: 0 4px 12px rgba(107, 114, 128, 0.25), 0 2px 4px rgba(107, 114, 128, 0.15);
@@ -108,7 +108,7 @@ async function handleNavClick(navItem: any) {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .navbar {
+    .navbar__wrap {
         padding: 0 1rem;
     }
 
