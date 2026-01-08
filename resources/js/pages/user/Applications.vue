@@ -286,13 +286,17 @@ async function fetchApplications() {
 
 async function updateStatus(applicationId: number, status: string) {
     const statusText = status === 'approved' ? '通過' : '婉拒'
+    const placeholder = status === 'approved'
+        ? '例如：歡迎來電預約看貓...'
+        : '例如：很抱歉，目前已有其他合適的領養人...'
+
     const confirmResult = await Swal.fire({
         title: `確定要${statusText}此申請嗎？`,
         html: `
             <div class="text-start mb-3">
                 <p class="mb-2">${status === 'approved' ? '通過後，申請人將會收到通知。' : '婉拒後，申請人將會收到通知。'}</p>
                 <label for="swal-owner-message" class="form-label small text-muted">您可以輸入回覆訊息給申請人（選填）：</label>
-                <textarea id="swal-owner-message" class="form-control" rows="3" placeholder="例如：歡迎來電預約看貓..."></textarea>
+                <textarea id="swal-owner-message" class="form-control" rows="3" placeholder="${placeholder}"></textarea>
             </div>
         `,
         icon: 'warning',
