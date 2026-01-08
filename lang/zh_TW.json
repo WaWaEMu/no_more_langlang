@@ -17,6 +17,18 @@
         "applications": "領養申請",
         "about": "網站理念"
     },
+    "housing_types": {
+        "apartment": "公寓",
+        "house": "透天厝",
+        "condo": "大樓",
+        "dormitory": "宿舍",
+        "other": "其他"
+    },
+    "experience_levels": {
+        "newbie": "新手",
+        "experienced": "有經驗",
+        "expert": "非常有經驗"
+    },
     "auth": {
         "login_title": "登入",
         "register_title": "註冊",

@@ -85,11 +85,11 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <small class="text-muted d-block">居住類型</small>
-                                                    <span>{{ app.housing_type }}</span>
+                                                    <span>{{ t('housing_types.' + app.housing_type) }}</span>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <small class="text-muted d-block">飼養經驗</small>
-                                                    <span>{{ app.experience }}</span>
+                                                    <span>{{ t('experience_levels.' + app.experience) }}</span>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <small class="text-muted d-block">家人同意</small>
@@ -219,6 +219,7 @@ import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { t } from '@/lang'
 
 interface Application {
     id: number
