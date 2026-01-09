@@ -6,15 +6,47 @@
         </div>
 
         <!-- Not Logged In -->
-        <div v-else-if="!authStore.isAuthenticated" class="user-menu__auth-buttons">
-            <RouterLink to="/auth/login" class="user-menu__btn user-menu__btn--login">
-                <i class="bi bi-box-arrow-in-right me-2"></i>
-                登入
-            </RouterLink>
-            <RouterLink to="/auth/register" class="user-menu__btn user-menu__btn--register">
-                <i class="bi bi-person-plus me-2"></i>
-                註冊
-            </RouterLink>
+        <div v-else-if="!authStore.isAuthenticated" class="user-menu__auth-wrapper" ref="userMenuRef">
+            <!-- Desktop Auth Buttons -->
+            <div class="user-menu__auth-buttons d-none d-md-flex">
+                <RouterLink to="/auth/login" class="user-menu__btn user-menu__btn--login">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    登入
+                </RouterLink>
+                <RouterLink to="/auth/register" class="user-menu__btn user-menu__btn--register">
+                    <i class="bi bi-person-plus me-2"></i>
+                    註冊
+                </RouterLink>
+            </div>
+
+            <!-- Mobile Auth Toggle -->
+            <button @click="toggleUserMenu" class="user-menu__button d-md-none">
+                <div class="user-menu__avatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <i class="bi bi-chevron-down user-menu__chevron"
+                    :class="{ 'user-menu__chevron--open': isMenuOpen }"></i>
+            </button>
+
+            <!-- Mobile Guest Dropdown Menu -->
+            <Transition name="dropdown">
+                <div v-if="isMenuOpen" class="user-menu__dropdown d-md-none">
+                    <ul class="user-menu__dropdown-list">
+                        <li>
+                            <RouterLink to="/auth/login" class="user-menu__dropdown-item" @click="closeMenu">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                <span>登入</span>
+                            </RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink to="/auth/register" class="user-menu__dropdown-item" @click="closeMenu">
+                                <i class="bi bi-person-plus"></i>
+                                <span>註冊</span>
+                            </RouterLink>
+                        </li>
+                    </ul>
+                </div>
+            </Transition>
         </div>
 
         <!-- Logged In -->

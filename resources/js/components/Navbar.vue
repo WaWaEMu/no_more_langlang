@@ -114,7 +114,7 @@ async function handleNavClick(navItem: any) {
 
     .navbar__title {
         margin: 0 1rem 0 0;
-        font-size: 1.25rem;
+        font-size: 1.75rem;
     }
 
     .navbar__toggler {
