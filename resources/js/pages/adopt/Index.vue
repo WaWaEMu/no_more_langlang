@@ -5,6 +5,7 @@
             <div>
                 <PetSearch />
                 <PetList :pet-list="activePets" />
+                <Pagination :current-page="currentPage" :last-page="lastPage" @change-page="fetchPets" />
             </div>
         </template>
     </Content>
@@ -15,12 +16,13 @@ import Navbar from '@/components/Navbar.vue'
 import PetSearch from '@/components/search/PetSearch.vue'
 import Content from '@/components/Content.vue'
 import PetList from '@/components/adopt/PetList.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import { onMounted } from 'vue'
 import { useAdoptStore } from '@/stores/adopt'
 import { storeToRefs } from 'pinia'
 
 const adoptStore = useAdoptStore()
-const { activePets } = storeToRefs(adoptStore)
+const { activePets, currentPage, lastPage } = storeToRefs(adoptStore)
 const { fetchPets } = adoptStore
 
 onMounted(async () => {

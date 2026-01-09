@@ -11,6 +11,12 @@ export const useAdoptStore = defineStore('adopt', () => {
     const loading = ref(false)
     const error = ref<string | null>(null)
 
+    // Pagination state
+    const currentPage = ref(1)
+    const lastPage = ref(1)
+    const total = ref(0)
+    const perPage = ref(12)
+
     const emptyFilters: PetFiltersInter = {
         city: { label: '', value: '' },
         color: { label: '', value: '' },
@@ -21,32 +27,39 @@ export const useAdoptStore = defineStore('adopt', () => {
     }
 
     const petFilters = reactive<PetFiltersInter>({ ...emptyFilters })
+    const keyword = ref('')
 
-    const activePets = computed(() => {
-        let list = pets.value
+    const activePets = computed(() => pets.value)
 
-        if (activeType.value === '貓咪') list = pets.value.filter(pet => pet.type === '貓咪')
-        else if (activeType.value === '狗狗') list = pets.value.filter(pet => pet.type === '狗狗')
-
-        return list.filter(pet => {
-            const f = petFilters
-            if (f.city['value'] && pet.city !== f.city['value']) return false
-            if (f.color['value'] && pet.color !== f.color['value']) return false
-            if (f.fur_type['value'] && pet.fur_type !== f.fur_type['value']) return false
-            if (f.gender['value'] && pet.gender !== f.gender['value']) return false
-            if (f.age['value'] && pet.age !== f.age['value']) return false
-            if (f.is_neuter['value'] !== '' && pet.is_neuter !== (f.is_neuter.value ? 1 : 0)) return false
-            return true
-        })
-    })
-
-    async function fetchPets() {
+    async function fetchPets(page = 1) {
         loading.value = true
         error.value = null
+        currentPage.value = page
 
         try {
-            const res = await axios.get('/api/adopt')
-            pets.value = res.data
+            const params: any = {
+                page,
+                type: activeType.value,
+            }
+
+            // Add filters to params
+            if (petFilters.city.value) params.city = petFilters.city.value
+            if (petFilters.color.value) params.color = petFilters.color.value
+            if (petFilters.fur_type.value) params.fur_type = petFilters.fur_type.value
+            if (petFilters.gender.value) params.gender = petFilters.gender.value
+            if (petFilters.age.value) params.age = petFilters.age.value
+            if (petFilters.is_neuter.value !== '') {
+                params.is_neuter = petFilters.is_neuter.value
+            }
+            if (keyword.value) params.keyword = keyword.value
+
+            const res = await axios.get('/api/adopt', { params })
+
+            // Laravel paginated response
+            pets.value = res.data.data
+            currentPage.value = res.data.current_page
+            lastPage.value = res.data.last_page
+            total.value = res.data.total
         } catch (err: any) {
             error.value = err.message ?? 'Failed to fetch adopts'
         } finally {
@@ -56,10 +69,12 @@ export const useAdoptStore = defineStore('adopt', () => {
 
     function changeType(type: string) {
         activeType.value = type
+        fetchPets(1) // Reset to page 1 when type changes
     }
 
     function updateFilters(key: keyof PetFiltersInter, item: OptionItem) {
         petFilters[key] = item
+        fetchPets(1) // Reset to page 1 when filters change
     }
 
     async function fetchPetById(id: string | number): Promise<PetInter> {
@@ -79,6 +94,7 @@ export const useAdoptStore = defineStore('adopt', () => {
 
     function resetFilters() {
         Object.assign(petFilters, emptyFilters)
+        fetchPets(1)
     }
 
     function getMyPets(userid: number) {
@@ -121,12 +137,17 @@ export const useAdoptStore = defineStore('adopt', () => {
         pets,
         loading,
         error,
+        currentPage,
+        lastPage,
+        total,
+        perPage,
         fetchPets,
         fetchPetById,
         changeType,
         activeType,
         activePets,
         petFilters,
+        keyword,
         updateFilters,
         resetFilters,
         getMyPets,

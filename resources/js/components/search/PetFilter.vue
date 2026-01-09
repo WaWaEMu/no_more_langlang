@@ -43,13 +43,13 @@
                 </a>
             </li>
         </ul>
-        <form class="pet-filter__form">
+        <form class="pet-filter__form" @submit.prevent="fetchPets(1)">
             <div class="input-group border">
                 <span class="input-group-text bg-white border-0">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" class="form-control border-0" placeholder="請輸入關鍵字">
-                <button class="btn border-0">搜尋</button>
+                <input type="text" class="form-control border-0" placeholder="請輸入關鍵字" v-model.trim="keyword">
+                <button type="submit" class="btn border-0">搜尋</button>
             </div>
         </form>
     </div>
@@ -69,8 +69,8 @@ const props = defineProps<{
 const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
 
 const adoptStore = useAdoptStore()
-const { petFilters } = storeToRefs(adoptStore)
-const { resetFilters } = adoptStore
+const { petFilters, keyword } = storeToRefs(adoptStore)
+const { resetFilters, fetchPets } = adoptStore
 </script>
 
 <style scoped>

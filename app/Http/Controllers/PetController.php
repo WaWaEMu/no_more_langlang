@@ -18,16 +18,56 @@ class PetController extends Controller
         $this->petCreatorInterface = $petCreatorInterface;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $userId = Auth::id();
-        $pets = Pet::with(['images', 'detail', 'user'])
+        $query = Pet::with(['images', 'detail', 'user'])
             ->withExists([
                 'favoritedBy as is_favorite' => function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 }
-            ])
-            ->get();
+            ]);
+
+        // Filtering
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+        if ($request->has('city')) {
+            $query->where('city', $request->city);
+        }
+        if ($request->has('color')) {
+            $query->where('color', $request->color);
+        }
+        if ($request->has('fur_type')) {
+            $query->where('fur_type', $request->fur_type);
+        }
+        if ($request->has('gender')) {
+            $query->where('gender', $request->gender);
+        }
+        if ($request->has('age')) {
+            $query->where('age', $request->age);
+        }
+        if ($request->has('is_neuter')) {
+            $query->where('is_neuter', $request->is_neuter === 'true' || $request->is_neuter === '1');
+        }
+
+        // Keyword search
+        if ($request->has('keyword')) {
+            $keyword = $request->keyword;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('name', 'like', "%{$keyword}%")
+                    ->orWhere('city', 'like', "%{$keyword}%")
+                    ->orWhere('town', 'like', "%{$keyword}%")
+                    ->orWhereHas('detail', function ($dq) use ($keyword) {
+                        $dq->where('adoption_description', 'like', "%{$keyword}%")
+                            ->orWhere('health_description', 'like', "%{$keyword}%")
+                            ->orWhere('adoption_condition', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        $pets = $query->latest()->paginate(12);
         return response()->json($pets);
     }
 
