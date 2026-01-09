@@ -176,6 +176,11 @@ class NotificationService
      * @param int $userId
      * @return int
      */
+    public function getAll(int $userId)
+    {
+        return Notification::getAll($userId);
+    }
+
     public function getUnreadCount(int $userId): int
     {
         return Notification::getUnreadCount($userId);

@@ -26,10 +26,7 @@ class NotificationController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $notifications = $user->notifications()
-            ->orderBy('created_at', 'desc')
-            ->limit(50) // Limit to most recent 50 notifications
-            ->get();
+        $notifications = $this->notificationService->getAll($user->id);
 
         return response()->json($notifications);
     }

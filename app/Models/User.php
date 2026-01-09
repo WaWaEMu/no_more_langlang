@@ -48,6 +48,20 @@ class User extends Authenticatable
         return $this->belongsToMany(Pet::class, 'favorites')->withTimestamps();
     }
 
+    public function updateProfile(array $data)
+    {
+        return $this->update([
+            'name' => $data['name'],
+        ]);
+    }
+
+    public function updatePassword(string $password)
+    {
+        return $this->update([
+            'password' => bcrypt($password),
+        ]);
+    }
+
     public function notifications()
     {
         return $this->hasMany(Notification::class);

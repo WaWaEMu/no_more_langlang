@@ -3,27 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\PetComment;
-use App\Services\NotificationService;
+use App\Contracts\PetCommentServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PetCommentController extends Controller
 {
-    protected NotificationService $notificationService;
+    protected PetCommentServiceInterface $petCommentService;
 
-    public function __construct(NotificationService $notificationService)
+    public function __construct(PetCommentServiceInterface $petCommentService)
     {
-        $this->notificationService = $notificationService;
+        $this->petCommentService = $petCommentService;
     }
 
     public function index($petId)
     {
-        $comments = PetComment::with(['user:id,name', 'replies.user:id,name'])
-            ->where('pet_id', $petId)
-            ->whereNull('parent_id') // Only fetch top-level comments
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+        $comments = $this->petCommentService->getCommentsByPetId($petId);
         return response()->json($comments);
     }
 
@@ -34,29 +29,15 @@ class PetCommentController extends Controller
             'parent_id' => 'nullable|exists:pet_comments,id',
         ]);
 
-        // If parent_id is provided, validate it belongs to the same pet
-        if ($request->has('parent_id')) {
-            $parentComment = PetComment::find($request->parent_id);
-            if ($parentComment && $parentComment->pet_id != $petId) {
-                return response()->json(['message' => '無效的父留言'], 400);
-            }
+        try {
+            $comment = $this->petCommentService->createComment(
+                $request->only(['content', 'parent_id']),
+                Auth::id(),
+                $petId
+            );
+            return response()->json($comment);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-
-        $comment = PetComment::create([
-            'pet_id' => $petId,
-            'user_id' => Auth::id(),
-            'parent_id' => $request->input('parent_id'),
-            'content' => $request->input('content'),
-        ]);
-
-        // Create notification for pet owner
-        $this->notificationService->notifyComment(
-            $petId,
-            $comment->id,
-            Auth::id(),
-            $request->input('parent_id')
-        );
-
-        return response()->json($comment->load('user:id,name'));
     }
 }

@@ -44,6 +44,17 @@ class Notification extends Model
     }
 
     /**
+     * Get all notifications for a user, ordered by creation date.
+     */
+    public static function getAll(int $userId)
+    {
+        return self::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->limit(50)
+            ->get();
+    }
+
+    /**
      * Scope a query to only include unread notifications.
      */
     public function scopeUnread($query)

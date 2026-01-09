@@ -30,4 +30,13 @@ class PetComment extends Model
     {
         return $this->hasMany(PetComment::class, 'parent_id')->with('user:id,name')->orderBy('created_at', 'asc');
     }
+
+    public static function getByPetId(int $petId)
+    {
+        return self::with(['user:id,name', 'replies.user:id,name'])
+            ->where('pet_id', $petId)
+            ->whereNull('parent_id')
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 }

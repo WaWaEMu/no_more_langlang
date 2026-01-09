@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;
 use App\Models\User;
 
 class UserController extends Controller
 {
+    protected UserServiceInterface $userService;
+
+    public function __construct(UserServiceInterface $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function show($id)
     {
         $user = User::findOrFail($id);
@@ -19,10 +27,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $user = $request->user();
-        $user->update([
-            'name' => $request->name,
-        ]);
+        $user = $this->userService->updateProfile($request->user(), $request->only('name'));
 
         return response()->json($user);
     }
@@ -34,10 +39,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = $request->user();
-        $user->update([
-            'password' => bcrypt($request->password),
-        ]);
+        $this->userService->updatePassword($request->user(), $request->password);
 
         return response()->json(['message' => 'Password updated successfully']);
     }
