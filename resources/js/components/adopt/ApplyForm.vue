@@ -335,7 +335,7 @@ async function submit() {
     const realForm = toFormData()
 
     try {
-        await axios.post('/api/adopt/store', realForm)
+        await axios.post('/api/adopt', realForm)
 
         await Swal.fire({
             icon: 'success',
