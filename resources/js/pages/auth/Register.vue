@@ -44,10 +44,16 @@
                             註冊
                         </button>
                     </div>
-                    <div class="d-flex justify-content-center align-items-center text-sm">
+                    <div class="d-flex justify-content-center align-items-center text-sm mb-4">
                         <span class="text-secondary me-2">已經有帳號了嗎？</span>
                         <RouterLink to="/auth/login" class="text-decoration-none register__link">
                             登入
+                        </RouterLink>
+                    </div>
+
+                    <div class="text-center pt-3 border-top">
+                        <RouterLink to="/adopt" class="text-decoration-none register__home-link">
+                            <i class="bi bi-house-door-fill me-2"></i>返回首頁
                         </RouterLink>
                     </div>
                 </form>
@@ -144,7 +150,7 @@ async function handleRegister() {
             Swal.fire({
                 icon: 'error',
                 title: '註冊失敗',
-                text: error.response?.data?.message || '請檢查您的網路連線或稍後再試',
+                text: error.response?.data?.message || '請檢查您的網路連線 or 稍後再試',
                 confirmButtonColor: '#2c5282'
             })
         }
@@ -198,5 +204,31 @@ async function handleRegister() {
     font-size: 0.8rem;
     color: #718096;
     margin-top: 0.25rem;
+}
+
+.register__home-link {
+    color: var(--color-denim-blue);
+    font-weight: 600;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+
+    &:hover {
+        opacity: 1;
+        color: var(--color-denim-blue-dark);
+    }
+}
+
+@media (max-width: 768px) {
+    .register__container {
+        padding: 1rem;
+    }
+
+    .register__card {
+        max-width: 100%;
+    }
+
+    .card-body {
+        padding: 2rem !important;
+    }
 }
 </style>
