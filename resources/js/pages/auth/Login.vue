@@ -26,6 +26,11 @@
                                 aria-hidden="true"></span>
                             {{ isLoading ? '登入中...' : '登入' }}
                         </button>
+                        <a href="/auth/google/redirect"
+                            class="btn btn-lg btn-outline-secondary fw-bold d-flex align-items-center justify-content-center"
+                            :class="{ 'disabled': isLoading }">
+                            <i class="bi bi-google me-2"></i> 使用 Google 登入
+                        </a>
                     </div>
                     <div class="d-flex justify-content-between align-items-center text-sm mb-4">
                         <RouterLink to="/auth/register" class="text-decoration-none login__link">
@@ -65,6 +70,22 @@ const form = reactive({
 
 const errors = reactive<Record<string, string>>({})
 const isLoading = ref(false)
+
+import { onMounted } from 'vue'
+import { trans } from 'laravel-vue-i18n'
+
+onMounted(() => {
+    const error = route.query.error as string
+    if (error) {
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: trans(error),
+        })
+        // Clear the error from the URL
+        router.replace({ query: { ...route.query, error: undefined } })
+    }
+})
 
 // Validate form
 function validateForm(): boolean {

@@ -37,6 +37,11 @@ const routes = [
         meta: { title: t('router.register') }
     },
     {
+        path: '/auth/callback',
+        component: () => import('@/pages/auth/SocialCallback.vue'),
+        meta: { title: 'Processing Login...' }
+    },
+    {
         path: '/auth/forgot',
         component: () => import('@/pages/auth/Forgot.vue'),
         meta: { title: t('router.forgot_password') }

@@ -43,6 +43,11 @@
                             <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
                             註冊
                         </button>
+                        <a href="/auth/google/redirect"
+                            class="btn btn-lg btn-outline-secondary fw-bold d-flex align-items-center justify-content-center"
+                            :class="{ 'disabled': isLoading }">
+                            <i class="bi bi-google me-2"></i> 使用 Google 註冊
+                        </a>
                     </div>
                     <div class="d-flex justify-content-center align-items-center text-sm mb-4">
                         <span class="text-secondary me-2">已經有帳號了嗎？</span>

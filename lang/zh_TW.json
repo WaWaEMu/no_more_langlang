@@ -37,6 +37,7 @@
         "confirm_password_label": "確認密碼",
         "name_label": "用戶暱稱",
         "failed": "帳號或密碼錯誤。",
+        "google_failed": "Google 驗證失敗",
         "password": "密碼錯誤。",
         "throttle": "嘗試登入次數過多，請在 :seconds 秒後再試。"
     },
@@ -193,5 +194,6 @@
             "current_password": "目前密碼"
         }
     },
-    "The password is incorrect.": "目前密碼不正確。"
+    "The password is incorrect.": "目前密碼不正確。",
+    "auth.google_failed": "Google 驗證失敗"
 }
