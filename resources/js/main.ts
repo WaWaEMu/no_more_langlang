@@ -22,7 +22,9 @@ app.use(pinia);
 app.use(i18nVue, {
     resolve: async (lang: string) => {
         const langs = import.meta.glob('../../lang/*.json');
-        return await langs[`../../lang/${lang}.json`]();
+        // Replace hyphen with underscore to match Laravel's naming convention (e.g., zh-TW -> zh_TW)
+        const langFile = lang.replace('-', '_');
+        return await langs[`../../lang/${langFile}.json`]();
     }
 });
 
