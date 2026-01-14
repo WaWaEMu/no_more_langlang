@@ -55,11 +55,11 @@ class SocialAuthController extends Controller
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return redirect(config('app.frontend_url') . '/#/auth/callback?token=' . $token);
+            return redirect(config('app.frontend_url') . '/auth/callback?token=' . $token);
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage());
-            return redirect(config('app.frontend_url') . '/#/auth/login?error=auth.google_failed');
+            return redirect(config('app.frontend_url') . '/auth/login?error=auth.google_failed');
         }
     }
 }

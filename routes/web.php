@@ -24,7 +24,7 @@ Route::get('/password-reset/{token}', function (Request $request, $token) {
         'email' => $request->query('email'),
     ]);
 
-    return redirect((config('app.frontend_url') . '/#/auth/reset'));
+    return redirect((config('app.frontend_url') . '/auth/reset'));
 });
 
 Route::middleware('web')->get('/api/password-reset/session', function () {
@@ -38,3 +38,8 @@ require __DIR__ . '/auth.php';
 
 Route::get('/auth/google/redirect', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback']);
+
+// SPA fallback route - must be last
+Route::get('/{any}', function () {
+    return view('welcome');
+})->where('any', '.*');
