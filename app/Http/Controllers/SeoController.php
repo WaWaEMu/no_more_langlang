@@ -14,8 +14,12 @@ class SeoController extends Controller
     {
         $path = $request->path();
         $meta = $this->getMeta($path);
+        $schema = $this->getSchema($path);
 
-        return view('welcome', ['meta' => $meta]);
+        return view('welcome', [
+            'meta' => $meta,
+            'schema' => $schema
+        ]);
     }
 
     /**
@@ -55,5 +59,51 @@ class SeoController extends Controller
         }
 
         return $meta;
+    }
+
+    /**
+     * Generate JSON-LD structured data based on the current path.
+     */
+    private function getSchema($path)
+    {
+        $schemas = [];
+
+        // Organization Schema - always included
+        $schemas[] = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => '諾摩浪浪',
+            'url' => url('/'),
+            'logo' => asset('images/logo.png'),
+            'description' => '幫助流浪動物找到溫暖的家',
+        ];
+
+        // Pet Detail Page Schema
+        if (preg_match('/^adopt\/(\d+)$/', $path, $matches)) {
+            $petId = $matches[1];
+            $pet = Pet::with(['images', 'detail'])->find($petId);
+
+            if ($pet) {
+                $schemas[] = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Product',
+                    'name' => $pet->name,
+                    'description' => $pet->detail->adoption_description ?? '',
+                    'image' => $pet->images->map(fn($img) => asset('storage/' . $img->path))->toArray(),
+                    'brand' => [
+                        '@type' => 'Brand',
+                        'name' => '諾摩浪浪'
+                    ],
+                    'offers' => [
+                        '@type' => 'Offer',
+                        'price' => '0',
+                        'priceCurrency' => 'TWD',
+                        'availability' => 'https://schema.org/InStock'
+                    ]
+                ];
+            }
+        }
+
+        return $schemas;
     }
 }

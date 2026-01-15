@@ -21,6 +21,14 @@
     <meta property="twitter:title" content="{{ $meta['title'] ?? '諾摩浪浪' }}">
     <meta property="twitter:description" content="{{ $meta['description'] ?? '' }}">
     <meta property="twitter:image" content="{{ $meta['image'] ?? asset('images/og-image.jpg') }}">
+
+    @if(isset($schema))
+        @foreach($schema as $s)
+            <script type="application/ld+json">
+                        {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+                    </script>
+        @endforeach
+    @endif
 </head>
 
 <body class="antialiased">
