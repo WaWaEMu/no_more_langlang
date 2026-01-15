@@ -14,9 +14,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [\App\Http\Controllers\SeoController::class, 'index']);
 
 Route::get('/password-reset/{token}', function (Request $request, $token) {
     session([
@@ -40,6 +38,4 @@ Route::get('/auth/google/redirect', [\App\Http\Controllers\Auth\SocialAuthContro
 Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback']);
 
 // SPA fallback route - must be last
-Route::get('/{any}', function () {
-    return view('welcome');
-})->where('any', '.*');
+Route::get('/{any}', [\App\Http\Controllers\SeoController::class, 'index'])->where('any', '.*');
