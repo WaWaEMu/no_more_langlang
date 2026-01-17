@@ -37,5 +37,7 @@ require __DIR__ . '/auth.php';
 Route::get('/auth/google/redirect', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback']);
 
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index']);
+
 // SPA fallback route - must be last
 Route::get('/{any}', [\App\Http\Controllers\SeoController::class, 'index'])->where('any', '.*');
