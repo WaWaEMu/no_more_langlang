@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" href="{{ $meta['url'] ?? url('/') }}">
 
     <title>{{ $meta['title'] ?? '諾摩浪浪' }}</title>
     <meta name="description" content="{{ $meta['description'] ?? '' }}">
@@ -25,8 +26,8 @@
     @if(isset($schema))
         @foreach($schema as $s)
             <script type="application/ld+json">
-                        {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-                    </script>
+                                {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+                            </script>
         @endforeach
     @endif
 </head>
