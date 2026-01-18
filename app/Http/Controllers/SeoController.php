@@ -79,12 +79,43 @@ class SeoController extends Controller
         ];
 
         // Pet Detail Page Schema
-        if (preg_match('/^adopt\/(\d+)$/', $path, $matches)) {
-            $petId = $matches[1];
-            $pet = Pet::with(['images', 'detail'])->find($petId);
+        if (preg_match('/^adopt\/(.+)$/', $path, $matches)) {
+            $petIdOrSlug = $matches[1];
+            // Try to find by slug first, then by ID
+            $pet = Pet::with(['images', 'detail'])
+                ->where('slug', $petIdOrSlug)
+                ->orWhere('id', $petIdOrSlug)
+                ->first();
 
             if ($pet) {
+                // BreadcrumbList Schema
                 $schemas[] = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        [
+                            '@type' => 'ListItem',
+                            'position' => 1,
+                            'name' => '首頁',
+                            'item' => url('/')
+                        ],
+                        [
+                            '@type' => 'ListItem',
+                            'position' => 2,
+                            'name' => '領養專區',
+                            'item' => url('/adopt')
+                        ],
+                        [
+                            '@type' => 'ListItem',
+                            'position' => 3,
+                            'name' => $pet->name,
+                            'item' => url('/adopt/' . ($pet->slug ?: $pet->id))
+                        ]
+                    ]
+                ];
+
+                // Enhanced Product Schema with additional properties
+                $productSchema = [
                     '@context' => 'https://schema.org',
                     '@type' => 'Product',
                     'name' => $pet->name,
@@ -99,8 +130,58 @@ class SeoController extends Controller
                         'price' => '0',
                         'priceCurrency' => 'TWD',
                         'availability' => 'https://schema.org/InStock'
-                    ]
+                    ],
+                    'category' => 'Pet Adoption',
+                    'additionalProperty' => []
                 ];
+
+                // Add pet-specific properties
+                if ($pet->type) {
+                    $productSchema['additionalProperty'][] = [
+                        '@type' => 'PropertyValue',
+                        'name' => 'Species',
+                        'value' => $pet->type
+                    ];
+                }
+
+                if ($pet->age) {
+                    $productSchema['additionalProperty'][] = [
+                        '@type' => 'PropertyValue',
+                        'name' => 'Age',
+                        'value' => $pet->age
+                    ];
+                }
+
+                if ($pet->gender) {
+                    $productSchema['additionalProperty'][] = [
+                        '@type' => 'PropertyValue',
+                        'name' => 'Gender',
+                        'value' => $pet->gender
+                    ];
+                }
+
+                if ($pet->color) {
+                    $productSchema['additionalProperty'][] = [
+                        '@type' => 'PropertyValue',
+                        'name' => 'Color',
+                        'value' => $pet->color
+                    ];
+                }
+
+                if ($pet->city) {
+                    $productSchema['additionalProperty'][] = [
+                        '@type' => 'PropertyValue',
+                        'name' => 'Location',
+                        'value' => $pet->city . ($pet->town ? ', ' . $pet->town : '')
+                    ];
+                }
+
+                // Remove empty additionalProperty array if no properties were added
+                if (empty($productSchema['additionalProperty'])) {
+                    unset($productSchema['additionalProperty']);
+                }
+
+                $schemas[] = $productSchema;
             }
         }
 
