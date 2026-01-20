@@ -1,22 +1,22 @@
 <template>
     <Navbar />
-    <Content title="網站理念">
+    <Content :title="$t('Website Concept')">
         <template #content>
             <div class="about__content">
                 <!-- About Me Section -->
                 <div class="about__section mb-5">
                     <h3 class="about__section-title">
-                        <i class="bi bi-person-heart me-2"></i>關於我
+                        <i class="bi bi-person-heart me-2"></i>{{ $t('About Me') }}
                     </h3>
                     <div class="about__card">
                         <p class="about__text">
-                            嗨！我是一位軟體工程師，平日工作量較大，但心裡一直有個願望——想在浪浪的世界盡一份力。
+                            {{ $t('Hi! I am a software engineer...') }}
                         </p>
                         <p class="about__text">
-                            雖然沒辦法像學生時期一樣，到各處當志工，但我選擇用自己最擅長的方式——寫程式，來幫助更多浪浪找到溫暖的家。
+                            {{ $t('I chose to use my skills to help strays...') }}
                         </p>
                         <p class="about__text mb-0">
-                            這就是開發「諾摩浪浪」的原因。
+                            {{ $t('This is why I developed "No More Langlang".') }}
                         </p>
                     </div>
                 </div>
@@ -42,14 +42,14 @@
                 <!-- Future Plans Section -->
                 <div class="about__section mb-5">
                     <h3 class="about__section-title">
-                        <i class="bi bi-rocket-takeoff me-2"></i>未來計劃
+                        <i class="bi bi-rocket-takeoff me-2"></i>{{ $t('Future Plans') }}
                     </h3>
                     <div class="about__card">
                         <p class="about__text">
-                            日後空閒時間，我會持續經營這個網站，不斷擴充功能、優化使用體驗。
+                            {{ $t('I will continue to maintain this site...') }}
                         </p>
                         <p class="about__text mb-0">
-                            我也計劃開放<strong>免費的 API</strong>，讓其他網站的軟體工程師可以輕鬆置入「諾摩浪浪」待領養動物的資料，讓更多人看到這些需要家的毛孩子們。
+                            <span v-html="$t('I plan to open a free API...').replace('免費的 API', '<strong>免費的 API</strong>')"></span>
                         </p>
                         <!-- <p class="about__text mb-0">
                             希望透過科技的力量，串連起每一份愛心。
@@ -60,11 +60,11 @@
                 <!-- Contact Section -->
                 <div class="about__section">
                     <h3 class="about__section-title">
-                        <i class="bi bi-chat-dots me-2"></i>聯絡我
+                        <i class="bi bi-chat-dots me-2"></i>{{ $t('Contact Me') }}
                     </h3>
                     <div class="about__card about__card--contact">
                         <p class="about__text">
-                            如果在使用體驗上有任何想分享的，都可以直接加我的 LINE 告訴我～
+                            {{ $t('Feel free to add my LINE...') }}
                         </p>
                         <div class="about__contact">
                             <i class="bi bi-line me-2"></i>

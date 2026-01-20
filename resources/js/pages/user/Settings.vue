@@ -1,11 +1,11 @@
 <template>
     <Navbar />
-    <Content title="帳號設定">
+    <Content :title="$t('Settings')">
         <template v-slot:content>
             <div class="settings__content">
                 <!-- Profile Section -->
                 <div class="settings__section mb-5">
-                    <h3 class="settings__section-title">基本資料</h3>
+                    <h3 class="settings__section-title">{{ $t('Basic Info') }}</h3>
                     <div class="settings__card">
                         <div class="mb-4 text-center">
                             <div class="settings__avatar">
@@ -15,19 +15,19 @@
 
                         <form @submit.prevent="updateProfile">
                             <div class="mb-3">
-                                <label class="form-label">電子郵件</label>
+                                <label class="form-label">{{ $t('Email') }}</label>
                                 <input type="email" class="form-control" :value="user?.email" disabled readonly>
-                                <div class="form-text">電子郵件無法修改</div>
+                                <div class="form-text">{{ $t('Email cannot be changed') }}</div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">顯示名稱</label>
+                                <label class="form-label">{{ $t('Nickname') }}</label>
                                 <input type="text" class="form-control" v-model="profileForm.name"
-                                    placeholder="請輸入您的名稱">
+                                    :placeholder="$t('auth.name_placeholder')">
                             </div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary" :disabled="loading">
                                     <span v-if="loading" class="spinner-border spinner-border-sm me-1"></span>
-                                    儲存變更
+                                    {{ $t('Save Changes') }}
                                 </button>
                             </div>
                         </form>
@@ -36,25 +36,25 @@
 
                 <!-- Security Section -->
                 <div class="settings__section">
-                    <h3 class="settings__section-title">安全設定</h3>
+                    <h3 class="settings__section-title">{{ $t('Security Settings') }}</h3>
                     <div class="settings__card">
                         <form @submit.prevent="updatePassword">
                             <div class="mb-3">
-                                <label class="form-label">目前密碼</label>
+                                <label class="form-label">{{ $t('Current Password') }}</label>
                                 <input type="password" class="form-control" v-model="passwordForm.current_password">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">新密碼</label>
+                                <label class="form-label">{{ $t('New Password') }}</label>
                                 <input type="password" class="form-control" v-model="passwordForm.password">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">確認新密碼</label>
+                                <label class="form-label">{{ $t('Confirm New Password') }}</label>
                                 <input type="password" class="form-control"
                                     v-model="passwordForm.password_confirmation">
                             </div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-outline-primary" :disabled="loading">
-                                    修改密碼
+                                    {{ $t('Update Password') }}
                                 </button>
                             </div>
                         </form>

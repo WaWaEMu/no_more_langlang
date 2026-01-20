@@ -1,14 +1,14 @@
 <template>
     <Navbar />
-    <Content :title="pet ? pet.title : '載入中...'">
+    <Content :title="pet ? pet.title : $t('Loading...')">
         <template #content>
             <div class="pet-detail__wrapper mx-auto">
                 <!-- Loading State -->
                 <div v-if="loading" class="text-center p-5">
                     <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">載入中...</span>
+                        <span class="visually-hidden">{{ $t('Loading...') }}</span>
                     </div>
-                    <p class="mt-3 text-secondary">載入中...</p>
+                    <p class="mt-3 text-secondary">{{ $t('Loading...') }}</p>
                 </div>
 
                 <!-- Error State -->
@@ -16,7 +16,7 @@
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     {{ error }}
                     <div class="mt-3">
-                        <RouterLink to="/adopt" class="btn btn-primary">返回列表</RouterLink>
+                        <RouterLink to="/adopt" class="btn btn-primary">{{ $t('Back to List') }}</RouterLink>
                     </div>
                 </div>
 
@@ -45,7 +45,7 @@
                         <div class="card shadow-sm border-0 pet-detail__card-hover">
                             <div class="card-body p-4">
                                 <h3 class="fs-5 fw-bold text-primary mb-3 d-flex align-items-center">
-                                    <i class="bi bi-person-fill me-2"></i>發文者
+                                    <i class="bi bi-person-fill me-2"></i>{{ $t('Posted by') }}
                                 </h3>
                                 <div class="d-flex flex-column gap-2">
                                     <RouterLink :to="`/user/profile/${pet.user.id}`"
@@ -53,7 +53,8 @@
                                         <i class="bi bi-person-circle me-2"></i>{{ pet.user.name }}
                                     </RouterLink>
                                     <span class="text-muted small d-flex align-items-center">
-                                        <i class="bi bi-calendar me-1"></i>發布於 {{ formatDate(pet.created_at) }}
+                                        <i class="bi bi-calendar me-1"></i>{{ $t('Published at') }} {{
+                                            formatDate(pet.created_at) }}
                                     </span>
                                 </div>
                             </div>
@@ -62,20 +63,20 @@
                         <!-- Action Buttons -->
                         <div class="d-flex gap-2">
                             <RouterLink to="/adopt" class="btn btn-outline-secondary flex-fill py-2 fw-semibold">
-                                <i class="bi bi-arrow-left me-2"></i>返回列表
+                                <i class="bi bi-arrow-left me-2"></i>{{ $t('Back to List') }}
                             </RouterLink>
 
                             <!-- Owner Actions -->
                             <template v-if="isOwner">
                                 <button @click="handleDelete" class="btn btn-danger flex-fill py-2 fw-semibold">
-                                    <i class="bi bi-trash me-2"></i>刪除
+                                    <i class="bi bi-trash me-2"></i>{{ $t('Delete') }}
                                 </button>
                             </template>
 
                             <!-- Visitor Actions -->
                             <template v-else>
                                 <button @click="handleApply" class="btn btn-primary flex-fill py-2 fw-semibold">
-                                    <i class="bi bi-envelope-heart me-2"></i>申請領養
+                                    <i class="bi bi-envelope-heart me-2"></i>{{ $t('Apply Adoption') }}
                                 </button>
                             </template>
                         </div>
@@ -87,62 +88,71 @@
                         <div class="card shadow-sm border-0 pet-detail__card-hover">
                             <div class="card-body p-4">
                                 <h3 class="fs-5 fw-bold text-primary mb-3 d-flex align-items-center">
-                                    <i class="bi bi-info-circle-fill me-2"></i>基本資訊
+                                    <i class="bi bi-info-circle-fill me-2"></i>{{ $t('Basic Info') }}
                                 </h3>
                                 <div class="row row-cols-2 g-3">
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">動物名稱</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Pet Name')
+                                            }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.name }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">動物類別</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Pet Type')
+                                            }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.type }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">性別</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Gender') }}</span>
                                             <span class="fw-semibold text-dark">
                                                 <i
                                                     :class="['bi', pet.gender === 'male' ? 'bi-gender-male text-primary' : 'bi-gender-female text-danger']"></i>
-                                                {{ pet.gender === 'male' ? '男生' : '女生' }}
+                                                {{ pet.gender === 'male' ? $t('Male') :
+                                                    $t('Female') }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">年齡</span>
-                                            <span class="fw-semibold text-dark">{{ pet.age }} 歲</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Age') }}</span>
+                                            <span class="fw-semibold text-dark">{{ pet.age }} {{ $t('years old')
+                                            }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">毛色</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Color') }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.color }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">毛型</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Fur Type')
+                                            }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.fur_type }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">結紮狀態</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Neuter Status')
+                                            }}</span>
                                             <span class="fw-semibold"
                                                 :class="pet.is_neuter ? 'text-success' : 'text-warning'">
-                                                {{ pet.is_neuter ? '已結紮' : '未結紮' }}
+                                                {{ pet.is_neuter ? $t('Neutered') : $t('Not Neutered') }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">是否為流浪動物</span>
-                                            <span class="fw-semibold text-dark">{{ pet.is_stray ? '是' : '否' }}</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Is Stray Animal')
+                                            }}</span>
+                                            <span class="fw-semibold text-dark">{{ pet.is_stray ? $t('Yes') :
+                                                $t('No')
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -153,24 +163,25 @@
                         <div class="card shadow-sm border-0 pet-detail__card-hover">
                             <div class="card-body p-4">
                                 <h3 class="fs-5 fw-bold text-primary mb-3 d-flex align-items-center">
-                                    <i class="bi bi-geo-alt-fill me-2"></i>地點資訊
+                                    <i class="bi bi-geo-alt-fill me-2"></i>{{ $t('Location Info') }}
                                 </h3>
                                 <div class="row row-cols-2 g-3">
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">所在縣市</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('City') }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.city }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">所在鄉鎮</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Town') }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.town }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div v-if="pet.sendable_cities && pet.sendable_cities.length > 0" class="mt-3">
-                                    <span class="small text-secondary fw-medium d-block mb-2">可送養縣市範圍</span>
+                                    <span class="small text-secondary fw-medium d-block mb-2">{{
+                                        $t('Sendable Cities') }}</span>
                                     <div class="d-flex flex-wrap gap-2">
                                         <span v-for="city in pet.sendable_cities" :key="city" class="pet-detail__tag">
                                             {{ city }}
@@ -191,14 +202,14 @@
                                                 class="accordion-button pet-detail__accordion-button rounded-2 fw-semibold"
                                                 type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
                                                 aria-expanded="true" aria-controls="collapseOne">
-                                                <i class="bi bi-card-text me-2"></i>送養說明
+                                                <i class="bi bi-card-text me-2"></i>{{ $t('Adoption Description') }}
                                             </button>
                                         </h2>
                                         <div id="collapseOne" class="accordion-collapse collapse show"
                                             aria-labelledby="headingOne" data-bs-parent="#petDetailAccordion">
                                             <div class="accordion-body px-0">
                                                 <p class="text-secondary lh-lg mb-0" style="white-space: pre-wrap;">
-                                                    {{ pet.detail?.adoption_description || '無' }}
+                                                    {{ pet.detail?.adoption_description || $t('None') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -211,14 +222,14 @@
                                                 class="accordion-button pet-detail__accordion-button collapsed rounded-2 fw-semibold"
                                                 type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
                                                 aria-expanded="false" aria-controls="collapseTwo">
-                                                <i class="bi bi-heart-pulse me-2"></i>健康狀態說明
+                                                <i class="bi bi-heart-pulse me-2"></i>{{ $t('Health Description') }}
                                             </button>
                                         </h2>
                                         <div id="collapseTwo" class="accordion-collapse collapse"
                                             aria-labelledby="headingTwo" data-bs-parent="#petDetailAccordion">
                                             <div class="accordion-body px-0">
                                                 <p class="text-secondary lh-lg mb-0" style="white-space: pre-wrap;">
-                                                    {{ pet.detail?.health_description || '無' }}
+                                                    {{ pet.detail?.health_description || $t('None') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -231,14 +242,15 @@
                                                 class="accordion-button pet-detail__accordion-button collapsed rounded-2 fw-semibold"
                                                 type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
                                                 aria-expanded="false" aria-controls="collapseThree">
-                                                <i class="bi bi-clipboard-check me-2"></i>領養條件
+                                                <i class="bi bi-clipboard-check me-2"></i>{{
+                                                    $t('Adoption Conditions') }}
                                             </button>
                                         </h2>
                                         <div id="collapseThree" class="accordion-collapse collapse"
                                             aria-labelledby="headingThree" data-bs-parent="#petDetailAccordion">
                                             <div class="accordion-body px-0">
                                                 <p class="text-secondary lh-lg mb-0" style="white-space: pre-wrap;">
-                                                    {{ pet.detail?.adoption_condition || '無' }}
+                                                    {{ pet.detail?.adoption_condition || $t('None') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -267,6 +279,9 @@ import Content from '@/components/Content.vue'
 import PetComment from '@/components/adopt/PetComment.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { trans } from 'laravel-vue-i18n'
+
+const $t = trans
 
 const route = useRoute()
 const router = useRouter()
@@ -297,7 +312,7 @@ async function fetchPetDetail() {
         const data = await adoptStore.fetchPetById(petId.value)
         pet.value = data
     } catch (err: any) {
-        error.value = err.response?.data?.message || '無法載入寵物詳細資料'
+        error.value = err.response?.data?.message || $t('Unable to load pet details')
         console.error('Failed to fetch pet details:', err)
     } finally {
         loading.value = false
@@ -306,7 +321,7 @@ async function fetchPetDetail() {
 
 async function handleApply() {
     if (!pet.value) return
-    if (await authStore.checkAuth('登入後即可提交領養申請，給浪浪一個家！')) {
+    if (await authStore.checkAuth($t('Login to submit an adoption application!'))) {
         router.push(`/adopt/${pet.value.id}/apply`)
     }
 }
@@ -315,14 +330,14 @@ async function handleDelete() {
     if (!pet.value) return
 
     const result = await Swal.fire({
-        title: '確定要刪除嗎？',
-        text: "刪除後將無法復原！",
+        title: $t('Are you sure you want to delete?'),
+        text: $t('This action cannot be undone!'),
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: '是的，刪除它！',
-        cancelButtonText: '取消'
+        confirmButtonText: $t('Yes, delete it!'),
+        cancelButtonText: $t('Cancel')
     })
 
     if (result.isConfirmed) {
@@ -331,8 +346,8 @@ async function handleDelete() {
 
             await Swal.fire({
                 icon: 'success',
-                title: '刪除成功',
-                text: '寵物資料已刪除',
+                title: $t('Deleted successfully'),
+                text: $t('Pet data has been deleted'),
                 timer: 1500,
                 showConfirmButton: false
             })
@@ -346,8 +361,8 @@ async function handleDelete() {
             console.error('Delete failed:', error)
             Swal.fire({
                 icon: 'error',
-                title: '刪除失敗',
-                text: '請稍後再試',
+                title: $t('Delete failed'),
+                text: $t('Please try again later'),
             })
         }
     }

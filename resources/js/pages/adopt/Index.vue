@@ -1,6 +1,6 @@
 <template>
     <Navbar />
-    <Content title="動物認養">
+    <Content :title="$t('Adopt')">
         <template #content>
             <div>
                 <PetSearch />
@@ -20,7 +20,9 @@ import Pagination from '@/components/common/Pagination.vue'
 import { onMounted } from 'vue'
 import { useAdoptStore } from '@/stores/adopt'
 import { storeToRefs } from 'pinia'
+import { trans } from 'laravel-vue-i18n'
 
+const $t = trans
 const adoptStore = useAdoptStore()
 const { activePets, currentPage, lastPage } = storeToRefs(adoptStore)
 const { fetchPets } = adoptStore

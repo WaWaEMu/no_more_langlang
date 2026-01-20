@@ -2,48 +2,49 @@
     <div class="login__container d-flex align-items-center justify-content-center min-vh-100">
         <div class="card shadow-lg border-0 login__card">
             <div class="card-body p-5">
-                <h2 class="text-center mb-4 fw-bold login__title">登入</h2>
+                <h2 class="text-center mb-4 fw-bold login__title">{{ $t('Login Title') }}</h2>
                 <form @submit.prevent="handleLogin">
                     <div class="mb-3">
-                        <label for="login-email" class="form-label text-secondary">帳號(Email)</label>
+                        <label for="login-email" class="form-label text-secondary">{{ $t('Email') }}</label>
                         <input type="text" id="login-email" v-model.trim="form.email" :disabled="isLoading"
-                            class="form-control form-control-lg login__input" placeholder="請輸入電子信箱"
-                            :class="{ 'is-invalid': errors.email }" @focus="delete errors.email"
-                            @input="delete errors.email">
+                            class="form-control form-control-lg login__input"
+                            :placeholder="$t('Enter Email')" :class="{ 'is-invalid': errors.email }"
+                            @focus="delete errors.email" @input="delete errors.email">
                         <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                     <div class="mb-4">
-                        <label for="login-password" class="form-label text-secondary">密碼</label>
+                        <label for="login-password" class="form-label text-secondary">{{ $t('Password')
+                            }}</label>
                         <input type="password" id="login-password" v-model="form.password" :disabled="isLoading"
-                            class="form-control form-control-lg login__input" placeholder="請輸入密碼"
-                            :class="{ 'is-invalid': errors.password }" @focus="delete errors.password"
-                            @input="delete errors.password">
+                            class="form-control form-control-lg login__input"
+                            :placeholder="$t('Enter Password')" :class="{ 'is-invalid': errors.password }"
+                            @focus="delete errors.password" @input="delete errors.password">
                         <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
                     </div>
                     <div class="d-grid gap-2 mb-4">
                         <button type="submit" class="btn login__btn btn-lg text-white fw-bold" :disabled="isLoading">
                             <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
                                 aria-hidden="true"></span>
-                            {{ isLoading ? '登入中...' : '登入' }}
+                            {{ isLoading ? $t('Sending...') : $t('Login Title') }}
                         </button>
                         <a href="/auth/google/redirect"
                             class="btn btn-lg btn-outline-secondary fw-bold d-flex align-items-center justify-content-center"
                             :class="{ 'disabled': isLoading }">
-                            <i class="bi bi-google me-2"></i> 使用 Google 登入
+                            <i class="bi bi-google me-2"></i> {{ $t('Login with Google') }}
                         </a>
                     </div>
                     <div class="d-flex justify-content-between align-items-center text-sm mb-4">
                         <RouterLink to="/auth/register" class="text-decoration-none login__link">
-                            註冊新帳號
+                            {{ $t('Register New Account') }}
                         </RouterLink>
                         <RouterLink to="/auth/forgot" class="text-decoration-none text-secondary">
-                            忘記密碼
+                            {{ $t('Forgot Password?') }}
                         </RouterLink>
                     </div>
 
                     <div class="text-center pt-3 border-top">
                         <RouterLink to="/adopt" class="text-decoration-none login__home-link">
-                            <i class="bi bi-house-door-fill me-2"></i>返回首頁
+                            <i class="bi bi-house-door-fill me-2"></i>{{ $t('Back to Home') }}
                         </RouterLink>
                     </div>
                 </form>
@@ -96,19 +97,19 @@ function validateForm(): boolean {
 
     // Validate email
     if (!form.email) {
-        errors.email = '請輸入電子信箱'
+        errors.email = trans('The :attribute field is required.', { attribute: trans('Email') })
         isValid = false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-        errors.email = '請輸入有效的電子信箱格式'
+        errors.email = trans('The :attribute must be a valid email address.', { attribute: trans('Email') })
         isValid = false
     }
 
     // Validate password
     if (!form.password) {
-        errors.password = '請輸入密碼'
+        errors.password = trans('The :attribute field is required.', { attribute: trans('Password') })
         isValid = false
     } else if (form.password.length < 8) {
-        errors.password = '密碼至少需要 8 個字元'
+        errors.password = trans('The :attribute must be at least :min characters.', { attribute: trans('Password'), min: '8' })
         isValid = false
     }
 
@@ -142,7 +143,7 @@ async function handleLogin() {
         console.error('登入失敗:', error)
 
         // Handle error messages
-        let errorMessage = '帳號或密碼錯誤'
+        let errorMessage = trans('These credentials do not match our records.')
 
         if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
@@ -152,24 +153,24 @@ async function handleLogin() {
                 const validationErrors = axiosError.response.data.errors
                 if (validationErrors) {
                     const firstError = Object.values(validationErrors)[0]
-                    const errorMsg = firstError ? firstError[0] : '請檢查輸入的資料'
+                    const errorMsg = firstError ? firstError[0] : trans('Error')
                     // Translate specific backend error
                     if (errorMsg === 'These credentials do not match our records.') {
-                        errorMessage = '帳號或密碼錯誤'
+                        errorMessage = trans('These credentials do not match our records.')
                     } else {
-                        errorMessage = errorMsg
+                        errorMessage = trans(errorMsg)
                     }
                 }
             } else if (axiosError.response?.status === 419) {
-                errorMessage = '頁面已過期，請重新整理後再試'
+                errorMessage = trans('Please try again later')
             } else if (backendMessage) {
-                errorMessage = backendMessage
+                errorMessage = trans(backendMessage)
             }
         }
 
         Swal.fire({
             icon: 'error',
-            title: '登入失敗',
+            title: trans('Login Title') + trans('Delete failed').replace('刪除', ''), // Hacky way to get "失敗"
             text: errorMessage,
         })
     }

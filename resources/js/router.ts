@@ -9,32 +9,32 @@ const routes = [
     {
         path: '/adopt',
         component: () => import('@/pages/adopt/Index.vue'),
-        meta: { title: t('router.adopt') }
+        meta: { title: t('Adopt') }
     },
     {
         path: '/adopt/new',
         component: () => import('@/pages/adopt/Create.vue'),
-        meta: { title: t('router.new_adoption') }
+        meta: { title: t('New Adoption') }
     },
     {
         path: '/adopt/:id/apply',
         component: () => import('@/pages/adopt/Application.vue'),
-        meta: { title: t('router.apply_adoption') }
+        meta: { title: t('Apply Adoption') }
     },
     {
         path: '/adopt/:id',
         component: () => import('@/pages/adopt/Detail.vue'),
-        meta: { title: t('router.pet_details') }
+        meta: { title: t('Pet Details') }
     },
     {
         path: '/auth/login',
         component: () => import('@/pages/auth/Login.vue'),
-        meta: { title: t('router.login') }
+        meta: { title: t('Login') }
     },
     {
         path: '/auth/register',
         component: () => import('@/pages/auth/Register.vue'),
-        meta: { title: t('router.register') }
+        meta: { title: t('Register') }
     },
     {
         path: '/auth/callback',
@@ -44,52 +44,52 @@ const routes = [
     {
         path: '/auth/forgot',
         component: () => import('@/pages/auth/Forgot.vue'),
-        meta: { title: t('router.forgot_password') }
+        meta: { title: t('Forgot Password') }
     },
     {
         path: '/auth/reset',
         component: () => import('@/pages/auth/Reset.vue'),
-        meta: { title: t('router.reset_password') }
+        meta: { title: t('Reset Password') }
     },
     {
         path: '/welcome',
         component: () => import('@/pages/auth/Welcome.vue'),
-        meta: { title: t('router.welcome') }
+        meta: { title: t('Welcome') }
     },
     {
         path: '/bye',
         component: () => import('@/pages/auth/Bye.vue'),
-        meta: { title: t('router.goodbye') }
+        meta: { title: t('Goodbye') }
     },
     {
         path: '/user/profile/:id',
         component: () => import('@/pages/user/Profile.vue'),
-        meta: { title: t('router.profile') }
+        meta: { title: t('Profile') }
     },
     {
         path: '/user/my-pets',
         component: () => import('@/pages/user/MyPets.vue'),
-        meta: { title: t('router.my_pets') }
+        meta: { title: t('My Pets') }
     },
     {
         path: '/user/favorites',
         component: () => import('@/pages/user/Favorites.vue'),
-        meta: { title: t('router.favorites') }
+        meta: { title: t('Favorites') }
     },
     {
         path: '/user/settings',
         component: () => import('@/pages/user/Settings.vue'),
-        meta: { title: t('router.settings') }
+        meta: { title: t('Settings') }
     },
     {
         path: '/user/applications',
         component: () => import('@/pages/user/Applications.vue'),
-        meta: { title: t('router.applications') }
+        meta: { title: t('Applications') }
     },
     {
         path: '/about',
         component: () => import('@/pages/About.vue'),
-        meta: { title: t('router.about') }
+        meta: { title: t('Website Concept') }
     }
 ]
 

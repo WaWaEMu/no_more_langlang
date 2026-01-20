@@ -2,37 +2,44 @@
     <div class="register__container d-flex align-items-center justify-content-center min-vh-100">
         <div class="card shadow-lg border-0 register__card">
             <div class="card-body p-5">
-                <h2 class="text-center mb-4 fw-bold register__title">註冊</h2>
+                <h2 class="text-center mb-4 fw-bold register__title">{{ $t('Register Title') }}</h2>
                 <form @submit.prevent="handleRegister">
                     <div class="mb-3">
-                        <label for="register-email" class="form-label text-secondary">電子信箱</label>
+                        <label for="register-email" class="form-label text-secondary">{{ $t('Email')
+                        }}</label>
                         <input type="text" id="register-email" v-model="form.email" required
-                            class="form-control form-control-lg register__input" placeholder="請輸入電子信箱"
-                            :class="{ 'is-invalid': errors.email }" @focus="delete errors.email"
-                            @input="delete errors.email">
+                            class="form-control form-control-lg register__input"
+                            :placeholder="$t('Enter Email')" :class="{ 'is-invalid': errors.email }"
+                            @focus="delete errors.email" @input="delete errors.email">
                         <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                     <div class="mb-3">
-                        <label for="register-name" class="form-label text-secondary">用戶暱稱</label>
+                        <label for="register-name" class="form-label text-secondary">{{ $t('Nickname') }}</label>
                         <input type="text" id="register-name" v-model="form.name" required
-                            class="form-control form-control-lg register__input" placeholder="請輸入用戶暱稱"
-                            :class="{ 'is-invalid': errors.name }" @focus="delete errors.name"
-                            @input="delete errors.name">
+                            class="form-control form-control-lg register__input"
+                            :placeholder="$t('auth.name_placeholder')" :class="{ 'is-invalid': errors.name }"
+                            @focus="delete errors.name" @input="delete errors.name">
                         <div v-if="errors.name" class="invalid-feedback">{{ errors.name }}</div>
                     </div>
                     <div class="mb-3">
-                        <label for="register-password" class="form-label text-secondary">密碼</label>
+                        <label for="register-password" class="form-label text-secondary">{{ $t('Password')
+                        }}</label>
                         <input type="password" id="register-password" v-model="form.password" required
-                            class="form-control form-control-lg register__input" placeholder="請輸入密碼"
-                            :class="{ 'is-invalid': errors.password }" @focus="delete errors.password"
-                            @input="delete errors.password">
+                            class="form-control form-control-lg register__input"
+                            :placeholder="$t('Enter Password')" :class="{ 'is-invalid': errors.password }"
+                            @focus="delete errors.password" @input="delete errors.password">
                         <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
-                        <div v-else class="form-text register__hint">密碼長度至少需為 8 個字元</div>
+                        <div v-else class="form-text register__hint">{{ $t('The :attribute must be at least :min characters.', {
+                            attribute:
+                                $t('Password'), min: '8'
+                        }) }}</div>
                     </div>
                     <div class="mb-4">
-                        <label for="confirm-password" class="form-label text-secondary">確認密碼</label>
+                        <label for="confirm-password" class="form-label text-secondary">{{
+                            $t('Confirm Password') }}</label>
                         <input type="password" id="confirm-password" v-model="form.password_confirmation" required
-                            class="form-control form-control-lg register__input" placeholder="請再次輸入密碼"
+                            class="form-control form-control-lg register__input"
+                            :placeholder="$t('auth.confirm_password_placeholder')"
                             :class="{ 'is-invalid': errors.password_confirmation }"
                             @focus="delete errors.password_confirmation" @input="delete errors.password_confirmation">
                         <div v-if="errors.password_confirmation" class="invalid-feedback">{{
@@ -41,24 +48,24 @@
                     <div class="d-grid gap-2 mb-4">
                         <button type="submit" :disabled="isLoading" class="btn register__btn btn-lg text-white fw-bold">
                             <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                            註冊
+                            {{ $t('Register Title') }}
                         </button>
                         <a href="/auth/google/redirect"
                             class="btn btn-lg btn-outline-secondary fw-bold d-flex align-items-center justify-content-center"
                             :class="{ 'disabled': isLoading }">
-                            <i class="bi bi-google me-2"></i> 使用 Google 註冊
+                            <i class="bi bi-google me-2"></i> {{ $t('Login with Google').replace('登入', '註冊') }}
                         </a>
                     </div>
                     <div class="d-flex justify-content-center align-items-center text-sm mb-4">
-                        <span class="text-secondary me-2">已經有帳號了嗎？</span>
+                        <span class="text-secondary me-2">{{ $t('Already have an account?') }}</span>
                         <RouterLink to="/auth/login" class="text-decoration-none register__link">
-                            登入
+                            {{ $t('Login Title') }}
                         </RouterLink>
                     </div>
 
                     <div class="text-center pt-3 border-top">
                         <RouterLink to="/adopt" class="text-decoration-none register__home-link">
-                            <i class="bi bi-house-door-fill me-2"></i>返回首頁
+                            <i class="bi bi-house-door-fill me-2"></i>{{ $t('Back to Home') }}
                         </RouterLink>
                     </div>
                 </form>
@@ -72,6 +79,7 @@ import { reactive, ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
+import { trans } from 'laravel-vue-i18n'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -93,28 +101,28 @@ function validateForm(): boolean {
     let isValid = true
 
     if (!form.email) {
-        errors.email = '請輸入電子信箱'
+        errors.email = trans('The :attribute field is required.', { attribute: trans('Email') })
         isValid = false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-        errors.email = '請輸入有效的電子信箱格式'
+        errors.email = trans('The :attribute must be a valid email address.', { attribute: trans('Email') })
         isValid = false
     }
 
     if (!form.name) {
-        errors.name = '請輸入用戶暱稱'
+        errors.name = trans('The :attribute field is required.', { attribute: trans('Nickname') })
         isValid = false
     }
 
     if (!form.password) {
-        errors.password = '請輸入密碼'
+        errors.password = trans('The :attribute field is required.', { attribute: trans('Password') })
         isValid = false
     } else if (form.password.length < 8) {
-        errors.password = '密碼長度至少需為 8 個字元'
+        errors.password = trans('The :attribute must be at least :min characters.', { attribute: trans('Password'), min: '8' })
         isValid = false
     }
 
     if (form.password !== form.password_confirmation) {
-        errors.password_confirmation = '兩次輸入的密碼不一致'
+        errors.password_confirmation = trans('The :attribute confirmation does not match.', { attribute: trans('Password') })
         isValid = false
     }
 
@@ -133,8 +141,8 @@ async function handleRegister() {
         // Show success message
         await Swal.fire({
             icon: 'success',
-            title: '註冊成功！',
-            text: '即將前往登入頁面...',
+            title: trans('Registration Successful!'),
+            text: trans('Redirecting to login page...'),
             timer: 1500,
             showConfirmButton: false
         })
@@ -149,13 +157,13 @@ async function handleRegister() {
         if (error.response?.status === 422) {
             const backendErrors = error.response.data.errors
             Object.keys(backendErrors).forEach(key => {
-                errors[key] = backendErrors[key][0]
+                errors[key] = trans(backendErrors[key][0])
             })
         } else {
             Swal.fire({
                 icon: 'error',
-                title: '註冊失敗',
-                text: error.response?.data?.message || '請檢查您的網路連線 or 稍後再試',
+                title: trans('Register Title') + trans('Delete failed').replace('刪除', ''),
+                text: error.response?.data?.message ? trans(error.response.data.message) : trans('Please try again later'),
                 confirmButtonColor: '#2c5282'
             })
         }
