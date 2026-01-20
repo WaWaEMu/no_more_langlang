@@ -91,13 +91,13 @@ class AdoptionApplicationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => '申請狀態已更新',
+                'message' => __('Application status updated'),
                 'data' => $application
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => '更新失敗：' . $e->getMessage()
+                'message' => __('Update failed:') . $e->getMessage()
             ], 500);
         }
     }

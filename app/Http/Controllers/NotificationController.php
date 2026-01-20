@@ -61,10 +61,10 @@ class NotificationController extends Controller
         $success = $this->notificationService->markAsRead($id, $user->id);
 
         if ($success) {
-            return response()->json(['message' => '已標記為已讀']);
+            return response()->json(['message' => __('Marked as read')]);
         }
 
-        return response()->json(['message' => '標記失敗'], 404);
+        return response()->json(['message' => __('Mark failed')], 404);
     }
 
     /**
@@ -81,9 +81,9 @@ class NotificationController extends Controller
         $success = $this->notificationService->markAllAsRead($user->id);
 
         if ($success) {
-            return response()->json(['message' => '已全部標記為已讀']);
+            return response()->json(['message' => __('All marked as read')]);
         }
 
-        return response()->json(['message' => '標記失敗'], 500);
+        return response()->json(['message' => __('Mark failed')], 500);
     }
 }

@@ -50,14 +50,14 @@ class AdoptionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => '申請已成功送出',
+                'message' => __('Application submitted successfully'),
                 'data' => $application
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to submit adoption application: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => '申請送出失敗，請稍後再試'
+                'message' => __('Application submission failed')
             ], 500);
         }
     }

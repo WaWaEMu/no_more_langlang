@@ -5,16 +5,16 @@
                 <div class="mb-4">
                     <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
                 </div>
-                <h2 class="mb-3 fw-bold welcome__title">登入成功！</h2>
-                <p class="text-secondary mb-4">歡迎回來，我們正在為您準備頁面...</p>
+                <h2 class="mb-3 fw-bold welcome__title">{{ $t('Login Success!') }}</h2>
+                <p class="text-secondary mb-4">{{ $t('Welcome back preparing') }}</p>
 
                 <div class="alert alert-light border mb-4">
-                    將在 <span class="fw-bold text-primary">{{ countdown }}</span> 秒後自動跳轉
+                    {{ $t('Will redirect in') }} <span class="fw-bold text-primary">{{ countdown }}</span> {{ $t('seconds auto redirect') }}
                 </div>
 
                 <div class="d-grid gap-2">
                     <button @click="jumpNow()" class="btn welcome__btn btn-lg text-white fw-bold">
-                        點我立即跳轉 <i class="bi bi-arrow-right ms-2"></i>
+                        {{ $t('Click to redirect') }} <i class="bi bi-arrow-right ms-2"></i>
                     </button>
                 </div>
             </div>

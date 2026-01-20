@@ -1,14 +1,13 @@
 <template>
     <Navbar />
-    <Content title="領養申請管理">
+    <Content :title="$t('Application Management')">
         <template v-slot:content>
             <div class="applications__container mx-auto">
                 <!-- Header Section -->
                 <div class="mb-4">
-                    <h2 class="fw-bold text-dark mb-1">領養申請管理</h2>
+                    <h2 class="fw-bold text-dark mb-1">{{ $t('Application Management') }}</h2>
                     <p class="text-muted mb-0" v-if="!loading">
-                        {{ activeTab === 'received' ? `共 ${totalReceivedApplications} 筆收到的申請` : `共
-                        ${sentApplications.length} 筆送出的申請` }}
+                        {{ activeTab === 'received' ? $t('Total received applications', { count: totalReceivedApplications }) : $t('Total sent applications', { count: sentApplications.length }) }}
                     </p>
                 </div>
 
@@ -17,13 +16,13 @@
                     <li class="nav-item flex-grow-1">
                         <button class="nav-link w-100 rounded-pill py-2" :class="{ active: activeTab === 'received' }"
                             @click="activeTab = 'received'">
-                            收到的申請
+                            {{ $t('Received Applications') }}
                         </button>
                     </li>
                     <li class="nav-item flex-grow-1">
                         <button class="nav-link w-100 rounded-pill py-2" :class="{ active: activeTab === 'sent' }"
                             @click="activeTab = 'sent'">
-                            送出的申請
+                            {{ $t('Sent Applications') }}
                         </button>
                     </li>
                 </ul>
@@ -31,9 +30,9 @@
                 <!-- Loading State -->
                 <div v-if="loading" class="text-center py-5">
                     <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden">{{ $t('Loading...') }}</span>
                     </div>
-                    <p class="mt-3 text-muted">載入申請資料中...</p>
+                    <p class="mt-3 text-muted">{{ $t('Loading applications...') }}</p>
                 </div>
 
                 <!-- Content State -->
@@ -52,12 +51,12 @@
                                     </div>
                                     <div>
                                         <h5 class="mb-0 fw-bold text-dark">{{ group.pet.name }}</h5>
-                                        <span class="text-muted small">{{ group.applications.length }} 筆申請</span>
+                                        <span class="text-muted small">{{ group.applications.length }} {{ $t('applications count') }}</span>
                                     </div>
                                     <div class="ms-auto">
                                         <RouterLink :to="`/adopt/${group.pet.id}`"
                                             class="btn btn-sm btn-outline-secondary rounded-pill">
-                                            查看寵物頁面
+                                            {{ $t('View Pet Page') }}
                                         </RouterLink>
                                     </div>
                                 </div>
@@ -80,28 +79,28 @@
 
                                             <div class="row g-2 mb-3">
                                                 <div class="col-md-6">
-                                                    <small class="text-muted d-block">聯絡電話</small>
+                                                    <small class="text-muted d-block">{{ $t('Phone Number') }}</small>
                                                     <span>{{ app.phone }}</span>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <small class="text-muted d-block">居住類型</small>
-                                                    <span>{{ t('housing_types.' + app.housing_type) }}</span>
+                                                    <small class="text-muted d-block">{{ $t('Housing Environment') }}</small>
+                                                    <span>{{ $t(app.housing_type) }}</span>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <small class="text-muted d-block">飼養經驗</small>
-                                                    <span>{{ t('experience_levels.' + app.experience) }}</span>
+                                                    <small class="text-muted d-block">{{ $t('Pet Experience') }}</small>
+                                                    <span>{{ $t(app.experience) }}</span>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <small class="text-muted d-block">家人同意</small>
+                                                    <small class="text-muted d-block">{{ $t('Does family/roommate agree ? ') }}</small>
                                                     <span
                                                         :class="app.family_agreement ? 'text-success' : 'text-danger'">
-                                                        {{ app.family_agreement ? '已同意' : '未確認' }}
+                                                        {{ app.family_agreement ? $t('Agreed') : $t('Not Confirmed') }}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             <div class="application__message p-3 rounded-3 mb-3">
-                                                <small class="text-muted d-block mb-1">自我介紹與動機</small>
+                                                <small class="text-muted d-block mb-1">{{ $t('Self-intro and Motivation') }}</small>
                                                 <p class="mb-0 text-secondary" style="white-space: pre-wrap;">
                                                     {{ app.message }}
                                                 </p>
@@ -110,28 +109,28 @@
                                             <div class="d-flex justify-content-end gap-2">
                                                 <a v-if="app.line_id" :href="`https://line.me/ti/p/~${app.line_id}`"
                                                     target="_blank" class="btn btn-sm btn-success text-white">
-                                                    <i class="bi bi-line me-1"></i>LINE 聯繫
+                                                    <i class="bi bi-line me-1"></i>{{ $t('LINE Contact') }}
                                                 </a>
                                                 <div v-if="app.status === 'pending'" class="d-flex gap-2">
                                                     <button @click="updateStatus(app.id, 'approved')"
                                                         class="btn btn-sm btn-outline-success rounded-pill px-3">
-                                                        <i class="bi bi-check-lg me-1"></i>通過
+                                                        <i class="bi bi-check-lg me-1"></i>{{ $t('Approve') }}
                                                     </button>
                                                     <button @click="updateStatus(app.id, 'rejected')"
                                                         class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                                                        <i class="bi bi-x-lg me-1"></i>婉拒
+                                                        <i class="bi bi-x-lg me-1"></i>{{ $t('Reject') }}
                                                     </button>
                                                 </div>
                                                 <div v-else class="d-flex flex-column align-items-end gap-1">
                                                     <div v-if="app.owner_message"
                                                         class="application__owner-message p-2 rounded-3 mb-1 w-100 border-start border-4">
-                                                        <small class="text-primary fw-bold d-block mb-1">您的回覆：</small>
+                                                        <small class="text-primary fw-bold d-block mb-1">{{ $t('Your Reply: ') }}</small>
                                                         <p class="mb-0 text-secondary small"
                                                             style="white-space: pre-wrap;">
                                                             {{ app.owner_message }}</p>
                                                     </div>
                                                     <div class="text-muted small">
-                                                        已於 {{ formatDate(app.updated_at) }} 處理
+                                                        {{ $t('Processed at', { date: formatDate(app.updated_at) }) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -146,8 +145,8 @@
                             <div class="mb-3">
                                 <i class="bi bi-inbox display-1 text-muted opacity-50"></i>
                             </div>
-                            <h4 class="fw-bold text-secondary mb-2">目前沒有收到的申請</h4>
-                            <p class="text-muted mb-0">當有人申請領養您的寵物時，會顯示在這裡。</p>
+                            <h4 class="fw-bold text-secondary mb-2">{{ $t('No received applications') }}</h4>
+                            <p class="text-muted mb-0">{{ $t('No received applications hint') }}</p>
                         </div>
                     </div>
 
@@ -170,8 +169,7 @@
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 <div>
                                                     <h5 class="mb-1 fw-bold text-dark">{{ app.pet.name }}</h5>
-                                                    <small class="text-muted">申請於 {{ formatDate(app.created_at)
-                                                    }}</small>
+                                                    <small class="text-muted">{{ $t('Applied at', { date: formatDate(app.created_at) }) }}</small>
                                                 </div>
                                                 <span class="badge rounded-pill" :class="getStatusClass(app.status)">
                                                     {{ getStatusText(app.status) }}
@@ -181,16 +179,15 @@
                                             <!-- Owner Message if processed -->
                                             <div v-if="app.owner_message"
                                                 class="application__owner-message p-2 rounded-3 mt-2 border-start border-4">
-                                                <small class="text-primary fw-bold d-block mb-1">送養人回覆：</small>
-                                                <p class="mb-0 text-secondary small" style="white-space: pre-wrap;">{{
-                                                    app.owner_message }}</p>
+                                                <small class="text-primary fw-bold d-block mb-1">{{ $t('Owner Reply:') }}</small>
+                                                <p class="mb-0 text-secondary small" style="white-space: pre-wrap;">{{ app.owner_message }}</p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mt-3 d-flex justify-content-end gap-2">
                                         <RouterLink :to="`/adopt/${app.pet.id}`"
                                             class="btn btn-sm btn-outline-secondary rounded-pill">
-                                            查看寵物頁面
+                                            {{ $t('View Pet Page') }}
                                         </RouterLink>
                                     </div>
                                 </div>
@@ -202,8 +199,8 @@
                             <div class="mb-3">
                                 <i class="bi bi-send display-1 text-muted opacity-50"></i>
                             </div>
-                            <h4 class="fw-bold text-secondary mb-2">目前沒有送出的申請</h4>
-                            <p class="text-muted mb-0">當您申請領養寵物時，會顯示在這裡。</p>
+                            <h4 class="fw-bold text-secondary mb-2">{{ $t('No sent applications') }}</h4>
+                            <p class="text-muted mb-0">{{ $t('No sent applications hint') }}</p>
                         </div>
                     </div>
                 </div>
@@ -219,7 +216,7 @@ import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { t } from '@/lang'
+import { trans } from 'laravel-vue-i18n'
 
 interface Application {
     id: number
@@ -286,17 +283,17 @@ async function fetchApplications() {
 }
 
 async function updateStatus(applicationId: number, status: string) {
-    const statusText = status === 'approved' ? '通過' : '婉拒'
+    const statusText = status === 'approved' ? trans('Approve') : trans('Reject')
     const placeholder = status === 'approved'
-        ? '例如：歡迎來電預約看貓...'
-        : '例如：很抱歉，目前已有其他合適的領養人...'
+        ? trans('Approve placeholder')
+        : trans('Reject placeholder')
 
     const confirmResult = await Swal.fire({
-        title: `確定要${statusText}此申請嗎？`,
+        title: trans('Confirm update status', { status: statusText }),
         html: `
             <div class="text-start mb-3">
-                <p class="mb-2">${status === 'approved' ? '通過後，申請人將會收到通知。' : '婉拒後，申請人將會收到通知。'}</p>
-                <label for="swal-owner-message" class="form-label small text-muted">您可以輸入回覆訊息給申請人（選填）：</label>
+                <p class="mb-2">${status === 'approved' ? trans('Approve hint') : trans('Reject hint')}</p>
+                <label for="swal-owner-message" class="form-label small text-muted">${trans('Owner message label')}</label>
                 <textarea id="swal-owner-message" class="form-control" rows="3" placeholder="${placeholder}"></textarea>
             </div>
         `,
@@ -304,8 +301,8 @@ async function updateStatus(applicationId: number, status: string) {
         showCancelButton: true,
         confirmButtonColor: status === 'approved' ? '#198754' : '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: `確定${statusText}`,
-        cancelButtonText: '取消',
+        confirmButtonText: trans('Confirm status', { status: statusText }),
+        cancelButtonText: trans('Cancel'),
         preConfirm: () => {
             return (document.getElementById('swal-owner-message') as HTMLTextAreaElement).value
         }
@@ -320,8 +317,8 @@ async function updateStatus(applicationId: number, status: string) {
             })
             await Swal.fire({
                 icon: 'success',
-                title: '更新成功',
-                text: `已成功${statusText}該申請`,
+                title: trans('Update Successful'),
+                text: trans('Update successful message', { status: statusText }),
                 timer: 1500,
                 showConfirmButton: false
             })
@@ -331,8 +328,8 @@ async function updateStatus(applicationId: number, status: string) {
             console.error('Failed to update status:', error)
             await Swal.fire({
                 icon: 'error',
-                title: '更新失敗',
-                text: '請稍後再試'
+                title: trans('Update Failed'),
+                text: trans('Please try again later')
             })
         }
     }
@@ -348,9 +345,9 @@ function getStatusClass(status: string) {
 
 function getStatusText(status: string) {
     switch (status) {
-        case 'approved': return '已通過'
-        case 'rejected': return '已婉拒'
-        default: return '待回覆'
+        case 'approved': return trans('Approved')
+        case 'rejected': return trans('Rejected')
+        default: return trans('Pending')
     }
 }
 

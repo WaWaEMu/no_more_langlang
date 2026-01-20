@@ -59,7 +59,7 @@ class PetController extends Controller
                 'success' => true
             ]);
         } catch (Throwable $error) {
-            \Log::error('新增寵物失敗：' . $error->getMessage());
+            \Log::error(__('Add pet failed') . '：' . $error->getMessage());
 
             return response()->json([
                 'success' => false

@@ -22,22 +22,20 @@
                 </div>
 
                 <!-- Tech & Collaboration Section -->
-                <!-- <div class="about__section mb-5">
+                <div class="about__section mb-5">
                     <h3 class="about__section-title">
-                        <i class="bi bi-code-slash me-2"></i>技術與協作
+                        <i class="bi bi-code-slash me-2"></i>{{ $t('Tech and Collaboration') }}
                     </h3>
                     <div class="about__card">
+                        <p class="about__text" v-html="$t('Tech Intro')"></p>
                         <p class="about__text">
-                            諾摩浪浪採用 <strong>Laravel + Vue 3</strong> 開發，是我持續精進技術的個人作品。
-                        </p>
-                        <p class="about__text">
-                            如果你也是軟體工程師，對這個專案有興趣，歡迎一起協作開發！無論是前端、後端，還是有其他想法，都歡迎聯繫我～
+                            {{ $t('Collaboration Invite') }}
                         </p>
                         <p class="about__text mb-0">
-                            讓我們一起用程式碼，為浪浪們盡一份心力。🐾
+                            {{ $t('Collaboration Closing') }}
                         </p>
                     </div>
-                </div> -->
+                </div>
 
                 <!-- Future Plans Section -->
                 <div class="about__section mb-5">
@@ -48,12 +46,12 @@
                         <p class="about__text">
                             {{ $t('I will continue to maintain this site...') }}
                         </p>
-                        <p class="about__text mb-0">
-                            <span v-html="$t('I plan to open a free API...').replace('免費的 API', '<strong>免費的 API</strong>')"></span>
+                        <p class="about__text">
+                            <span v-html="$t('Free API Strong')"></span>
                         </p>
-                        <!-- <p class="about__text mb-0">
-                            希望透過科技的力量，串連起每一份愛心。
-                        </p> -->
+                        <p class="about__text mb-0">
+                            {{ $t('Tech Power Love') }}
+                        </p>
                     </div>
                 </div>
 

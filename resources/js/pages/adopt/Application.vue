@@ -15,9 +15,7 @@
                             </div>
                             <div class="p-3 flex-grow-1">
                                 <h5 class="fw-bold text-dark mb-1">{{ $t('Apply for:') }}{{ pet.name }}</h5>
-                                <p class="text-secondary mb-0 small">{{ pet.breed }} · {{ pet.gender === 'male' ?
-                                    $t('Male') :
-                                    $t('Female') }} · {{ pet.age }}</p>
+                                <p class="text-secondary mb-0 small">{{ pet.breed }} · {{ pet.gender === 'male' ? $t('Male') : $t('Female') }} · {{ pet.age }}</p>
                             </div>
                         </div>
                     </div>
@@ -32,8 +30,7 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label
-                                            class="form-label application-form__label application-form__label--required">{{
-                                                $t('Nickname') }}</label>
+                                            class="form-label application-form__label application-form__label--required">{{ $t('Nickname') }}</label>
                                         <input type="text" class="form-control application-form__input"
                                             v-model="form.name" required>
                                     </div>
@@ -44,15 +41,13 @@
                                     </div>
                                     <div class="col-12">
                                         <label for="phone"
-                                            class="form-label application-form__label application-form__label--required">{{
-                                                $t('Phone Number') }}</label>
+                                            class="form-label application-form__label application-form__label--required">{{ $t('Phone Number') }}</label>
                                         <input type="tel" id="phone" class="form-control application-form__input"
                                             v-model="form.phone" required
                                             :placeholder="$t('Enter phone number')">
                                     </div>
                                     <div class="col-12">
-                                        <label for="line_id" class="form-label application-form__label">{{
-                                            $t('Line ID (Optional)') }}</label>
+                                        <label for="line_id" class="form-label application-form__label">{{ $t('Line ID (Optional)') }}</label>
                                         <input type="text" id="line_id" class="form-control application-form__input"
                                             v-model="form.line_id" :placeholder="$t('For owner to contact you')">
                                     </div>
@@ -65,8 +60,7 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="housing"
-                                            class="form-label application-form__label application-form__label--required">{{
-                                                $t('Housing Environment') }}</label>
+                                            class="form-label application-form__label application-form__label--required">{{ $t('Housing Environment') }}</label>
                                         <select id="housing" class="form-select application-form__input"
                                             v-model="form.housing_type" required>
                                             <option value="" disabled>{{ $t('Please select') }}</option>
@@ -79,8 +73,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="experience"
-                                            class="form-label application-form__label application-form__label--required">{{
-                                                $t('Pet Experience') }}</label>
+                                            class="form-label application-form__label application-form__label--required">{{ $t('Pet Experience') }}</label>
                                         <select id="experience" class="form-select application-form__input"
                                             v-model="form.experience" required>
                                             <option value="" disabled>{{ $t('Please select') }}</option>
@@ -93,21 +86,18 @@
                                     </div>
                                     <div class="col-12">
                                         <label
-                                            class="form-label application-form__label application-form__label--required">{{
-                                                $t('Does family/roommate agree?') }}</label>
+                                            class="form-label application-form__label application-form__label--required">{{ $t('Does family/roommate agree?') }}</label>
                                         <div class="d-flex gap-4">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="family_agreement"
                                                     id="agree_yes" :value="true" v-model="form.family_agreement"
                                                     required>
-                                                <label class="form-check-label" for="agree_yes">{{
-                                                    $t('Yes, all agreed') }}</label>
+                                                <label class="form-check-label" for="agree_yes">{{ $t('Yes, all agreed') }}</label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="family_agreement"
                                                     id="agree_no" :value="false" v-model="form.family_agreement">
-                                                <label class="form-check-label" for="agree_no">{{
-                                                    $t('Not yet confirmed') }}</label>
+                                                <label class="form-check-label" for="agree_no">{{ $t('Not yet confirmed') }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -120,8 +110,7 @@
                                 </h3>
                                 <div class="mb-3">
                                     <label for="message"
-                                        class="form-label application-form__label application-form__label--required">{{
-                                            $t('Self-introduction & Motivation') }}</label>
+                                        class="form-label application-form__label application-form__label--required">{{ $t('Self-introduction & Motivation') }}</label>
                                     <textarea id="message" class="form-control application-form__input" rows="5"
                                         v-model="form.message" required
                                         :placeholder="$t('Briefly introduce yourself...')"></textarea>

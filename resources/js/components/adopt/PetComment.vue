@@ -53,8 +53,7 @@
                                 <span v-if="comment.user_id === petOwnerId"
                                     class="badge pet-comment__owner-badge text-primary border border-primary-subtle rounded-pill"
                                     style="font-size: 0.7rem;">送養者</span>
-                                <span class="text-muted small ms-auto">{{ formatDate(comment.created_at)
-                                    }}</span>
+                                <span class="text-muted small ms-auto">{{ formatDate(comment.created_at) }}</span>
                             </div>
                             <div class="pet-comment__bubble p-3 rounded-3 text-secondary"
                                 style="white-space: pre-wrap;">{{ comment.content }}</div>
@@ -108,18 +107,14 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="d-flex align-items-center gap-2 mb-1">
-                                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">{{
-                                                reply.user.name
-                                                }}</span>
+                                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">{{ reply.user.name }}</span>
                                             <span v-if="reply.user_id === petOwnerId"
                                                 class="badge pet-comment__owner-badge text-primary border border-primary-subtle rounded-pill"
                                                 style="font-size: 0.65rem;">送養者</span>
-                                            <span class="text-muted small ms-auto">{{
-                                                formatDate(reply.created_at) }}</span>
+                                            <span class="text-muted small ms-auto">{{ formatDate(reply.created_at) }}</span>
                                         </div>
                                         <div class="pet-comment__bubble p-2 rounded-3 text-secondary"
-                                            style="white-space: pre-wrap; font-size: 0.9rem;">{{
-                                                reply.content }}</div>
+                                            style="white-space: pre-wrap; font-size: 0.9rem;">{{ reply.content }}</div>
                                     </div>
                                 </div>
                             </div>

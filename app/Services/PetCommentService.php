@@ -26,7 +26,7 @@ class PetCommentService implements PetCommentServiceInterface
         if (isset($data['parent_id'])) {
             $parentComment = PetComment::find($data['parent_id']);
             if ($parentComment && $parentComment->pet_id != $petId) {
-                throw new \InvalidArgumentException('無效的父留言');
+                throw new \InvalidArgumentException(__('Invalid parent comment'));
             }
         }
 

@@ -5,45 +5,38 @@
                 <h2 class="text-center mb-4 fw-bold register__title">{{ $t('Register Title') }}</h2>
                 <form @submit.prevent="handleRegister">
                     <div class="mb-3">
-                        <label for="register-email" class="form-label text-secondary">{{ $t('Email')
-                        }}</label>
+                        <label for="register-email" class="form-label text-secondary">{{ $t('Email') }}</label>
                         <input type="text" id="register-email" v-model="form.email" required
-                            class="form-control form-control-lg register__input"
-                            :placeholder="$t('Enter Email')" :class="{ 'is-invalid': errors.email }"
-                            @focus="delete errors.email" @input="delete errors.email">
+                            class="form-control form-control-lg register__input" :placeholder="$t('Enter Email')"
+                            :class="{ 'is-invalid': errors.email }" @focus="delete errors.email"
+                            @input="delete errors.email">
                         <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                     <div class="mb-3">
                         <label for="register-name" class="form-label text-secondary">{{ $t('Nickname') }}</label>
                         <input type="text" id="register-name" v-model="form.name" required
-                            class="form-control form-control-lg register__input"
-                            :placeholder="$t('auth.name_placeholder')" :class="{ 'is-invalid': errors.name }"
-                            @focus="delete errors.name" @input="delete errors.name">
+                            class="form-control form-control-lg register__input" :placeholder="$t('Enter Nickname')"
+                            :class="{ 'is-invalid': errors.name }" @focus="delete errors.name"
+                            @input="delete errors.name">
                         <div v-if="errors.name" class="invalid-feedback">{{ errors.name }}</div>
                     </div>
                     <div class="mb-3">
-                        <label for="register-password" class="form-label text-secondary">{{ $t('Password')
-                        }}</label>
+                        <label for="register-password" class="form-label text-secondary">{{ $t('Password') }}</label>
                         <input type="password" id="register-password" v-model="form.password" required
-                            class="form-control form-control-lg register__input"
-                            :placeholder="$t('Enter Password')" :class="{ 'is-invalid': errors.password }"
-                            @focus="delete errors.password" @input="delete errors.password">
+                            class="form-control form-control-lg register__input" :placeholder="$t('Enter Password')"
+                            :class="{ 'is-invalid': errors.password }" @focus="delete errors.password"
+                            @input="delete errors.password">
                         <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
-                        <div v-else class="form-text register__hint">{{ $t('The :attribute must be at least :min characters.', {
-                            attribute:
-                                $t('Password'), min: '8'
-                        }) }}</div>
+                        <div v-else class="form-text register__hint">{{ $t('The :attribute must be at least :min characters.', { attribute: $t('Password'), min: '8' }) }}</div>
                     </div>
                     <div class="mb-4">
-                        <label for="confirm-password" class="form-label text-secondary">{{
-                            $t('Confirm Password') }}</label>
+                        <label for="confirm-password" class="form-label text-secondary">{{ $t('Confirm Password') }}</label>
                         <input type="password" id="confirm-password" v-model="form.password_confirmation" required
                             class="form-control form-control-lg register__input"
-                            :placeholder="$t('auth.confirm_password_placeholder')"
+                            :placeholder="$t('Confirm Password Placeholder')"
                             :class="{ 'is-invalid': errors.password_confirmation }"
                             @focus="delete errors.password_confirmation" @input="delete errors.password_confirmation">
-                        <div v-if="errors.password_confirmation" class="invalid-feedback">{{
-                            errors.password_confirmation }}</div>
+                        <div v-if="errors.password_confirmation" class="invalid-feedback">{{ errors.password_confirmation }}</div>
                     </div>
                     <div class="d-grid gap-2 mb-4">
                         <button type="submit" :disabled="isLoading" class="btn register__btn btn-lg text-white fw-bold">
@@ -53,7 +46,7 @@
                         <a href="/auth/google/redirect"
                             class="btn btn-lg btn-outline-secondary fw-bold d-flex align-items-center justify-content-center"
                             :class="{ 'disabled': isLoading }">
-                            <i class="bi bi-google me-2"></i> {{ $t('Login with Google').replace('登入', '註冊') }}
+                            <i class="bi bi-google me-2"></i> {{ $t('Register with Google') }}
                         </a>
                     </div>
                     <div class="d-flex justify-content-center align-items-center text-sm mb-4">
@@ -151,7 +144,7 @@ async function handleRegister() {
         router.push('/auth/login')
     }
     catch (error: any) {
-        console.error('註冊失敗:', error)
+        console.error('Register Failed:', error)
 
         // Handle Laravel validation errors
         if (error.response?.status === 422) {
@@ -162,7 +155,7 @@ async function handleRegister() {
         } else {
             Swal.fire({
                 icon: 'error',
-                title: trans('Register Title') + trans('Delete failed').replace('刪除', ''),
+                title: trans('Register Failed'),
                 text: error.response?.data?.message ? trans(error.response.data.message) : trans('Please try again later'),
                 confirmButtonColor: '#2c5282'
             })

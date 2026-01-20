@@ -2,19 +2,19 @@
   <div class="forgot__container d-flex align-items-center justify-content-center min-vh-100">
     <div class="card shadow-lg border-0 forgot__card">
       <div class="card-body p-5">
-        <h2 class="text-center mb-4 fw-bold forgot__title">重設密碼</h2>
+        <h2 class="text-center mb-4 fw-bold forgot__title">{{ $t('Reset Password') }}</h2>
         <form @submit.prevent="sendResetEmail()">
           <div class="mb-4">
-            <label for="forgot-email" class="form-label text-secondary">電子信箱</label>
+            <label for="forgot-email" class="form-label text-secondary">{{ $t('Email') }}</label>
             <input type="email" id="forgot-email" v-model="email" required
-              class="form-control form-control-lg forgot__input" placeholder="請輸入您的電子信箱">
+              class="form-control form-control-lg forgot__input" :placeholder="$t('Enter Email')">
           </div>
           <div class="d-grid gap-2 mb-4">
-            <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold">寄送重設密碼信</button>
+            <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold">{{ $t('Send Reset Password Email') }}</button>
           </div>
           <div class="d-flex justify-content-center align-items-center text-sm">
             <RouterLink to="/auth/login" class="text-decoration-none forgot__link">
-              <i class="bi bi-arrow-left me-1"></i> 返回登入
+              <i class="bi bi-arrow-left me-1"></i> {{ $t('Back to Login') }}
             </RouterLink>
           </div>
         </form>
@@ -28,6 +28,7 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { trans } from 'laravel-vue-i18n'
 
 const email = ref('')
 
@@ -38,17 +39,17 @@ async function sendResetEmail() {
 
     await Swal.fire({
       icon: 'success',
-      title: '已寄出重設密碼信',
-      text: '請至信箱點擊連結以重設密碼',
-      confirmButtonText: '好的'
+      title: trans('Reset Password Mail Sent'),
+      text: trans('Check email to reset password'),
+      confirmButtonText: trans('Got it')
     })
   }
   catch (error) {
-    console.error('寄送失敗', error)
+    console.error('Send Failed', error)
     Swal.fire({
       icon: 'error',
-      title: '寄送失敗',
-      text: '請確認您的電子信箱是否正確',
+      title: trans('Send Failed'),
+      text: trans('Check email correct'),
     })
   }
 }

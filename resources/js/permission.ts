@@ -2,6 +2,7 @@ import router from '@/router'
 import { isLoggedIn } from '@/utils/authStatus'
 import getPageTitle from '@/utils/getPageTitle'
 import Swal from 'sweetalert2'
+import { trans } from 'laravel-vue-i18n'
 
 // No redirect whitelist
 const whiteList = [
@@ -42,12 +43,12 @@ router.beforeEach(async (to, from, next) => {
     } else {
         // If not logged in, show a confirmation dialog
         const result = await Swal.fire({
-            title: '需要登入',
-            text: '此功能需要登入後才能使用，是否前往登入頁面？',
+            title: trans('Login Required'),
+            text: trans('Login required message'),
             icon: 'info',
             showCancelButton: true,
-            confirmButtonText: '前往登入',
-            cancelButtonText: '取消',
+            confirmButtonText: trans('Go to Login'),
+            cancelButtonText: trans('Cancel'),
             confirmButtonColor: '#2c5282',
             cancelButtonColor: '#6c757d',
         })

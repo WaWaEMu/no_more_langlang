@@ -28,8 +28,8 @@ class SeoController extends Controller
     private function getMeta($path)
     {
         // Default meta tags for the site
-        $defaultTitle = '諾摩浪浪 - 幫助流浪動物找到溫暖的家';
-        $defaultDescription = '諾摩浪浪是一個致力於幫助流浪動物尋找領養家庭的平台。在這裡，您可以瀏覽待領養的毛孩，或是發布領養資訊。';
+        $defaultTitle = __('SEO Default Title');
+        $defaultDescription = __('SEO Default Description');
         $defaultImage = asset('images/og-image.jpg'); // Ensure this exists or use a placeholder
         $url = url($path);
 
@@ -47,7 +47,7 @@ class SeoController extends Controller
             $pet = Pet::with(['images', 'detail'])->find($petId);
 
             if ($pet) {
-                $meta['title'] = "領養 {$pet->name} - {$pet->title} | 諾摩浪浪";
+                $meta['title'] = __("SEO Pet Title", ['name' => $pet->name, 'title' => $pet->title]);
                 // Use the adoption description if available, otherwise fallback to default
                 $meta['description'] = $pet->detail->adoption_description ?? $defaultDescription;
 
@@ -72,10 +72,10 @@ class SeoController extends Controller
         $schemas[] = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => '諾摩浪浪',
+            'name' => __('App Name'),
             'url' => url('/'),
             'logo' => asset('images/logo.png'),
-            'description' => '幫助流浪動物找到溫暖的家',
+            'description' => __('SEO Default Description'),
         ];
 
         // Pet Detail Page Schema
@@ -96,13 +96,13 @@ class SeoController extends Controller
                         [
                             '@type' => 'ListItem',
                             'position' => 1,
-                            'name' => '首頁',
+                            'name' => __('SEO Home Name'),
                             'item' => url('/')
                         ],
                         [
                             '@type' => 'ListItem',
                             'position' => 2,
-                            'name' => '領養專區',
+                            'name' => __('SEO Adopt Name'),
                             'item' => url('/adopt')
                         ],
                         [
@@ -123,7 +123,7 @@ class SeoController extends Controller
                     'image' => $pet->images->map(fn($img) => asset('storage/' . $img->path))->toArray(),
                     'brand' => [
                         '@type' => 'Brand',
-                        'name' => '諾摩浪浪'
+                        'name' => __('App Name')
                     ],
                     'offers' => [
                         '@type' => 'Offer',

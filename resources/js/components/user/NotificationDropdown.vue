@@ -38,8 +38,7 @@
 
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
-                            <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
-                                }}</span>
+                            <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at) }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>

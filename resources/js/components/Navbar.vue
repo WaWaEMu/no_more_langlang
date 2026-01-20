@@ -1,7 +1,7 @@
 <template>
     <div class="fw-semibold justify-content-between navbar__wrap pe-4 d-flex align-items-center">
         <div class="d-flex align-items-center navbar__container">
-            <h1 class="my-4 navbar__title">諾摩浪浪</h1>
+            <h1 class="my-4 navbar__title">{{ $t('App Name') }}</h1>
 
             <!-- Mobile Toggle Button -->
             <button class="navbar__toggler d-md-none" @click="toggleMenu" aria-label="Toggle navigation">
@@ -15,7 +15,7 @@
                     <RouterLink :to="navItem.path"
                         active-class="text-decoration-none d-inline-block pb-2 navbar__isActive"
                         :class="!isActive(navItem.path) && 'navbar__link'" @click.prevent="handleNavClick(navItem)">
-                        {{ navItem.label }}
+                        {{ $t(navItem.label) }}
                     </RouterLink>
                 </li>
             </ul>
@@ -35,6 +35,7 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import UserMenu from '@/components/user/UserMenu.vue'
 import NotificationDropdown from '@/components/user/NotificationDropdown.vue'
 import { useAuthStore } from '@/stores/auth'
+import { trans } from 'laravel-vue-i18n'
 
 const authStore = useAuthStore()
 const route = useRoute();
@@ -42,10 +43,10 @@ const router = useRouter();
 const isMenuOpen = ref(false);
 
 const navList = ref<{ id: string; label: string; path: string }[]>([
-    { id: '00', label: '動物認養', path: '/adopt' },
-    { id: '01', label: '登記送養', path: '/adopt/new' },
-    { id: '02', label: '免費API', path: '/freeApi' },
-    { id: '03', label: '網站理念', path: '/about' }
+    { id: '00', label: 'Adopt', path: '/adopt' },
+    { id: '01', label: 'New Adoption', path: '/adopt/new' },
+    { id: '02', label: 'Free API', path: '/freeApi' },
+    { id: '03', label: 'Website Concept', path: '/about' }
 ])
 
 function isActive(path: string) {
@@ -63,7 +64,7 @@ function closeMenu() {
 async function handleNavClick(navItem: any) {
     closeMenu()
     if (navItem.path === '/adopt/new') {
-        if (await authStore.checkAuth('登入後即可登記送養，幫浪浪找新家！')) {
+        if (await authStore.checkAuth(trans('Login to post adoption'))) {
             router.push(navItem.path)
         }
     } else {

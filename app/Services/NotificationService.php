@@ -38,7 +38,7 @@ class NotificationService
                     $notifications[] = Notification::store([
                         'user_id' => $ownerId,
                         'type' => 'new_comment',
-                        'message' => "有人在「{$petName}」的頁面留言",
+                        'message' => __("Notification: New comment", ['petName' => $petName]),
                         'data' => [
                             'pet_id' => $petId,
                             'pet_name' => $petName,
@@ -59,7 +59,7 @@ class NotificationService
                         $notifications[] = Notification::store([
                             'user_id' => $parentAuthorId,
                             'type' => 'comment_reply',
-                            'message' => "有人回覆了您在「{$petName}」的留言",
+                            'message' => __("Notification: Comment reply", ['petName' => $petName]),
                             'data' => [
                                 'pet_id' => $petId,
                                 'pet_name' => $petName,
@@ -74,7 +74,7 @@ class NotificationService
                         $notifications[] = Notification::store([
                             'user_id' => $ownerId,
                             'type' => 'comment_reply',
-                            'message' => "有人在「{$petName}」的頁面回覆了留言",
+                            'message' => __("Notification: Comment reply on pet", ['petName' => $petName]),
                             'data' => [
                                 'pet_id' => $petId,
                                 'pet_name' => $petName,
@@ -118,7 +118,7 @@ class NotificationService
             return Notification::store([
                 'user_id' => $ownerId,
                 'type' => 'new_adoption_application',
-                'message' => "有人提交了「{$petName}」的領養申請",
+                'message' => __("Notification: New application", ['petName' => $petName]),
                 'data' => [
                     'pet_id' => $petId,
                     'pet_name' => $petName,
@@ -203,11 +203,11 @@ class NotificationService
             $application = \App\Models\AdoptionApplication::with('pet')->findOrFail($applicationId);
             $applicantId = $application->user_id;
             $petName = $application->pet->name;
-            $statusText = $status === 'approved' ? '已通過' : '已婉拒';
+            $statusText = $status === 'approved' ? __('Approved') : __('Rejected');
 
-            $message = "您對「{$petName}」的領養申請{$statusText}";
+            $message = __("Notification: Application status", ['petName' => $petName, 'status' => $statusText]);
             if ($ownerMessage) {
-                $message .= "。送養人留言：{$ownerMessage}";
+                $message .= __("Notification: Owner message", ['message' => $ownerMessage]);
             }
 
             return Notification::store([

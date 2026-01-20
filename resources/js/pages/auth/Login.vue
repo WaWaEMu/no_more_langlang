@@ -7,18 +7,17 @@
                     <div class="mb-3">
                         <label for="login-email" class="form-label text-secondary">{{ $t('Email') }}</label>
                         <input type="text" id="login-email" v-model.trim="form.email" :disabled="isLoading"
-                            class="form-control form-control-lg login__input"
-                            :placeholder="$t('Enter Email')" :class="{ 'is-invalid': errors.email }"
-                            @focus="delete errors.email" @input="delete errors.email">
+                            class="form-control form-control-lg login__input" :placeholder="$t('Enter Email')"
+                            :class="{ 'is-invalid': errors.email }" @focus="delete errors.email"
+                            @input="delete errors.email">
                         <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                     <div class="mb-4">
-                        <label for="login-password" class="form-label text-secondary">{{ $t('Password')
-                            }}</label>
+                        <label for="login-password" class="form-label text-secondary">{{ $t('Password') }}</label>
                         <input type="password" id="login-password" v-model="form.password" :disabled="isLoading"
-                            class="form-control form-control-lg login__input"
-                            :placeholder="$t('Enter Password')" :class="{ 'is-invalid': errors.password }"
-                            @focus="delete errors.password" @input="delete errors.password">
+                            class="form-control form-control-lg login__input" :placeholder="$t('Enter Password')"
+                            :class="{ 'is-invalid': errors.password }" @focus="delete errors.password"
+                            @input="delete errors.password">
                         <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
                     </div>
                     <div class="d-grid gap-2 mb-4">
@@ -140,7 +139,7 @@ async function handleLogin() {
         })
     }
     catch (error) {
-        console.error('登入失敗:', error)
+        console.error('Login Failed:', error)
 
         // Handle error messages
         let errorMessage = trans('These credentials do not match our records.')
@@ -170,7 +169,7 @@ async function handleLogin() {
 
         Swal.fire({
             icon: 'error',
-            title: trans('Login Title') + trans('Delete failed').replace('刪除', ''), // Hacky way to get "失敗"
+            title: trans('Login Failed'),
             text: errorMessage,
         })
     }
