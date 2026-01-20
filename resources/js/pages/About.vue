@@ -28,11 +28,8 @@
                     </h3>
                     <div class="about__card">
                         <p class="about__text" v-html="$t('Tech Intro')"></p>
-                        <p class="about__text">
-                            {{ $t('Collaboration Invite') }}
-                        </p>
                         <p class="about__text mb-0">
-                            {{ $t('Collaboration Closing') }}
+                            {{ $t('Collaboration Invite') }}
                         </p>
                     </div>
                 </div>
@@ -46,11 +43,8 @@
                         <p class="about__text">
                             {{ $t('I will continue to maintain this site...') }}
                         </p>
-                        <p class="about__text">
-                            <span v-html="$t('Free API Strong')"></span>
-                        </p>
                         <p class="about__text mb-0">
-                            {{ $t('Tech Power Love') }}
+                            <span v-html="$t('Free API Strong')"></span>
                         </p>
                     </div>
                 </div>
