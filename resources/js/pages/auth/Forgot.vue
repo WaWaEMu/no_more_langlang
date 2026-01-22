@@ -11,7 +11,7 @@
           </div>
           <div class="d-grid gap-2 mb-4">
             <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold">{{ $t('Send Reset Password Email')
-              }}</button>
+            }}</button>
           </div>
           <div class="d-flex justify-content-center align-items-center text-sm">
             <RouterLink to="/auth/login" class="text-decoration-none forgot__link">
@@ -57,10 +57,13 @@ async function sendResetEmail() {
         text: emailError,
       })
     } else {
+      // Log the detailed error for developers to see in the console
+      console.error('Server Error:', error.response?.data || error.message);
+
       Swal.fire({
         icon: 'error',
         title: trans('Send Failed'),
-        text: trans('Check email correct'),
+        text: trans('Please try again later'),
       })
     }
   }
