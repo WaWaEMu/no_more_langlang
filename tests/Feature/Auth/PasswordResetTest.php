@@ -23,6 +23,14 @@ class PasswordResetTest extends TestCase
         Notification::assertSentTo($user, ResetPassword::class);
     }
 
+    public function test_reset_password_link_returns_success_even_for_non_existent_email(): void
+    {
+        $response = $this->postJson('/forgot-password', ['email' => 'nonexistent@example.com']);
+
+        $response->assertStatus(200);
+        $response->assertJson(['status' => __('Reset Password Mail Sent')]);
+    }
+
     public function test_password_can_be_reset_with_valid_token(): void
     {
         Notification::fake();

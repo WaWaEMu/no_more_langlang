@@ -28,12 +28,14 @@ class PasswordResetLinkController extends Controller
             $request->only('email')
         );
 
-        if ($status != Password::RESET_LINK_SENT) {
+        // For security reasons (preventing account enumeration), we always return a success status
+        // even if the email doesn't exist in our records.
+        if ($status != Password::RESET_LINK_SENT && $status != Password::INVALID_USER) {
             throw ValidationException::withMessages([
                 'email' => [__($status)],
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return response()->json(['status' => __('Reset Password Mail Sent')]);
     }
 }

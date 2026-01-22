@@ -10,7 +10,8 @@
               class="form-control form-control-lg forgot__input" :placeholder="$t('Enter Email')">
           </div>
           <div class="d-grid gap-2 mb-4">
-            <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold">{{ $t('Send Reset Password Email') }}</button>
+            <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold">{{ $t('Send Reset Password Email')
+              }}</button>
           </div>
           <div class="d-flex justify-content-center align-items-center text-sm">
             <RouterLink to="/auth/login" class="text-decoration-none forgot__link">
@@ -40,17 +41,28 @@ async function sendResetEmail() {
     await Swal.fire({
       icon: 'success',
       title: trans('Reset Password Mail Sent'),
-      text: trans('Check email to reset password'),
+      text: trans('Check email to reset password', { email: email.value }),
       confirmButtonText: trans('Got it')
     })
   }
-  catch (error) {
+  catch (error: any) {
     console.error('Send Failed', error)
-    Swal.fire({
-      icon: 'error',
-      title: trans('Send Failed'),
-      text: trans('Check email correct'),
-    })
+
+    // Check if it's a validation error (422) with specific field errors
+    if (error.response?.status === 422 && error.response?.data?.errors?.email) {
+      const emailError = error.response.data.errors.email[0]
+      Swal.fire({
+        icon: 'error',
+        title: trans('Send Failed'),
+        text: emailError,
+      })
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: trans('Send Failed'),
+        text: trans('Check email correct'),
+      })
+    }
   }
 }
 </script>
