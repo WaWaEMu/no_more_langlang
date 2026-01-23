@@ -213,5 +213,11 @@
     "Enter Nickname": "請輸入您的暱稱",
     "Confirm Password Placeholder": "請再次輸入您的密碼",
     "Add pet failed": "新增寵物失敗",
-    "Invalid parent comment": "無效的父留言"
+    "Invalid parent comment": "無效的父留言",
+    "Hello!": "你好！",
+    "You are receiving this email because we received a password reset request for your account.": "您收到這封郵件是因為我們收到了您帳號的密碼重設請求。",
+    "This password reset link will expire in :count minutes.": "此密碼重設連結將在 :count 分鐘後失效。",
+    "If you did not request a password reset, no further action is required.": "如果您沒有請求重設密碼，請忽略此郵件。",
+    "Regards": "謝謝",
+    "Whoops!": "哎呀！"
 }
