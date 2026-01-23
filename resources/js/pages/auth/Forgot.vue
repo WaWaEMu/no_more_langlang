@@ -10,8 +10,9 @@
               class="form-control form-control-lg forgot__input" :placeholder="$t('Enter Email')">
           </div>
           <div class="d-grid gap-2 mb-4">
-            <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold">{{ $t('Send Reset Password Email')
-            }}</button>
+            <button type="submit" class="btn forgot__btn btn-lg text-white fw-bold" :disabled="loading">
+              {{ loading ? $t('Sending...') : $t('Send Reset Password Email') }}
+            </button>
           </div>
           <div class="d-flex justify-content-center align-items-center text-sm">
             <RouterLink to="/auth/login" class="text-decoration-none forgot__link">
@@ -32,8 +33,10 @@ import Swal from 'sweetalert2'
 import { trans } from 'laravel-vue-i18n'
 
 const email = ref('')
+const loading = ref(false)
 
 async function sendResetEmail() {
+  loading.value = true
   try {
     await axios.get('/sanctum/csrf-cookie')
     await axios.post('/forgot-password', { email: email.value })
@@ -66,6 +69,8 @@ async function sendResetEmail() {
         text: trans('Please try again later'),
       })
     }
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -103,6 +108,12 @@ async function sendResetEmail() {
 
 .forgot__btn:hover {
   background-color: var(--color-denim-blue-dark);
+}
+
+.forgot__btn:disabled {
+  background-color: var(--color-denim-blue);
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .forgot__input:focus {

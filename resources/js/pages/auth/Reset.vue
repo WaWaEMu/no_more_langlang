@@ -86,9 +86,9 @@ async function resetPassword() {
             title: trans('Update Successful'),
             text: trans('Password has been reset successfully'),
             confirmButtonText: trans('Got it')
+        }).then(() => {
+            router.push('/auth/login')
         })
-
-        router.push('/auth/login')
     }
     catch (error: any) {
         console.error('Reset Password Failed', error)
@@ -155,6 +155,12 @@ async function resetPassword() {
 
 .reset__btn:hover {
     background-color: var(--color-denim-blue-dark);
+}
+
+.reset__btn:disabled {
+    background-color: var(--color-denim-blue);
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .reset__input:focus {
