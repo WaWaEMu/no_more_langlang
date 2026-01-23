@@ -148,6 +148,8 @@
     "The :attribute must be a valid email address.": ":attribute 必須是有效的電子郵件地址。",
     "The :attribute must be at least :min characters.": ":attribute 至少為 :min 個字元。",
     "The :attribute confirmation does not match.": ":attribute 確認欄位不一致。",
+    "The password field confirmation does not match.": "密碼確認欄位不一致。",
+    "The password confirmation does not match.": "密碼確認欄位不一致。",
     "The password is incorrect.": "目前密碼不正確。",
     "Application Management": "領養申請管理",
     "Total received applications": "共 :count 筆收到的申請",

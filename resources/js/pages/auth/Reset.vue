@@ -93,6 +93,22 @@ async function resetPassword() {
     catch (error: any) {
         console.error('Reset Password Failed', error)
 
+        // Handle validation errors (422)
+        if (error.response?.status === 422 && error.response?.data?.errors) {
+            const errors = error.response.data.errors
+            // Get the first error message from password or email fields
+            const firstError = errors.password?.[0] || errors.email?.[0] || errors.token?.[0]
+
+            if (firstError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: trans('Error'),
+                    text: firstError,
+                })
+                return
+            }
+        }
+
         const message = error.response?.data?.message || trans('Reset Password Failed')
 
         Swal.fire({
