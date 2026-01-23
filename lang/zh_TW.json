@@ -221,5 +221,7 @@
     "This password reset link will expire in :count minutes.": "此密碼重設連結將在 :count 分鐘後失效。",
     "If you did not request a password reset, no further action is required.": "如果您沒有請求重設密碼，請忽略此郵件。",
     "Regards": "謝謝",
+    "passwords.throttled": "寄送過於頻繁，請等待 60 秒後再嘗試。",
+    "Please wait before retrying.": "寄送過於頻繁，請等待 60 秒後再嘗試。",
     "Whoops!": "哎呀！"
 }
