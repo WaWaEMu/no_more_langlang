@@ -406,12 +406,47 @@ onUnmounted(() => {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .user-menu {
+        position: static;
+    }
+
+    .user-menu__wrapper {
+        position: static;
+    }
+
     .user-menu__name {
         display: none;
     }
 
     .user-menu__dropdown {
-        right: -1rem;
+        width: auto;
+        left: 1rem;
+        right: 1rem;
+        min-width: auto;
+        max-width: none;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .user-menu__dropdown {
+        left: 0.5rem;
+        right: 0.5rem;
+        width: auto;
+        min-width: auto;
+    }
+
+    .user-menu__dropdown-header {
+        padding: 1rem;
+    }
+
+    .user-menu__dropdown-item {
+        padding: 0.625rem 1rem;
+        font-size: 0.85rem;
+
+        i {
+            font-size: 1rem;
+        }
     }
 }
 </style>

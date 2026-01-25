@@ -38,7 +38,8 @@
 
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
-                            <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at) }}</span>
+                            <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
+                                }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>
@@ -480,13 +481,55 @@ onUnmounted(() => {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .notification-dropdown {
+        position: static;
+    }
+
     .notification-dropdown__menu {
-        width: 320px;
-        right: -1rem;
+        width: auto;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
+        margin-top: 0.5rem;
     }
 
     .notification-dropdown__item {
         padding: 0.875rem 1rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .notification-dropdown__menu {
+        left: 0.5rem;
+        right: 0.5rem;
+        width: auto;
+    }
+
+    .notification-dropdown__header {
+        padding: 0.875rem 1rem;
+    }
+
+    .notification-dropdown__title {
+        font-size: 1rem;
+    }
+
+    .notification-dropdown__mark-all {
+        font-size: 0.8rem;
+    }
+
+    .notification-dropdown__item {
+        padding: 0.75rem 0.875rem;
+        gap: 0.75rem;
+    }
+
+    .notification-dropdown__item-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .notification-dropdown__item-message {
+        font-size: 0.85rem;
     }
 }
 </style>
