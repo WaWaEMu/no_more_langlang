@@ -23,7 +23,7 @@
                                 @update:image-blob="saveImageBlob" />
                         </template>
                     </div>
-                    <div class="d-flex flex-column">
+                    <div class="update-img__label-group d-flex flex-column align-items-center">
                         <span class="fs-5 fw-medium">裁減預覽</span>
                         <img src="@public/icons/arrow-right.svg" class="update-img__icon--arrow">
                     </div>
@@ -37,7 +37,7 @@
                         <button type="button" @click="resetUpload()"
                             class="update-img__btn--dark btn px-5 py-2">重新上傳</button>
                     </div>
-                    <div class="ms-auto">
+                    <div class="ms-auto button-group-right">
                         <button type="button" @click="cancelClick()" class="update-img__btn--dark btn me-3 px-4 py-2"
                             data-bs-dismiss="modal" aria-label="Close">取消</button>
                         <button type="button" @click="confirmImg()"
@@ -193,5 +193,102 @@ button {
     background-color: #2a4365;
     transform: translateY(-1px);
     box-shadow: 0 4px 6px rgba(44, 82, 130, 0.3);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .update-img__modal {
+        --bs-modal-width: 95vw;
+        max-width: 95vw;
+    }
+
+    .modal-body {
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+        padding: 1.5rem !important;
+    }
+
+    .update-img__upload {
+        width: min(300px, 80vw);
+        height: min(300px, 80vw);
+    }
+
+    .update-img__choose {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+
+    .update-img__preview {
+        width: min(200px, 60vw);
+        height: min(200px, 60vw);
+    }
+
+    .update-img__label-group {
+        flex-direction: row !important;
+        gap: 0.5rem;
+    }
+
+    .update-img__icon--arrow {
+        width: 30px;
+        height: 30px;
+        transform: rotate(90deg); /* Point down in mobile view */
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 1rem !important;
+    }
+
+    .modal-footer > div {
+        width: 100%;
+        margin: 0 !important;
+    }
+
+    /* Target the container of the right-side buttons */
+    .button-group-right {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    /* Remove the margin-end from the cancel button in mobile view since we use gap */
+    .button-group-right .update-img__btn--dark {
+        margin-right: 0 !important;
+    }
+
+    .update-img__btn--dark,
+    .update-img__btn--light {
+        width: 100%;
+        padding: 0.75rem !important;
+    }
+
+    button {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .update-img__upload {
+        width: min(250px, 75vw);
+        height: min(250px, 75vw);
+    }
+
+    .update-img__preview {
+        width: min(180px, 55vw);
+        height: min(180px, 55vw);
+    }
+
+    .update-img__choose {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .modal-body {
+        gap: 1rem !important;
+        padding: 1rem !important;
+    }
 }
 </style>

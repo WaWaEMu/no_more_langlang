@@ -410,13 +410,16 @@ async function submit() {
 }
 
 .apply-form__upload-card {
-    width: 150px;
+    /* Use responsive width that adapts to screen size */
+    width: min(150px, 45vw);
+    max-width: 100%;
 }
 
 .apply-form__upload--placeholder {
     background-color: #fff;
-    width: 150px;
-    height: 150px;
+    /* Use same responsive width */
+    width: min(150px, 45vw);
+    height: min(150px, 45vw);
     aspect-ratio: 1 / 1;
     border-radius: 6px 6px 0 0;
     border: 2px dashed #cbd5e0;
@@ -424,8 +427,9 @@ async function submit() {
 }
 
 .apply-form__upload--img {
-    width: 150px;
-    height: 150px;
+    /* Use same responsive width */
+    width: min(150px, 45vw);
+    height: min(150px, 45vw);
     border-radius: 6px 6px 0 0;
     aspect-ratio: 1 / 1;
     object-fit: cover;
@@ -498,5 +502,38 @@ button[type="submit"].apply-form__btn:active {
 .form-check-input:checked {
     background-color: #3182ce;
     border-color: #3182ce;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 576px) {
+    .apply-form__wrapper {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    .apply-form__section {
+        padding: 1.25rem;
+        border-radius: 12px;
+    }
+
+    .apply-form__section-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .apply-form__label {
+        font-size: 0.875rem;
+    }
+
+    button[type="submit"].apply-form__btn {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .apply-form__btn--img {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
 }
 </style>
