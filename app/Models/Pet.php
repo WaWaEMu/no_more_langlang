@@ -9,6 +9,12 @@ class Pet extends Model
 {
     use HasFactory;
 
+    // Status constants
+    public const STATUS_AVAILABLE = 'available'; // 開放領養
+    public const STATUS_PAUSED = 'paused'; // 暫停送養
+    public const STATUS_PENDING = 'pending'; // 預約互動
+    public const STATUS_ADOPTED = 'adopted'; // 送養成功
+
     protected $fillable = [
         'user_id',
         'title',
@@ -21,7 +27,8 @@ class Pet extends Model
         'name',
         'gender',
         'age',
-        'is_neuter'
+        'is_neuter',
+        'status'
     ];
 
     protected $appends = ['sendable_cities'];
@@ -123,6 +130,9 @@ class Pet extends Model
         if (isset($filters['is_neuter'])) {
             $isNeuter = $filters['is_neuter'];
             $query->where('is_neuter', $isNeuter === 'true' || $isNeuter === '1' || $isNeuter === true || $isNeuter === 1);
+        }
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
         }
     }
 

@@ -53,7 +53,8 @@
                                         <i class="bi bi-person-circle me-2"></i>{{ pet.user.name }}
                                     </RouterLink>
                                     <span class="text-muted small d-flex align-items-center">
-                                        <i class="bi bi-calendar me-1"></i>{{ $t('Published at') }} {{ formatDate(pet.created_at) }}
+                                        <i class="bi bi-calendar me-1"></i>{{ $t('Published at') }} {{
+                                            formatDate(pet.created_at) }}
                                     </span>
                                 </div>
                             </div>
@@ -93,7 +94,13 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Pet Name') }}</span>
-                                            <span class="fw-semibold text-dark">{{ pet.name }}</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-bold text-dark fs-5">{{ pet.name }}</span>
+                                                <span
+                                                    :class="['pet-detail__status-badge', `pet-detail__status-badge--${pet.status}`]">
+                                                    {{ getStatusLabel(pet.status) }}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -115,7 +122,8 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Age') }}</span>
-                                            <span class="fw-semibold text-dark">{{ pet.age }} {{ $t('years old') }}</span>
+                                            <span class="fw-semibold text-dark">{{ pet.age }} {{ $t('years old')
+                                            }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -132,7 +140,8 @@
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">{{ $t('Neuter Status') }}</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Neuter Status')
+                                            }}</span>
                                             <span class="fw-semibold"
                                                 :class="pet.is_neuter ? 'text-success' : 'text-warning'">
                                                 {{ pet.is_neuter ? $t('Neutered') : $t('Not Neutered') }}
@@ -141,8 +150,10 @@
                                     </div>
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
-                                            <span class="small text-secondary fw-medium">{{ $t('Is Stray Animal') }}</span>
-                                            <span class="fw-semibold text-dark">{{ pet.is_stray ? $t('Yes') : $t('No') }}</span>
+                                            <span class="small text-secondary fw-medium">{{ $t('Is Stray Animal')
+                                            }}</span>
+                                            <span class="fw-semibold text-dark">{{ pet.is_stray ? $t('Yes') : $t('No')
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -170,7 +181,8 @@
                                     </div>
                                 </div>
                                 <div v-if="pet.sendable_cities && pet.sendable_cities.length > 0" class="mt-3">
-                                    <span class="small text-secondary fw-medium d-block mb-2">{{ $t('Sendable Cities') }}</span>
+                                    <span class="small text-secondary fw-medium d-block mb-2">{{ $t('Sendable Cities')
+                                    }}</span>
                                     <div class="d-flex flex-wrap gap-2">
                                         <span v-for="city in pet.sendable_cities" :key="city" class="pet-detail__tag">
                                             {{ city }}
@@ -231,7 +243,8 @@
                                                 class="accordion-button pet-detail__accordion-button collapsed rounded-2 fw-semibold"
                                                 type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
                                                 aria-expanded="false" aria-controls="collapseThree">
-                                                <i class="bi bi-clipboard-check me-2"></i>{{ $t('Adoption Conditions') }}
+                                                <i class="bi bi-clipboard-check me-2"></i>{{ $t('Adoption Conditions')
+                                                }}
                                             </button>
                                         </h2>
                                         <div id="collapseThree" class="accordion-collapse collapse"
@@ -364,6 +377,16 @@ function formatDate(dateStr: string): string {
     })
 }
 
+function getStatusLabel(status: string) {
+    const labels: Record<string, string> = {
+        'available': 'Status.Available',
+        'paused': 'Status.Paused',
+        'pending': 'Status.Pending',
+        'adopted': 'Status.Adopted'
+    }
+    return labels[status] ? $t(labels[status]) : status
+}
+
 // Watch for route param changes
 watch(() => route.params.id, (newId, oldId) => {
     if (newId && newId !== oldId) {
@@ -441,6 +464,31 @@ onMounted(() => {
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 600;
+}
+
+/* Status Badge Colors */
+.pet-detail__status-badge--available {
+    background-color: #48bb78;
+}
+
+.pet-detail__status-badge--paused {
+    background-color: #ed8936;
+}
+
+.pet-detail__status-badge--pending {
+    background-color: #4299e1;
+}
+
+.pet-detail__status-badge--adopted {
+    background-color: #805ad5;
+}
+
+.pet-detail__status-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 550;
+    color: #fff;
 }
 
 /* Accordion custom button styling */

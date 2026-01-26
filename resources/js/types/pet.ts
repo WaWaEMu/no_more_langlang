@@ -14,6 +14,7 @@ export interface PetFormInter {
   adoption_description: string;
   health_description: string;
   adoption_condition: string;
+  status?: string;
   blobs: Blob[];
 }
 
@@ -46,6 +47,7 @@ export interface PetInter {
   user: { id: number; name: string }
   created_at: string
   updated_at: string
+  status: string
   is_favorite?: boolean
 }
 

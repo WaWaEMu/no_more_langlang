@@ -54,6 +54,16 @@
                                 <option :value="false">未結紮</option>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label for="status" class="form-label apply-form__label required">{{ $t('Adoption Status')
+                            }}</label>
+                            <select id="status" class="form-select" v-model="formState.status" required>
+                                <option v-for="option in statusOptions.items" :key="String(option.value)"
+                                    :value="option.value" :disabled="option.disabled">
+                                    {{ $t(option.label) }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </section>
 
@@ -202,6 +212,7 @@
 import { ref, reactive, watch, computed } from 'vue'
 import { areas } from '@/../data/areas'
 import { pets } from '@/../data/pets'
+import { statusOptions } from '@/../data/options'
 import UpdateImg from '@/components/modals/UpdateImg.vue'
 import { PetFormInter } from '@/types/pet'
 import { Modal } from 'bootstrap'
@@ -230,6 +241,7 @@ const formState = reactive<PetFormInter>({
     adoption_description: '',
     health_description: '',
     adoption_condition: '',
+    status: 'available',
     blobs: []
 })
 const imgUrls = ref<string[]>(['', '', ''])

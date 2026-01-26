@@ -10,10 +10,23 @@
                 <div class="pet-list__card--badge">
                     {{ pet.type }}
                 </div>
+                <div :class="['pet-list__card--status', `pet-list__card--status-${pet.status}`]">
+                    {{ getStatusLabel(pet.status) }}
+                </div>
                 <button class="pet-list__card--favorite" @click.prevent.stop="handleToggleFavorite(pet.id)"
                     :class="{ 'active': isFavorite(pet.id) }">
                     <i class="bi" :class="isFavorite(pet.id) ? 'bi-heart-fill' : 'bi-heart'"></i>
                 </button>
+                <div v-if="editable" class="pet-list__card--edit-status" @click.prevent.stop>
+                    <select :value="pet.status"
+                        @change="handleStatusUpdate(pet.id, ($event.target as HTMLSelectElement).value)"
+                        class="form-select form-select-sm pet-list__card--status-select">
+                        <option v-for="option in statusOptions.items" :key="String(option.value)" :value="option.value"
+                            :disabled="option.disabled">
+                            {{ $t(option.label) }}
+                        </option>
+                    </select>
+                </div>
             </div>
 
             <div class="pet-list__card--content">
@@ -71,17 +84,33 @@ import { RouterLink } from 'vue-router'
 import { useAdoptStore } from '@/stores/adopt'
 import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
+import axios from 'axios'
+import { statusOptions } from '@/../data/options'
+import { trans } from 'laravel-vue-i18n'
+
+const $t = trans
 
 const adoptStore = useAdoptStore()
 const authStore = useAuthStore()
 const { toggleFavorite, isFavorite } = adoptStore
 
-defineProps<{
-    petList: any[]
+const props = defineProps<{
+    petList: any[],
+    editable?: boolean
 }>()
 
 function formatDate(dateStr: string) {
     return dateStr ? dateStr.split('T')[0] : ''
+}
+
+function getStatusLabel(status: string) {
+    const labels: Record<string, string> = {
+        'available': 'Status.Available',
+        'paused': 'Status.Paused',
+        'pending': 'Status.Pending',
+        'adopted': 'Status.Adopted'
+    }
+    return labels[status] ? $t(labels[status]) : status
 }
 
 async function handleToggleFavorite(petId: number) {
@@ -104,6 +133,31 @@ async function handleToggleFavorite(petId: number) {
         })
     } else {
         toggleFavorite(petId)
+    }
+}
+
+async function handleStatusUpdate(petId: number, newStatus: string) {
+    try {
+        const res = await axios.put(`/api/adopt/${petId}/status`, { status: newStatus })
+        if (res.data.success) {
+            const pet = props.petList.find((p: any) => p.id === petId)
+            if (pet) pet.status = newStatus
+            Swal.fire({
+                icon: 'success',
+                title: '狀態已更新',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        }
+    } catch (error) {
+        console.error('Failed to update status:', error)
+        Swal.fire({
+            icon: 'error',
+            title: '更新失敗',
+            text: '請稍後再試'
+        })
     }
 }
 </script>
@@ -180,6 +234,35 @@ async function handleToggleFavorite(petId: number) {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.pet-list__card--status {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 550;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+.pet-list__card--status-available {
+    background-color: #48bb78;
+}
+
+.pet-list__card--status-paused {
+    background-color: #ed8936;
+}
+
+.pet-list__card--status-pending {
+    background-color: #4299e1;
+}
+
+.pet-list__card--status-adopted {
+    background-color: #805ad5;
+}
+
 .pet-list__card--favorite {
     position: absolute;
     top: 0.75rem;
@@ -215,6 +298,21 @@ async function handleToggleFavorite(petId: number) {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.pet-list__card--edit-status {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    right: 0.5rem;
+    z-index: 3;
+}
+
+.pet-list__card--status-select {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e0;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
 }
 
 .pet-list__card--content {

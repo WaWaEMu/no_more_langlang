@@ -37,6 +37,12 @@
                 </template>
             </DropdownButton>
 
+            <DropdownButton :options="statusOptions" filterKey="status">
+                <template #label>
+                    {{ petFilters.status['label'] ? $t(petFilters.status['label']) : $t('Adoption Status') }}
+                </template>
+            </DropdownButton>
+
             <li class="d-flex align-items-center ms-2">
                 <a href="#" class="pet-filter__reset underline" @click.prevent="resetFilters">
                     重設篩選
@@ -66,7 +72,7 @@ const props = defineProps<{
     petColors: string[]
 }>()
 
-const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions } = options
+const { isStrayOptions, furTypeOptions, genderOptions, ageOptions, isNeuterOptions, statusOptions } = options
 
 const adoptStore = useAdoptStore()
 const { petFilters, keyword } = storeToRefs(adoptStore)

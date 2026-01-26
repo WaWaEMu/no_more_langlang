@@ -24,6 +24,7 @@ export const useAdoptStore = defineStore('adopt', () => {
         gender: { label: '', value: '' },
         age: { label: '', value: '' },
         is_neuter: { label: '', value: '' },
+        status: { label: '', value: '' },
     }
 
     const petFilters = reactive<PetFiltersInter>({ ...emptyFilters })
@@ -51,6 +52,7 @@ export const useAdoptStore = defineStore('adopt', () => {
             if (petFilters.is_neuter.value !== '') {
                 params.is_neuter = petFilters.is_neuter.value
             }
+            if (petFilters.status.value) params.status = petFilters.status.value
             if (keyword.value) params.keyword = keyword.value
 
             const res = await axios.get('/api/adopt', { params })

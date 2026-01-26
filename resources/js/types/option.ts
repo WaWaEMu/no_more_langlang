@@ -1,7 +1,7 @@
 export interface OptionItem {
-    value: string | boolean
-    label: string
-    disabled?: boolean
+  value: string | boolean
+  label: string
+  disabled?: boolean
 }
 
 export interface OptionGroup {
@@ -21,4 +21,5 @@ export interface PetFiltersInter {
   gender: OptionItem
   age: OptionItem
   is_neuter: OptionItem
+  status: OptionItem
 }

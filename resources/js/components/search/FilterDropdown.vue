@@ -38,7 +38,7 @@
                         <template v-for="item in options.items" :key="String(item.value)">
                             <li v-if="!item.disabled" class="filter-dropdown__option py-2 rounded-md"
                                 @click="updatePetFilters(props.filterKey, item)">
-                                {{ item.label }}
+                                {{ $t(item.label) }}
                             </li>
                         </template>
                     </ul>

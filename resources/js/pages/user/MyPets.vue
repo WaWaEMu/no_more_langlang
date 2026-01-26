@@ -28,7 +28,7 @@
                 <!-- Content State -->
                 <div v-else>
                     <div v-if="pets.length > 0">
-                        <PetList :pet-list="pets" />
+                        <PetList :pet-list="pets" :editable="true" />
                     </div>
 
                     <!-- Empty State -->

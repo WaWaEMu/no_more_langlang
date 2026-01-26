@@ -50,10 +50,22 @@ export const isNeuterOptions: OptionInter = {
     ]
 }
 
+export const statusOptions: OptionInter = {
+    key: 'status',
+    items: [
+        { value: "", label: "Select Adoption Status", disabled: true },
+        { value: "available", label: "Status.Available" },
+        { value: "paused", label: "Status.Paused" },
+        { value: "pending", label: "Status.Pending" },
+        { value: "adopted", label: "Status.Adopted" }
+    ]
+}
+
 export default {
     isStrayOptions,
     furTypeOptions,
     genderOptions,
     ageOptions,
-    isNeuterOptions
+    isNeuterOptions,
+    statusOptions
 }

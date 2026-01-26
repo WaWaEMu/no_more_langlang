@@ -34,7 +34,8 @@ class PetController extends Controller
             'gender',
             'age',
             'is_neuter',
-            'keyword'
+            'keyword',
+            'status'
         ]);
 
         $pets = $this->petService->getAvailablePets($filters, 12);
@@ -121,6 +122,39 @@ class PetController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to delete pet: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to delete pet'], 500);
+        }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+        $pet = Pet::findOrFail($id);
+
+        // Check if user is the owner
+        if ($pet->user_id !== $user->id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|in:available,paused,pending,adopted'
+        ]);
+
+        try {
+            $pet->status = $validated['status'];
+            $pet->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully',
+                'status' => $pet->status
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to update status: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to update status'], 500);
         }
     }
 }

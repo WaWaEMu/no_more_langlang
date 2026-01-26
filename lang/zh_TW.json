@@ -223,5 +223,11 @@
     "Regards": "謝謝",
     "passwords.throttled": "寄送過於頻繁，請等待 60 秒後再嘗試。",
     "Please wait before retrying.": "寄送過於頻繁，請等待 60 秒後再嘗試。",
-    "Whoops!": "哎呀！"
+    "Whoops!": "哎呀！",
+    "Adoption Status": "領養狀態",
+    "Select Adoption Status": "請選擇領養狀態",
+    "Status.Available": "開放領養",
+    "Status.Paused": "暫停送養",
+    "Status.Pending": "預約互動",
+    "Status.Adopted": "送養成功"
 }
