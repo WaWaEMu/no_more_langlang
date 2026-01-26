@@ -16,6 +16,10 @@ class PetCreationService implements PetCreatorInterface {
     }
 
     public function create(array $data, array $blobs = []):Pet {
+        if (empty($blobs)) {
+            throw new \InvalidArgumentException('At least one image is required.');
+        }
+
         $cities = $data['sendable_city'];
         $details = Arr::only($data, [
             'adoption_description',

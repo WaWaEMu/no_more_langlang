@@ -2,7 +2,11 @@
     <div class="pet-list">
         <RouterLink v-for="pet in petList" :key="pet.id" :to="`/adopt/${pet.id}`" class="pet-list__card">
             <div class="pet-list__card--image-wrapper">
-                <img :src="`/storage/${pet.images[0].path}`" :alt="pet.name" class="pet-list__card--image">
+                <img v-if="pet.images && pet.images.length > 0" :src="`/storage/${pet.images[0].path}`" :alt="pet.name"
+                    class="pet-list__card--image">
+                <div v-else class="pet-list__card--image pet-list__card--no-image">
+                    <i class="bi bi-image"></i>
+                </div>
                 <div class="pet-list__card--badge">
                     {{ pet.type }}
                 </div>
@@ -147,6 +151,15 @@ async function handleToggleFavorite(petId: number) {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+}
+
+.pet-list__card--no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e2e8f0;
+    color: #a0aec0;
+    font-size: 3rem;
 }
 
 .pet-list__card:hover .pet-list__card--image {

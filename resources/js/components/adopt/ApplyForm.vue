@@ -332,6 +332,20 @@ async function submit() {
     if (isSubmitting.value) return
 
     isSubmitting.value = true
+
+    // Validate images
+    const hasImage = formState.blobs.some(blob => blob !== undefined && blob !== null)
+    if (!hasImage) {
+        Swal.fire({
+            icon: 'warning',
+            title: '請上傳圖片',
+            text: '請至少上傳一張動物的照片，讓大家更認識牠！',
+            confirmButtonColor: '#2c5282'
+        })
+        isSubmitting.value = false
+        return
+    }
+
     const realForm = toFormData()
 
     try {
