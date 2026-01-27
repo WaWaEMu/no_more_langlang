@@ -67,6 +67,7 @@
                                             <option value="apartment">{{ $t('Housing.Apartment') }}</option>
                                             <option value="house">{{ $t('Housing.House') }}</option>
                                             <option value="condo">{{ $t('Housing.Condo') }}</option>
+                                            <option value="suite">{{ $t('Housing.Suite') }}</option>
                                             <option value="dormitory">{{ $t('Housing.Dormitory') }}</option>
                                             <option value="other">{{ $t('Housing.Other') }}</option>
                                         </select>

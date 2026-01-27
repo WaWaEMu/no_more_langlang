@@ -91,7 +91,7 @@
                                                     <span>{{ $t(app.experience) }}</span>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <small class="text-muted d-block">{{ $t('Does family/roommate agree ? ') }}</small>
+                                                    <small class="text-muted d-block">{{ $t('Does family/roommate agree?') }}</small>
                                                     <span
                                                         :class="app.family_agreement ? 'text-success' : 'text-danger'">
                                                         {{ app.family_agreement ? $t('Agreed') : $t('Not Confirmed') }}
