@@ -3,48 +3,63 @@
     <Content :title="$t('Website Concept')">
         <template #content>
             <div class="about__content">
-                <!-- About Me Section -->
+                <!-- Website Concept Section -->
                 <div class="about__section mb-5">
                     <h3 class="about__section-title">
-                        <i class="bi bi-person-heart me-2"></i>{{ $t('About Me') }}
+                        <i class="bi bi-lightbulb me-2"></i>{{ $t('About.Concept.Title') }}
                     </h3>
                     <div class="about__card">
-                        <p class="about__text">
-                            {{ $t('Hi! I am a software engineer...') }}
-                        </p>
-                        <p class="about__text">
-                            {{ $t('I chose to use my skills to help strays...') }}
-                        </p>
+                        <p class="about__text" v-html="$t('About.Concept.Intro')"></p>
+                        <p class="about__text">{{ $t('About.Concept.List') }}</p>
+                        <ul class="about__list">
+                            <li>{{ $t('About.Concept.Feature1') }}</li>
+                            <li>{{ $t('About.Concept.Feature2') }}</li>
+                            <li>{{ $t('About.Concept.Feature3') }}</li>
+                            <li>{{ $t('About.Concept.Feature4') }}</li>
+                        </ul>
                         <p class="about__text mb-0">
-                            {{ $t('This is why I developed "No More Langlang".') }}
+                            {{ $t('About.Concept.Footer') }}
                         </p>
+                    </div>
+                </div>
+
+                <!-- Why Section -->
+                <div class="about__section mb-5">
+                    <h3 class="about__section-title">
+                        <i class="bi bi-question-circle me-2"></i>{{ $t('About.Why.Title') }}
+                    </h3>
+                    <div class="about__card">
+                        <p class="about__text mb-0">
+                            {{ $t('About.Why.Content') }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Who is it for Section -->
+                <div class="about__section mb-5">
+                    <h3 class="about__section-title">
+                        <i class="bi bi-people me-2"></i>{{ $t('About.Who.Title') }}
+                    </h3>
+                    <div class="about__card">
+                        <p class="about__text">{{ $t('About.Who.List') }}</p>
+                        <ul class="about__list">
+                            <li>{{ $t('About.Who.Item1') }}</li>
+                            <li>{{ $t('About.Who.Item2') }}</li>
+                            <li>{{ $t('About.Who.Item3') }}</li>
+                            <li>{{ $t('About.Who.Item4') }}</li>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- Tech & Collaboration Section -->
                 <div class="about__section mb-5">
                     <h3 class="about__section-title">
-                        <i class="bi bi-code-slash me-2"></i>{{ $t('Tech and Collaboration') }}
+                        <i class="bi bi-code-slash me-2"></i>{{ $t('About.Tech.Title') }}
                     </h3>
                     <div class="about__card">
-                        <p class="about__text" v-html="$t('Tech Intro')"></p>
+                        <p class="about__text" v-html="$t('About.Tech.Content')"></p>
                         <p class="about__text mb-0">
-                            {{ $t('Collaboration Invite') }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Future Plans Section -->
-                <div class="about__section mb-5">
-                    <h3 class="about__section-title">
-                        <i class="bi bi-rocket-takeoff me-2"></i>{{ $t('Future Plans') }}
-                    </h3>
-                    <div class="about__card">
-                        <p class="about__text">
-                            {{ $t('I will continue to maintain this site...') }}
-                        </p>
-                        <p class="about__text mb-0">
-                            <span v-html="$t('Free API Strong')"></span>
+                            {{ $t('About.Tech.Invite') }}
                         </p>
                     </div>
                 </div>
@@ -109,6 +124,28 @@ import Content from '@/components/Content.vue'
     line-height: 1.8;
     color: #4a5568;
     margin-bottom: 1rem;
+}
+
+.about__list {
+    list-style: none;
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.about__list li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    font-size: 1.05rem;
+}
+
+.about__list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #3182ce;
+    font-weight: bold;
 }
 
 .about__contact {
