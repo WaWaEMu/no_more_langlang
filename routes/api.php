@@ -55,4 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Profile & Password
     Route::put('/user/profile', [UserController::class, 'updateProfile']);
     Route::put('/user/password', [UserController::class, 'updatePassword']);
+
+    // Adoption Cases
+    Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
 });
