@@ -107,6 +107,11 @@ class Pet extends Model
         return $this->hasMany(AdoptionApplication::class);
     }
 
+    public function adoptionCase()
+    {
+        return $this->hasOne(AdoptionCase::class);
+    }
+
     public function scopeFilter($query, array $filters)
     {
         if (isset($filters['type'])) {

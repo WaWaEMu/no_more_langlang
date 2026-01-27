@@ -71,4 +71,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function adoptionCases()
+    {
+        return $this->hasMany(AdoptionCase::class, 'adopter_id');
+    }
+
+    public function managedCases()
+    {
+        return $this->hasMany(AdoptionCase::class, 'owner_id');
+    }
 }

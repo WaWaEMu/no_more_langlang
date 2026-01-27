@@ -37,6 +37,11 @@ class AdoptionApplication extends Model
         return $this->belongsTo(Pet::class);
     }
 
+    public function adoptionCase()
+    {
+        return $this->hasOne(AdoptionCase::class, 'application_id');
+    }
+
     /**
      * Get applications sent by the user.
      */
