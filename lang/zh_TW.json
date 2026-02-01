@@ -252,5 +252,7 @@
     "Status.Paused": "暫停送養",
     "Status.Pending": "預約互動",
     "Status.Adopted": "送養成功",
-    "Failed to fetch user pets": "無法載入我的送養清單"
+    "Failed to fetch user pets": "無法載入我的送養清單",
+    "Failed to fetch adopts": "無法載入領養列表",
+    "Failed to fetch pet details": "無法載入寵物詳細資料"
 }
