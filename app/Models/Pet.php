@@ -172,4 +172,12 @@ class Pet extends Model
             ->latest()
             ->paginate($perPage);
     }
+
+    public static function getUserPets(int $userId)
+    {
+        return self::where('user_id', $userId)
+            ->with(['images', 'user'])
+            ->latest()
+            ->get();
+    }
 }

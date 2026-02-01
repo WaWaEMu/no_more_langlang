@@ -13,4 +13,9 @@ class PetService implements PetServiceInterface
     {
         return Pet::getAvailablePets($filters, $perPage);
     }
+
+    public function getUserPets(int $userId)
+    {
+        return Pet::getUserPets($userId);
+    }
 }

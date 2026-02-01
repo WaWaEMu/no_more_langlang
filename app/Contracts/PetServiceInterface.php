@@ -14,4 +14,12 @@ interface PetServiceInterface
      * @return LengthAwarePaginator
      */
     public function getAvailablePets(array $filters, int $perPage = 12): LengthAwarePaginator;
+
+    /**
+     * Get all pets owned by a specific user.
+     *
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUserPets(int $userId);
 }

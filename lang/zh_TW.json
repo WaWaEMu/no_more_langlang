@@ -251,5 +251,6 @@
     "Status.Available": "開放領養",
     "Status.Paused": "暫停送養",
     "Status.Pending": "預約互動",
-    "Status.Adopted": "送養成功"
+    "Status.Adopted": "送養成功",
+    "Failed to fetch user pets": "無法載入我的送養清單"
 }

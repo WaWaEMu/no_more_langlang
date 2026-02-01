@@ -58,27 +58,21 @@ import { useAuthStore } from '@/stores/auth'
 import { PetInter } from '@/types/pet'
 
 const authStore = useAuthStore()
-const user = computed(() => authStore.user)
 const pets = ref<PetInter[]>([])
 
 const adoptStore = useAdoptStore()
-const { getMyPets } = adoptStore
-const { fetchPets } = adoptStore
+const { fetchUserPets } = adoptStore
 
 const authLoading = ref(true)
 
 onMounted(async () => {
     authLoading.value = true
     try {
-        // Ensure user and pets are fetched
-        await Promise.all([
-            authStore.fetchUser(),
-            fetchPets()
-        ])
+        // Ensure user is authenticated first
+        await authStore.fetchUser()
 
-        if (user.value) {
-            pets.value = getMyPets(user.value.id)
-        }
+        // Fetch user's own pets from the dedicated endpoint
+        pets.value = await fetchUserPets()
     } catch (error) {
         console.error('Failed to load user pets:', error)
     } finally {

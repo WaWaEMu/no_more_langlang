@@ -42,6 +42,21 @@ class PetController extends Controller
         return response()->json($pets);
     }
 
+    /**
+     * Get all pets owned by the authenticated user.
+     */
+    public function getUserPets(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $pets = $this->petService->getUserPets($user->id);
+        return response()->json($pets);
+    }
+
     public function store(Request $request)
     {
         if (!Auth::check()) {

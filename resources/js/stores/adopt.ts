@@ -99,8 +99,19 @@ export const useAdoptStore = defineStore('adopt', () => {
         fetchPets(1)
     }
 
-    function getMyPets(userid: number) {
-        return pets.value.filter(pet => pet.user.id === userid)
+    async function fetchUserPets(): Promise<PetInter[]> {
+        loading.value = true
+        error.value = null
+
+        try {
+            const res = await axios.get('/api/user/pets')
+            return res.data
+        } catch (err: any) {
+            error.value = err.message ?? 'Failed to fetch user pets'
+            throw err
+        } finally {
+            loading.value = false
+        }
     }
 
     // Favorites Logic
@@ -152,7 +163,7 @@ export const useAdoptStore = defineStore('adopt', () => {
         keyword,
         updateFilters,
         resetFilters,
-        getMyPets,
+        fetchUserPets,
         // Favorites exports
         toggleFavorite,
         isFavorite,
