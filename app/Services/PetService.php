@@ -18,4 +18,9 @@ class PetService implements PetServiceInterface
     {
         return Pet::getUserPets($userId);
     }
+
+    public function getUserFavorites(int $userId)
+    {
+        return Pet::getUserFavorites($userId);
+    }
 }

@@ -180,4 +180,18 @@ class Pet extends Model
             ->latest()
             ->get();
     }
+
+    public static function getUserFavorites(int $userId)
+    {
+        return User::findOrFail($userId)
+            ->favorites()
+            ->with(['images', 'user'])
+            ->withExists([
+                'favoritedBy as is_favorite' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                }
+            ])
+            ->orderByPivot('created_at', 'desc')
+            ->get();
+    }
 }

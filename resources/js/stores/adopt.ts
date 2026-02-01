@@ -115,11 +115,34 @@ export const useAdoptStore = defineStore('adopt', () => {
     }
 
     // Favorites Logic
+    const favorites = ref<PetInter[]>([])
+
+    async function fetchFavorites() {
+        loading.value = true
+        error.value = null
+
+        try {
+            const res = await axios.get('/api/user/favorites')
+            favorites.value = res.data
+        } catch (err: any) {
+            error.value = err.message ?? 'Failed to fetch favorites'
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
     async function toggleFavorite(petId: number) {
         // Optimistic update
         const pet = pets.value.find(p => p.id === petId)
         if (pet) {
             pet.is_favorite = !pet.is_favorite
+        }
+
+        // Also update in favorites list if present
+        const favIndex = favorites.value.findIndex(p => p.id === petId)
+        if (favIndex !== -1) {
+            favorites.value.splice(favIndex, 1)
         }
 
         try {
@@ -139,11 +162,13 @@ export const useAdoptStore = defineStore('adopt', () => {
 
     function isFavorite(petId: number): boolean {
         const pet = pets.value.find(p => p.id === petId)
-        return !!pet?.is_favorite
+        if (pet) return !!pet.is_favorite
+
+        return favorites.value.some(p => p.id === petId)
     }
 
     const favoritePets = computed(() => {
-        return pets.value.filter(pet => pet.is_favorite)
+        return favorites.value
     })
 
     return {
@@ -165,6 +190,8 @@ export const useAdoptStore = defineStore('adopt', () => {
         resetFilters,
         fetchUserPets,
         // Favorites exports
+        favorites,
+        fetchFavorites,
         toggleFavorite,
         isFavorite,
         favoritePets

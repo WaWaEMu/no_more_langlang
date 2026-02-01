@@ -31,11 +31,11 @@ import { storeToRefs } from 'pinia'
 
 const adoptStore = useAdoptStore()
 const { favoritePets } = storeToRefs(adoptStore)
-const { fetchPets } = adoptStore
+const { fetchFavorites } = adoptStore
 
 onMounted(() => {
-    // Ensure we have the latest pets data to filter favorites from
-    fetchPets()
+    // Fetch user's favorite pets from the dedicated endpoint
+    fetchFavorites()
 })
 </script>
 

@@ -57,6 +57,21 @@ class PetController extends Controller
         return response()->json($pets);
     }
 
+    /**
+     * Get all pets favorited by the authenticated user.
+     */
+    public function getFavorites(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $favorites = $this->petService->getUserFavorites($user->id);
+        return response()->json($favorites);
+    }
+
     public function store(Request $request)
     {
         if (!Auth::check()) {

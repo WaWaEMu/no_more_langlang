@@ -22,4 +22,12 @@ interface PetServiceInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getUserPets(int $userId);
+
+    /**
+     * Get all pets favorited by a specific user.
+     *
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getUserFavorites(int $userId);
 }
