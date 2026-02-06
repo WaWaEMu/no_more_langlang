@@ -37,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Contracts\UserServiceInterface::class,
             \App\Services\UserService::class
         );
+
+        $this->app->bind(
+            \App\Services\AdoptionCaseServiceInterface::class,
+            \App\Services\AdoptionCaseService::class
+        );
     }
 
     /**

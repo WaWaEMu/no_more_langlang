@@ -176,7 +176,7 @@ class Pet extends Model
     public static function getUserPets(int $userId)
     {
         return self::where('user_id', $userId)
-            ->with(['images', 'user'])
+            ->with(['images', 'user', 'adoptionCase.adopter'])
             ->latest()
             ->get();
     }

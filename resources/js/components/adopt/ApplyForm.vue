@@ -56,7 +56,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="status" class="form-label apply-form__label required">{{ $t('Adoption Status')
-                            }}</label>
+                                }}</label>
                             <select id="status" class="form-select" v-model="formState.status" required>
                                 <option v-for="option in statusOptions.items" :key="String(option.value)"
                                     :value="option.value" :disabled="option.disabled">
@@ -367,11 +367,11 @@ async function submit() {
             icon: 'success',
             title: '發布成功',
             text: '您的送養資訊已成功發布！',
-            confirmButtonText: '前往我的送養清單',
+            confirmButtonText: '前往送養管理頁面',
             confirmButtonColor: '#2c5282'
         })
 
-        router.push('/user/my-pets')
+        router.push('/user/adoptions')
     } catch (error: any) {
         console.error('Submit failed:', error)
         Swal.fire({

@@ -9,6 +9,10 @@ class AdoptionCase extends Model
 {
     use HasFactory;
 
+    public const STATUS_ACTIVE = 'active'; // 追蹤中
+    public const STATUS_COMPLETED = 'completed'; // 已完成
+    public const STATUS_PAUSED = 'paused'; // 已暫停
+
     protected $fillable = [
         'pet_id',
         'adopter_id',
@@ -48,5 +52,17 @@ class AdoptionCase extends Model
     public function application()
     {
         return $this->belongsTo(AdoptionApplication::class, 'application_id');
+    }
+
+    public function scopeForAdopter($query, $userId)
+    {
+        return $query->where('adopter_id', $userId)
+            ->with(['pet.images', 'owner']);
+    }
+
+    public function scopeForOwner($query, $userId)
+    {
+        return $query->where('owner_id', $userId)
+            ->with(['pet.images', 'adopter']);
     }
 }

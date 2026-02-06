@@ -8,9 +8,33 @@ use App\Models\Pet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\AdoptionCaseServiceInterface;
 
 class AdoptionCaseController extends Controller
 {
+    protected $adoptionCaseService;
+
+    public function __construct(AdoptionCaseServiceInterface $adoptionCaseService)
+    {
+        $this->adoptionCaseService = $adoptionCaseService;
+    }
+
+    /**
+     * Get list of adoption cases for the user.
+     */
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $role = $request->query('role', 'owner');
+
+        $cases = $this->adoptionCaseService->getUserCases($user, $role);
+
+        return response()->json([
+            'success' => true,
+            'data' => $cases
+        ]);
+    }
+
     /**
      * Store a new adoption case.
      * This is triggered when an owner finalizes an adoption.

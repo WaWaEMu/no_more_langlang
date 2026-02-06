@@ -84,9 +84,15 @@
                             </RouterLink>
                         </li>
                         <li>
-                            <RouterLink to="/user/my-pets" class="user-menu__dropdown-item" @click="closeMenu">
-                                <i class="bi bi-heart-fill"></i>
-                                <span>我的送養</span>
+                            <RouterLink to="/user/adoptions" class="user-menu__dropdown-item" @click="closeMenu">
+                                <i class="bi bi-house-heart"></i>
+                                <span>送養管理</span>
+                            </RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink to="/user/adopted" class="user-menu__dropdown-item" @click="closeMenu">
+                                <i class="bi bi-balloon-heart"></i>
+                                <span>收養管理</span>
                             </RouterLink>
                         </li>
                         <li>

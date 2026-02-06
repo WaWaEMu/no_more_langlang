@@ -67,9 +67,14 @@ const routes = [
         meta: { title: t('Profile') }
     },
     {
-        path: '/user/my-pets',
-        component: () => import('@/pages/user/MyPets.vue'),
-        meta: { title: t('My Pets') }
+        path: '/user/adoptions',
+        component: () => import('@/pages/user/Adoptions.vue'),
+        meta: { title: t('Adoption Management') }
+    },
+    {
+        path: '/user/adopted',
+        component: () => import('@/pages/user/Adopted.vue'),
+        meta: { title: t('Adopt Management') }
     },
     {
         path: '/user/favorites',

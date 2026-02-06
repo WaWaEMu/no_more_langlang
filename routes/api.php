@@ -61,5 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/favorites', [PetController::class, 'getFavorites']);
 
     // Adoption Cases
+    Route::get('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'index']);
     Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
 });

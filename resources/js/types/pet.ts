@@ -49,6 +49,10 @@ export interface PetInter {
   updated_at: string
   status: string
   is_favorite?: boolean
+  adoptionCase?: {
+    adopter?: { name: string }
+    started_at: string
+  }
 }
 
 export interface PetColorMapInter {
