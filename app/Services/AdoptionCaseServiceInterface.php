@@ -16,4 +16,13 @@ interface AdoptionCaseServiceInterface
      * @return Collection
      */
     public function getUserCases(User $user, string $role): Collection;
+
+    /**
+     * Create a new adoption case.
+     *
+     * @param array $data
+     * @param User $owner
+     * @return AdoptionCase
+     */
+    public function createCase(array $data, User $owner): AdoptionCase;
 }

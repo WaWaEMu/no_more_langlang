@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class AdoptionCase extends Model
 {
@@ -64,5 +65,71 @@ class AdoptionCase extends Model
     {
         return $query->where('owner_id', $userId)
             ->with(['pet.images', 'adopter']);
+    }
+
+    /**
+     * Finalize an adoption: Create case, update pet status, and update application status.
+     *
+     * @param array $data
+     * @param User $owner
+     * @return self
+     */
+    public static function finalize(array $data, User $owner): self
+    {
+        return DB::transaction(function () use ($data, $owner) {
+            // 1. Create the Adoption Case
+            $case = self::create([
+                'pet_id' => $data['pet_id'],
+                'adopter_id' => $data['adopter_id'],
+                'owner_id' => $owner->id,
+                'application_id' => $data['application_id'] ?? null,
+                'status' => self::STATUS_ACTIVE,
+                'tracking_config' => $data['tracking_config'],
+                'started_at' => now(),
+                'next_report_due_at' => self::calculateNextReportDate($data['tracking_config']),
+            ]);
+
+            if (!$case) {
+                throw new \Exception('Failed to create adoption case.');
+            }
+
+            // 2. Update Pet Status to Adopted (Must succeed)
+            $petUpdated = Pet::where('id', $data['pet_id'])
+                ->where('user_id', $owner->id) // Security double-check
+                ->update(['status' => Pet::STATUS_ADOPTED]);
+
+            if (!$petUpdated) {
+                throw new \Exception('Failed to update pet status or unauthorized.');
+            }
+
+            // 3. Update Adoption Application Status to Approved (if provided)
+            if (!empty($data['application_id'])) {
+                $appUpdated = AdoptionApplication::where('id', $data['application_id'])
+                    ->update(['status' => 'approved']);
+
+                if (!$appUpdated) {
+                    throw new \Exception('Failed to update adoption application status.');
+                }
+            }
+
+            return $case;
+        });
+    }
+
+    /**
+     * Calculate the next report due date based on tracking config.
+     */
+    private static function calculateNextReportDate(?array $config): ?\Carbon\Carbon
+    {
+        if (!$config || !isset($config['frequency'])) {
+            return null;
+        }
+
+        return match ($config['frequency']) {
+            'weekly' => now()->addWeek(),
+            'monthly' => now()->addMonth(),
+            'quarterly' => now()->addMonths(3),
+            default => null,
+        };
     }
 }

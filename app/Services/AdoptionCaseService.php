@@ -31,4 +31,21 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
             ->get();
     }
 
+    public function createCase(array $data, User $owner): AdoptionCase
+    {
+        try {
+            $pet = Pet::findOrFail($data['pet_id']);
+
+            if ($pet->user_id !== $owner->id) {
+                throw new \Exception('Unauthorized: User is not the owner of this pet.', 403);
+            }
+
+            return AdoptionCase::finalize($data, $owner);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw new \Exception('Pet not found.', 404);
+        } catch (\Exception $e) {
+            // Re-throw the exception to be handled by the controller's catch block
+            throw $e;
+        }
+    }
 }
