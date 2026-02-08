@@ -7,7 +7,13 @@
                 <div class="mb-4">
                     <h2 class="fw-bold text-dark mb-1">{{ $t('Application Management') }}</h2>
                     <p class="text-muted mb-0" v-if="!loading">
-                        {{ activeTab === 'received' ? $t('Total received applications', { count: totalReceivedApplications }) : $t('Total sent applications', { count: sentApplications.length }) }}
+                        {{ activeTab === 'received' ? $t('Total received applications', {
+                            count:
+                                totalReceivedApplications.toString()
+                        }) : $t('Total sent applications', {
+                            count:
+                                sentApplications.length.toString()
+                        }) }}
                     </p>
                 </div>
 
