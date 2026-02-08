@@ -279,5 +279,18 @@
     "Owner": "送養人",
     "View Adoption Page": "查看送養頁面",
     "View Case Details (Coming Soon)": "查看案件詳情 (即將上線)",
-    "Loading data...": "載入資料中..."
+    "Loading data...": "載入資料中...",
+    "Finalize Adoption": "確認領養",
+    "Finalize Adoption Confirmation": "確認完成領養流程",
+    "Finalize Adoption Hint": "此操作將正式建立領養案件，並開始追蹤流程。",
+    "Tracking Frequency": "追蹤頻率",
+    "No Tracking": "不追蹤",
+    "Weekly": "每週回報",
+    "Monthly": "每月回報",
+    "Quarterly": "每季回報",
+    "Finalize Success": "領養成交！",
+    "Finalize Success Message": "領養案件已成功建立，即將跳轉至送養管理頁面...",
+    "Finalize Failed": "建立失敗",
+    "Please select tracking frequency": "請選擇追蹤頻率",
+    "Confirm": "確認"
 }

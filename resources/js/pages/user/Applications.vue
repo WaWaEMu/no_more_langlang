@@ -127,10 +127,27 @@
                                                         <i class="bi bi-x-lg me-1"></i>{{ $t('Reject') }}
                                                     </button>
                                                 </div>
+                                                <div v-else-if="app.status === 'approved'"
+                                                    class="d-flex flex-column align-items-end gap-2">
+                                                    <button @click="finalizeAdoption(app, group.pet)"
+                                                        class="btn btn-sm btn-primary rounded-pill px-3">
+                                                        <i class="bi bi-check-circle me-1"></i>{{ $t('Finalize Adoption') }}
+                                                    </button>
+                                                    <div v-if="app.owner_message"
+                                                        class="application__owner-message p-2 rounded-3 w-100 border-start border-4">
+                                                        <small class="text-primary fw-bold d-block mb-1">{{ $t('Your Reply:') }}</small>
+                                                        <p class="mb-0 text-secondary small"
+                                                            style="white-space: pre-wrap;">
+                                                            {{ app.owner_message }}</p>
+                                                    </div>
+                                                    <div class="text-muted small">
+                                                        {{ $t('Processed at', { date: formatDate(app.updated_at) }) }}
+                                                    </div>
+                                                </div>
                                                 <div v-else class="d-flex flex-column align-items-end gap-1">
                                                     <div v-if="app.owner_message"
                                                         class="application__owner-message p-2 rounded-3 mb-1 w-100 border-start border-4">
-                                                        <small class="text-primary fw-bold d-block mb-1">{{ $t('Your Reply: ') }}</small>
+                                                        <small class="text-primary fw-bold d-block mb-1">{{ $t('Your Reply:') }}</small>
                                                         <p class="mb-0 text-secondary small"
                                                             style="white-space: pre-wrap;">
                                                             {{ app.owner_message }}</p>
@@ -217,12 +234,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, nextTick, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { trans } from 'laravel-vue-i18n'
+
+const $t = trans
 
 interface Application {
     id: number
@@ -262,6 +281,7 @@ interface SentApplication {
 }
 
 const route = useRoute()
+const router = useRouter()
 const loading = ref(true)
 const activeTab = ref<'received' | 'sent'>('received')
 const groupedApplications = ref<PetGroup[]>([])
@@ -335,7 +355,8 @@ async function updateStatus(applicationId: number, status: string) {
             await Swal.fire({
                 icon: 'error',
                 title: trans('Update Failed'),
-                text: trans('Please try again later')
+                text: trans('Please try again later'),
+                confirmButtonColor: '#2c5282'
             })
         }
     }
@@ -392,6 +413,71 @@ async function handleHighlight() {
                 }, 2000)
             }
         }, 100)
+    }
+}
+
+async function finalizeAdoption(application: any, pet: any) {
+    const result = await Swal.fire({
+        title: $t('Finalize Adoption Confirmation'),
+        html: `
+            <p class="mb-3">${$t('Finalize Adoption Hint')}</p>
+            <div class="form-group text-start">
+                <label class="form-label fw-bold">${$t('Tracking Frequency')}</label>
+                <select id="tracking-frequency" class="form-select">
+                    <option value="">${$t('Please select tracking frequency')}</option>
+                    <option value="none">${$t('No Tracking')}</option>
+                    <option value="weekly">${$t('Weekly')}</option>
+                    <option value="monthly">${$t('Monthly')}</option>
+                    <option value="quarterly">${$t('Quarterly')}</option>
+                </select>
+            </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#2c5282',
+        confirmButtonText: $t('Confirm'),
+        cancelButtonText: $t('Cancel'),
+        preConfirm: () => {
+            const select = document.getElementById('tracking-frequency') as HTMLSelectElement
+            const frequency = select.value
+            if (!frequency) {
+                Swal.showValidationMessage($t('Please select tracking frequency'))
+                return false
+            }
+            return frequency
+        }
+    })
+
+    if (result.isConfirmed && result.value) {
+        const frequency = result.value
+        const trackingConfig = frequency === 'none' ? null : { frequency }
+
+        try {
+            await axios.post('/api/adoption-cases', {
+                pet_id: pet.id,
+                adopter_id: application.applicant.id,
+                application_id: application.id,
+                tracking_config: trackingConfig
+            })
+
+            await Swal.fire({
+                icon: 'success',
+                title: $t('Finalize Success'),
+                text: $t('Finalize Success Message'),
+                timer: 2000,
+                showConfirmButton: false
+            })
+
+            // Redirect to adoptions page
+            router.push('/user/adoptions')
+        } catch (error: any) {
+            Swal.fire({
+                icon: 'error',
+                title: $t('Finalize Failed'),
+                text: error.response?.data?.message || error.message,
+                confirmButtonColor: '#2c5282'
+            })
+        }
     }
 }
 
