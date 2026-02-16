@@ -49,9 +49,17 @@ export interface PetInter {
   updated_at: string
   status: string
   is_favorite?: boolean
-  adoptionCase?: {
-    adopter?: { name: string }
+  adoption_case?: {
+    id: number
+    adopter: {
+        id: number
+        name: string
+    }
     started_at: string
+    tracking_config?: {
+        frequency: string
+    }
+    next_report_due_at?: string
   }
 }
 

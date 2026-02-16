@@ -292,5 +292,8 @@
     "Finalize Success Message": "領養案件已成功建立，即將跳轉至送養管理頁面...",
     "Finalize Failed": "建立失敗",
     "Please select tracking frequency": "請選擇追蹤頻率",
-    "Confirm": "確認"
+    "Confirm": "確認",
+    "Next Report Due": "下次回報期限",
+    "Adopted Date": "送養日期",
+    "View Details": "查看詳情"
 }
