@@ -35,21 +35,14 @@ class AdoptionCaseController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\AdoptionCaseRequest $request)
     {
-        $validated = $request->validate([
-            'pet_id' => 'required|exists:pets,id',
-            'adopter_id' => 'required|exists:users,id',
-            'application_id' => 'nullable|exists:adoption_applications,id',
-            'tracking_config' => 'nullable|array',
-        ]);
-
         try {
-            $case = $this->adoptionCaseService->createCase($validated, Auth::user());
+            $case = $this->adoptionCaseService->createCase($request->validated(), Auth::user());
 
             return response()->json([
                 'success' => true,
-                'message' => 'Adoption finalized and case created.',
+                'message' => '結案成功，案件已建立',
                 'data' => $case
             ], 201);
 
@@ -57,7 +50,7 @@ class AdoptionCaseController extends Controller
             $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to finalize adoption: ' . $e->getMessage()
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
             ], $statusCode);
         }
     }

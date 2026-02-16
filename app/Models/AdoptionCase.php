@@ -105,7 +105,7 @@ class AdoptionCase extends Model
             // 3. Update Adoption Application Status to Approved (if provided)
             if (!empty($data['application_id'])) {
                 $appUpdated = AdoptionApplication::where('id', $data['application_id'])
-                    ->update(['status' => 'approved']);
+                    ->update(['status' => 'finalized']);
 
                 if (!$appUpdated) {
                     throw new \Exception('Failed to update adoption application status.');

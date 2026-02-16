@@ -365,6 +365,7 @@ async function updateStatus(applicationId: number, status: string) {
 function getStatusClass(status: string) {
     switch (status) {
         case 'approved': return 'bg-success'
+        case 'finalized': return 'bg-success'
         case 'rejected': return 'bg-danger'
         default: return 'bg-warning text-dark'
     }
@@ -373,6 +374,7 @@ function getStatusClass(status: string) {
 function getStatusText(status: string) {
     switch (status) {
         case 'approved': return trans('Approved')
+        case 'finalized': return trans('Adopted')
         case 'rejected': return trans('Rejected')
         default: return trans('Pending')
     }
@@ -452,10 +454,21 @@ async function finalizeAdoption(application: any, pet: any) {
         const frequency = result.value
         const trackingConfig = frequency === 'none' ? null : { frequency }
 
+        // Validate that applicant_user exists
+        if (!application.applicant_user) {
+            await Swal.fire({
+                icon: 'error',
+                title: $t('Finalize Failed'),
+                text: '申請人資料不完整，無法完成結案',
+                confirmButtonColor: '#2c5282'
+            })
+            return
+        }
+
         try {
             await axios.post('/api/adoption-cases', {
                 pet_id: pet.id,
-                adopter_id: application.applicant.id,
+                adopter_id: application.applicant_user.id,
                 application_id: application.id,
                 tracking_config: trackingConfig
             })
