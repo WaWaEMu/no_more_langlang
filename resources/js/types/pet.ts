@@ -55,7 +55,12 @@ export interface PetInter {
         id: number
         name: string
     }
+    owner?: {
+        id: number
+        name: string
+    }
     started_at: string
+    status: string
     tracking_config?: {
         frequency: string
     }

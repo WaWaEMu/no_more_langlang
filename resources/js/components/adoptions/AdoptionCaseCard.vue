@@ -40,8 +40,10 @@
             <!-- Adoption Base Info -->
             <div class="adoption-card__info-box rounded-3 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-secondary small">{{ $t('Adopter') }}</span>
-                    <span class="fw-semibold text-dark">{{ pet.adoption_case?.adopter.name }}</span>
+                    <span class="text-secondary small">{{ role === 'adopter' ? $t('Owner') : $t('Adopter') }}</span>
+                    <span class="fw-semibold text-dark">
+                        {{ role === 'adopter' ? pet.adoption_case?.owner?.name : pet.adoption_case?.adopter?.name }}
+                    </span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="text-secondary small">{{ $t('Adopted Date') }}</span>
@@ -60,7 +62,6 @@
                         <span class="text-secondary small">追蹤頻率</span>
                         <span class="text-dark small">{{ getTrackingFrequencyText(pet.adoption_case.tracking_config.frequency) }}</span>
                     </div>
-                    <!-- Future: Last Report Date can go here -->
                 </div>
             </div>
 
@@ -81,9 +82,14 @@ import { ref } from 'vue'
 import { trans } from 'laravel-vue-i18n'
 import { PetInter } from '@/types/pet'
 
-const props = defineProps<{
+interface Props {
     pet: PetInter
-}>()
+    role?: 'owner' | 'adopter'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    role: 'owner'
+})
 
 const isExpanded = ref(false)
 

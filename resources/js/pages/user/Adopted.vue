@@ -32,9 +32,13 @@
                     </ul>
 
                     <!-- Active Adopted Cases -->
-                    <div v-if="activeTab === 'active'">
-                        <!-- Placeholder: Data integration pending -->
-                        <div class="adopted__empty-state text-center py-5 bg-light rounded-3">
+                    <div v-show="activeTab === 'active'">
+                        <div v-if="activeCases.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                            <div class="col" v-for="pet in activeCases" :key="pet.id">
+                                <AdoptionCaseCard :pet="pet" role="adopter" />
+                            </div>
+                        </div>
+                        <div v-else class="adopted__empty-state text-center py-5 bg-light rounded-3 shadow-sm border">
                             <div class="mb-3">
                                 <i class="bi bi-house-heart display-1 text-muted opacity-50"></i>
                             </div>
@@ -44,9 +48,13 @@
                     </div>
 
                     <!-- Completed Adopted Cases -->
-                    <div v-else-if="activeTab === 'completed'">
-                        <!-- Placeholder: Data integration pending -->
-                        <div class="adopted__empty-state text-center py-5 bg-light rounded-3">
+                    <div v-show="activeTab === 'completed'">
+                        <div v-if="completedCases.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                            <div class="col" v-for="pet in completedCases" :key="pet.id">
+                                <AdoptionCaseCard :pet="pet" role="adopter" />
+                            </div>
+                        </div>
+                        <div v-else class="adopted__empty-state text-center py-5 bg-light rounded-3 shadow-sm border">
                             <div class="mb-3">
                                 <i class="bi bi-check2-all display-1 text-muted opacity-50"></i>
                             </div>
@@ -61,17 +69,39 @@
 </template>
 
 <script setup lang="ts" name="Adopted">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
+import AdoptionCaseCard from '@/components/adoptions/AdoptionCaseCard.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useAdoptStore } from '@/stores/adopt'
+import { PetInter } from '@/types/pet'
 
 const authStore = useAuthStore()
+const adoptStore = useAdoptStore()
 const activeTab = ref<'active' | 'completed'>('active')
-const loading = ref(false)
+const loading = ref(true)
+const adoptionCases = ref<PetInter[]>([])
 
-// Note: Data fetching will be implemented in later commits
-// For now, we show empty states to establish the UI structure
+const activeCases = computed(() => {
+    return adoptionCases.value.filter(pet => pet.adoption_case?.status === 'active')
+})
+
+const completedCases = computed(() => {
+    return adoptionCases.value.filter(pet => pet.adoption_case?.status === 'completed')
+})
+
+onMounted(async () => {
+    loading.value = true
+    try {
+        await authStore.fetchUser()
+        adoptionCases.value = await adoptStore.fetchAdoptionCases('adopter')
+    } catch (error) {
+        console.error('Failed to fetch adoption cases:', error)
+    } finally {
+        loading.value = false
+    }
+})
 
 </script>
 

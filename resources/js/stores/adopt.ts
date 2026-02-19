@@ -114,6 +114,31 @@ export const useAdoptStore = defineStore('adopt', () => {
         }
     }
 
+    async function fetchAdoptionCases(role = 'owner'): Promise<PetInter[]> {
+        loading.value = true
+        error.value = null
+
+        try {
+            const res = await axios.get('/api/adoption-cases', { params: { role } })
+            // The API returns an array of AdoptionCase objects. 
+            // We want to return an array of Pet objects with the adoption_case attached.
+            const cases = res.data.data
+            return cases.map((c: any) => {
+                const pet = c.pet
+                pet.adoption_case = {
+                    ...c,
+                    pet: undefined // Remove circular reference if any
+                }
+                return pet
+            })
+        } catch (err: any) {
+            error.value = err.message ?? 'Failed to fetch adoption cases'
+            throw err
+        } finally {
+            loading.value = false
+        }
+    }
+
     // Favorites Logic
     const favorites = ref<PetInter[]>([])
 
@@ -189,6 +214,7 @@ export const useAdoptStore = defineStore('adopt', () => {
         updateFilters,
         resetFilters,
         fetchUserPets,
+        fetchAdoptionCases,
         // Favorites exports
         favorites,
         fetchFavorites,
