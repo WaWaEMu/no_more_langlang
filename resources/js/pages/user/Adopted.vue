@@ -18,15 +18,15 @@
                         <li class="nav-item">
                             <button class="nav-link bg-transparent border-0 pb-2 px-1 me-4 position-relative"
                                 :class="{ active: activeTab === 'active' }" @click="activeTab = 'active'">
-                                <span class="fw-semibold">{{ $t('Tracking') }}</span>
-                                <span class="badge rounded-pill bg-secondary ms-1 text-white opacity-75">0</span>
+                                <span class="fw-semibold">{{ $t('Tracking Report') }}</span>
+                                <span class="badge rounded-pill bg-secondary ms-1 text-white opacity-75">{{ activeCases.length }}</span>
                             </button>
                         </li>
                         <li class="nav-item">
                             <button class="nav-link bg-transparent border-0 pb-2 px-1 position-relative"
                                 :class="{ active: activeTab === 'completed' }" @click="activeTab = 'completed'">
-                                <span class="fw-semibold">{{ $t('Completed') }}</span>
-                                <span class="badge rounded-pill bg-secondary ms-1 text-white opacity-75">0</span>
+                                <span class="fw-semibold">{{ $t('Tracking Ended') }}</span>
+                                <span class="badge rounded-pill bg-secondary ms-1 text-white opacity-75">{{ completedCases.length }}</span>
                             </button>
                         </li>
                     </ul>
