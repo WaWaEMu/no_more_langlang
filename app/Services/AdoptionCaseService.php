@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\TrackingReport;
+
 class AdoptionCaseService implements AdoptionCaseServiceInterface
 {
     /**
@@ -64,5 +66,49 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
             // Re-throw the exception to be handled by the controller's catch block
             throw $e;
         }
+    }
+
+    /**
+     * Submit a tracking report for an adoption case.
+     */
+    public function submitReport(AdoptionCase $case, array $data, User $reporter): TrackingReport
+    {
+        return DB::transaction(function () use ($case, $data, $reporter) {
+            // 1. Handle image uploads
+            $imagePaths = [];
+            if (!empty($data['images'])) {
+                $date = now()->format('Y_m_d');
+                foreach ($data['images'] as $index => $image) {
+                    $filename = "report_{$case->id}_{$index}_" . time() . '.' . $image->guessExtension();
+                    $path = $image->storeAs("images/reports/{$date}", $filename, 'public');
+                    $imagePaths[] = $path;
+                }
+            }
+
+            // 2. Create the tracking report
+            $report = TrackingReport::create([
+                'adoption_case_id' => $case->id,
+                'reporter_id' => $reporter->id,
+                'content' => $data['content'],
+                'images' => !empty($imagePaths) ? $imagePaths : null,
+                'reported_at' => now(),
+            ]);
+
+            // 3. Update case tracking dates
+            $case->update([
+                'last_report_at' => now(),
+                'next_report_due_at' => AdoptionCase::calculateNextReportDate($case->tracking_config),
+            ]);
+
+            return $report;
+        });
+    }
+
+    /**
+     * Get all tracking reports for an adoption case.
+     */
+    public function getReports(AdoptionCase $case): Collection
+    {
+        return $case->reports()->with('reporter:id,name')->get();
     }
 }

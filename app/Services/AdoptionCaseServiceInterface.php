@@ -25,4 +25,22 @@ interface AdoptionCaseServiceInterface
      * @return AdoptionCase
      */
     public function createCase(array $data, User $owner): AdoptionCase;
+
+    /**
+     * Submit a tracking report for an adoption case.
+     *
+     * @param AdoptionCase $case
+     * @param array $data
+     * @param User $reporter
+     * @return \App\Models\TrackingReport
+     */
+    public function submitReport(AdoptionCase $case, array $data, User $reporter): \App\Models\TrackingReport;
+
+    /**
+     * Get all tracking reports for an adoption case.
+     *
+     * @param AdoptionCase $case
+     * @return Collection
+     */
+    public function getReports(AdoptionCase $case): Collection;
 }

@@ -55,6 +55,11 @@ class AdoptionCase extends Model
         return $this->belongsTo(AdoptionApplication::class, 'application_id');
     }
 
+    public function reports()
+    {
+        return $this->hasMany(TrackingReport::class)->orderBy('reported_at', 'desc');
+    }
+
     public function scopeForAdopter($query, $userId)
     {
         return $query->where('adopter_id', $userId)
@@ -119,7 +124,7 @@ class AdoptionCase extends Model
     /**
      * Calculate the next report due date based on tracking config.
      */
-    private static function calculateNextReportDate(?array $config): ?\Carbon\Carbon
+    public static function calculateNextReportDate(?array $config): ?\Carbon\Carbon
     {
         if (!$config || !isset($config['frequency'])) {
             return null;

@@ -54,4 +54,79 @@ class AdoptionCaseController extends Controller
             ], $statusCode);
         }
     }
+
+    /**
+     * Submit a tracking report for an adoption case.
+     * Only the adopter of the case can submit reports.
+     */
+    public function submitReport(\App\Http\Requests\TrackingReportRequest $request, $id)
+    {
+        try {
+            $case = AdoptionCase::findOrFail($id);
+            $user = Auth::user();
+
+            // Only the adopter can submit reports
+            if ($case->adopter_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '只有認養人可以提交回報'
+                ], 403);
+            }
+
+            // Case must be active
+            if ($case->status !== AdoptionCase::STATUS_ACTIVE) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '此案件已結束，無法提交回報'
+                ], 400);
+            }
+
+            $report = $this->adoptionCaseService->submitReport($case, $request->validated() + ['images' => $request->file('images')], $user);
+
+            return response()->json([
+                'success' => true,
+                'message' => '回報提交成功',
+                'data' => $report->load('reporter:id,name')
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all tracking reports for an adoption case.
+     * Both adopter and owner can view reports.
+     */
+    public function getReports($id)
+    {
+        try {
+            $case = AdoptionCase::findOrFail($id);
+            $user = Auth::user();
+
+            // Only adopter or owner can view reports
+            if ($case->adopter_id !== $user->id && $case->owner_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '無權限查看此案件的回報'
+                ], 403);
+            }
+
+            $reports = $this->adoptionCaseService->getReports($case);
+
+            return response()->json([
+                'success' => true,
+                'data' => $reports
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
 }

@@ -63,4 +63,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Adoption Cases
     Route::get('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'index']);
     Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
+
+    // Tracking Reports
+    Route::post('/adoption-cases/{id}/reports', [\App\Http\Controllers\AdoptionCaseController::class, 'submitReport']);
+    Route::get('/adoption-cases/{id}/reports', [\App\Http\Controllers\AdoptionCaseController::class, 'getReports']);
 });
