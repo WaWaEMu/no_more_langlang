@@ -17,4 +17,10 @@ export default defineConfig({
             '@public': path.resolve(__dirname, 'public')
         },
     },
+    server: {
+        host: '0.0.0.0',
+        hmr: {
+            host: '192.168.0.7'
+        }
+    }
 });
