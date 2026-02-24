@@ -65,7 +65,22 @@ export interface PetInter {
         frequency: string
     }
     next_report_due_at?: string
+    last_report_at?: string
   }
+}
+
+export interface TrackingReport {
+  id: number
+  adoption_case_id: number
+  reporter_id: number
+  reporter?: {
+    id: number
+    name: string
+  }
+  content: string
+  images?: string[]
+  reported_at: string
+  created_at: string
 }
 
 export interface PetColorMapInter {

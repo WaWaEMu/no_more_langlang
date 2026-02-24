@@ -53,7 +53,7 @@
 
             <!-- Expandable Content -->
             <div v-show="isExpanded" class="mt-3 pt-3 border-top adoption-card__extra">
-                <div class="d-flex flex-column gap-2">
+                <div class="d-flex flex-column gap-2 mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-secondary small">案件編號</span>
                         <span class="text-dark small fw-medium">#{{ pet.adoption_case?.id }}</span>
@@ -63,6 +63,21 @@
                         <span class="text-dark small">{{ getTrackingFrequencyText(pet.adoption_case.tracking_config.frequency) }}</span>
                     </div>
                 </div>
+
+                <!-- Submit Report Button (Adopter only, active cases only) -->
+                <button v-if="role === 'adopter' && pet.adoption_case?.status === 'active' && pet.adoption_case?.tracking_config"
+                    class="btn btn-outline-primary btn-sm w-100 mb-3 adoption-card__report-btn"
+                    data-bs-toggle="modal" data-bs-target="#trackingReportModal"
+                    @click="prepareReportForm">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    {{ $t('Submit Report') }}
+                </button>
+
+                <!-- Tracking Report Timeline -->
+                <TrackingReportTimeline 
+                    v-if="pet.adoption_case?.id"
+                    :case-id="pet.adoption_case.id"
+                    :refresh-key="reportRefreshKey" />
             </div>
 
             <!-- Footer Action -->
@@ -74,6 +89,14 @@
                 </button>
             </div>
         </div>
+
+        <!-- Report Form Modal -->
+        <TrackingReportForm 
+            v-if="role === 'adopter' && pet.adoption_case?.id"
+            :case-id="pet.adoption_case.id"
+            :pet-name="pet.name"
+            :pet-image="getPetImageUrl(pet)"
+            @submitted="onReportSubmitted" />
     </div>
 </template>
 
@@ -81,6 +104,8 @@
 import { ref } from 'vue'
 import { trans } from 'laravel-vue-i18n'
 import { PetInter } from '@/types/pet'
+import TrackingReportForm from './TrackingReportForm.vue'
+import TrackingReportTimeline from './TrackingReportTimeline.vue'
 
 interface Props {
     pet: PetInter
@@ -92,6 +117,17 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const isExpanded = ref(false)
+const reportRefreshKey = ref(0)
+
+function prepareReportForm() {
+    // This method is called when the "Submit Report" button is clicked
+    // The modal is opened via Bootstrap's data-bs-toggle
+}
+
+function onReportSubmitted() {
+    // Increment the refresh key to trigger a re-fetch of reports in the timeline
+    reportRefreshKey.value++
+}
 
 function getTrackingBadgeClass(frequency: string) {
     const classes = {
@@ -163,6 +199,21 @@ function formatDate(dateStr: string | undefined) {
 
 .adoption-card__view-btn:hover {
     transform: translateY(-2px);
+}
+
+.adoption-card__report-btn {
+    border-color: var(--color-denim-blue);
+    color: var(--color-denim-blue);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.adoption-card__report-btn:hover {
+    background-color: var(--color-denim-blue);
+    border-color: var(--color-denim-blue);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(44, 82, 130, 0.2);
 }
 
 /* Tag Colors */

@@ -295,5 +295,11 @@
     "Confirm": "確認",
     "Next Report Due": "下次回報期限",
     "Adopted Date": "送養日期",
-    "View Details": "查看詳情"
+    "View Details": "查看詳情",
+    "Submit Report": "提交回報",
+    "Report Content": "回報內容",
+    "Report Content Placeholder": "請描述毛孩目前的生活狀況、健康情況，或是其他想分享的事情...",
+    "Upload Photos": "上傳照片",
+    "Max 3 photos": "最多 3 張",
+    "No Reports Yet": "尚無回報紀錄"
 }
