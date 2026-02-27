@@ -80,6 +80,11 @@ const { resetFilters, fetchPets } = adoptStore
 </script>
 
 <style scoped>
+.pet-filter__wrapper {
+    position: relative;
+    z-index: 10;
+}
+
 .pet-filter__reset {
     color: #6b7280;
     transition: color 0.2s ease;

@@ -106,7 +106,7 @@ function updatePetFilters(key: keyof PetFiltersInter, item: OptionItem | string)
     font-size: 0.85rem;
     position: relative;
     color: #7f7f7f;
-    z-index: 1;
+    z-index: 100;
 }
 
 .filter-dropdown__panel hr {
