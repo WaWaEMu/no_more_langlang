@@ -39,7 +39,7 @@
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
                             <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>
@@ -57,7 +57,7 @@ import axios from 'axios'
 
 interface Notification {
     id: number
-    type: 'new_adoption_application' | 'new_comment' | 'comment_reply' | 'adoption_application_status'
+    type: 'new_adoption_application' | 'new_comment' | 'comment_reply' | 'adoption_application_status' | 'tracking_report_submitted' | 'tracking_report_reminder' | 'tracking_report_overdue'
     message: string
     is_read: boolean
     read_at?: string
@@ -68,6 +68,7 @@ interface Notification {
         application_id?: number
         comment_id?: number
         parent_comment_id?: number
+        adoption_case_id?: number
     }
 }
 
@@ -129,12 +130,18 @@ function getIconClass(type: string): string {
     if (type === 'new_adoption_application' || type === 'adoption_application_status') {
         return 'bi-heart-fill'
     }
+    if (type.startsWith('tracking_report_')) {
+        return 'bi-journal-check'
+    }
     return 'bi-chat-fill' // for new_comment and comment_reply
 }
 
 function getIconTypeClass(type: string): string {
     if (type === 'new_adoption_application' || type === 'adoption_application_status') {
         return 'notification-dropdown__item-icon--adoption_application'
+    }
+    if (type.startsWith('tracking_report_')) {
+        return 'notification-dropdown__item-icon--tracking'
     }
     return 'notification-dropdown__item-icon--comment'
 }
@@ -170,6 +177,12 @@ async function handleNotificationClick(notification: Notification) {
             path: '/user/applications',
             query: { highlight: notification.data.application_id }
         })
+    } else if (notification.type === 'tracking_report_reminder') {
+        // Adopter reminder -> Navigate to /user/adopted
+        await router.push('/user/adopted')
+    } else if (notification.type === 'tracking_report_submitted' || notification.type === 'tracking_report_overdue') {
+        // Owner alerts -> Navigate to /user/adoptions
+        await router.push('/user/adoptions')
     } else if (notification.data?.pet_id) {
         const petId = notification.data.pet_id
         const commentId = notification.data.comment_id
@@ -428,6 +441,11 @@ onUnmounted(() => {
 .notification-dropdown__item-icon--comment {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15));
     color: #2563eb;
+}
+
+.notification-dropdown__item-icon--tracking {
+    background: linear-gradient(135deg, rgba(44, 82, 130, 0.15), rgba(74, 85, 104, 0.15));
+    color: #2c5282;
 }
 
 /* Item Content */
