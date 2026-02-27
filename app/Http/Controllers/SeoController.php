@@ -79,13 +79,10 @@ class SeoController extends Controller
         ];
 
         // Pet Detail Page Schema
-        if (preg_match('/^adopt\/(.+)$/', $path, $matches)) {
-            $petIdOrSlug = $matches[1];
-            // Try to find by slug first, then by ID
+        if (preg_match('/^adopt\/(\d+)$/', $path, $matches)) {
+            $petId = $matches[1];
             $pet = Pet::with(['images', 'detail'])
-                ->where('slug', $petIdOrSlug)
-                ->orWhere('id', $petIdOrSlug)
-                ->first();
+                ->find($petId);
 
             if ($pet) {
                 // BreadcrumbList Schema
@@ -109,7 +106,7 @@ class SeoController extends Controller
                             '@type' => 'ListItem',
                             'position' => 3,
                             'name' => $pet->name,
-                            'item' => url('/adopt/' . ($pet->slug ?: $pet->id))
+                            'item' => url('/adopt/' . $pet->id)
                         ]
                     ]
                 ];
