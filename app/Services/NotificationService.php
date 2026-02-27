@@ -5,7 +5,10 @@ namespace App\Services;
 use App\Models\Notification;
 use App\Models\Pet;
 use App\Models\PetComment;
+use App\Mail\TrackingReportSubmittedMail;
+use App\Mail\ReportDueReminderMail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationService
 {
@@ -224,6 +227,95 @@ class NotificationService
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to create adoption application status notification: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Create a notification + send email when an adopter submits a tracking report.
+     * Notifies the pet owner (sender).
+     *
+     * @param int $caseId
+     * @param int $reporterId
+     * @param string $reportContent
+     * @return Notification|null
+     */
+    public function notifyTrackingReport(
+        int $caseId,
+        int $reporterId,
+        string $reportContent = ''
+    ): ?Notification {
+        try {
+            $case = \App\Models\AdoptionCase::with(['pet', 'owner'])->findOrFail($caseId);
+            $ownerId = $case->owner_id;
+            $petName = $case->pet->name;
+
+            // Don't notify if somehow the owner is the reporter
+            if ($ownerId === $reporterId) {
+                return null;
+            }
+
+            // 1. In-app notification
+            $notification = Notification::store([
+                'user_id' => $ownerId,
+                'type' => 'tracking_report_submitted',
+                'message' => __("Notification: Tracking report submitted", ['petName' => $petName]),
+                'data' => [
+                    'pet_id' => $case->pet_id,
+                    'pet_name' => $petName,
+                    'adoption_case_id' => $caseId,
+                ],
+            ]);
+
+            // 2. Email notification to owner
+            if ($case->owner && $case->owner->email) {
+                Mail::to($case->owner->email)
+                    ->send(new TrackingReportSubmittedMail($case, $reportContent));
+            }
+
+            return $notification;
+        } catch (\Exception $e) {
+            Log::error('Failed to create tracking report notification: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Create a reminder notification + send email for an adopter when a report is due.
+     *
+     * @param \App\Models\AdoptionCase $case
+     * @param int $daysUntilDue
+     * @return Notification|null
+     */
+    public function notifyReportDueReminder(
+        \App\Models\AdoptionCase $case,
+        int $daysUntilDue = 2
+    ): ?Notification {
+        try {
+            $petName = $case->pet->name ?? '毛孩';
+
+            // 1. In-app notification
+            $notification = Notification::store([
+                'user_id' => $case->adopter_id,
+                'type' => 'tracking_report_reminder',
+                'message' => __("Notification: Report due reminder", ['petName' => $petName]),
+                'data' => [
+                    'pet_id' => $case->pet_id,
+                    'pet_name' => $petName,
+                    'adoption_case_id' => $case->id,
+                ],
+            ]);
+
+            // 2. Email notification to adopter
+            $adopter = \App\Models\User::find($case->adopter_id);
+            if ($adopter && $adopter->email) {
+                Mail::to($adopter->email)
+                    ->send(new ReportDueReminderMail($case, $daysUntilDue));
+            }
+
+            return $notification;
+        } catch (\Exception $e) {
+            Log::error('Failed to create report reminder notification: ' . $e->getMessage());
             return null;
         }
     }

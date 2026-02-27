@@ -301,5 +301,7 @@
     "Report Content Placeholder": "請描述毛孩目前的生活狀況、健康情況，或是其他想分享的事情...",
     "Upload Photos": "上傳照片",
     "Max 3 photos": "最多 3 張",
-    "No Reports Yet": "尚無回報紀錄"
+    "No Reports Yet": "尚無回報紀錄",
+    "Notification: Tracking report submitted": ":petName 的認養人提交了追蹤回報",
+    "Notification: Report due reminder": ":petName 的追蹤回報期限已到，請記得提交回報"
 }

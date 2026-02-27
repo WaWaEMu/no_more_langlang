@@ -13,6 +13,13 @@ use App\Models\TrackingReport;
 
 class AdoptionCaseService implements AdoptionCaseServiceInterface
 {
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     /**
      * Get list of adoption cases for the user based on role.
      *
@@ -99,6 +106,9 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
                 'last_report_at' => now(),
                 'next_report_due_at' => AdoptionCase::calculateNextReportDate($case->tracking_config),
             ]);
+
+            // 4. Notify the pet owner (in-app + email)
+            $this->notificationService->notifyTrackingReport($case->id, $reporter->id, $data['content']);
 
             return $report;
         });
