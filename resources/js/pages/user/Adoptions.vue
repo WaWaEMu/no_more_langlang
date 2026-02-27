@@ -55,6 +55,7 @@
 
 <script setup lang="ts" name="Adoptions">
 import { onMounted, ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import AdoptionActiveList from '@/components/adoptions/AdoptionActiveList.vue'
@@ -63,6 +64,7 @@ import { useAdoptStore } from '@/stores/adopt'
 import { useAuthStore } from '@/stores/auth'
 import { PetInter } from '@/types/pet'
 
+const route = useRoute()
 const authStore = useAuthStore()
 const pets = ref<PetInter[]>([])
 const activeTab = ref<'active' | 'history'>('active')
@@ -82,6 +84,11 @@ const historyPets = computed(() => {
 })
 
 onMounted(async () => {
+    // Handle tab from query
+    if (route.query.tab === 'history') {
+        activeTab.value = 'history'
+    }
+
     loading.value = true
     try {
         await authStore.fetchUser()

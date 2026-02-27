@@ -39,7 +39,7 @@
                         <div class="notification-dropdown__item-content">
                             <p class="notification-dropdown__item-message">{{ notification.message }}</p>
                             <span class="notification-dropdown__item-time">{{ formatTime(notification.created_at)
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div v-if="!notification.is_read" class="notification-dropdown__item-dot"></div>
@@ -181,8 +181,11 @@ async function handleNotificationClick(notification: Notification) {
         // Adopter reminder -> Navigate to /user/adopted
         await router.push('/user/adopted')
     } else if (notification.type === 'tracking_report_submitted' || notification.type === 'tracking_report_overdue') {
-        // Owner alerts -> Navigate to /user/adoptions
-        await router.push('/user/adoptions')
+        // Owner alerts -> Navigate to /user/adoptions with history tab
+        await router.push({
+            path: '/user/adoptions',
+            query: { tab: 'history' }
+        })
     } else if (notification.data?.pet_id) {
         const petId = notification.data.pet_id
         const commentId = notification.data.comment_id
