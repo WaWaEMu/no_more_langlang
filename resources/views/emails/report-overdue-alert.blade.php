@@ -115,7 +115,7 @@
                 <strong>📅 原定回報日：</strong>{{ \Carbon\Carbon::parse($case->next_report_due_at)->format('Y/m/d') }}
             </div>
 
-            <a href="{{ url('/user/adoptions') }}" class="btn">前往查看案件</a>
+            <a href="{{ url('/user/adoptions?tab=history') }}" class="btn">前往查看案件</a>
         </div>
         <div class="footer">
             此信件由「諾摩浪浪」系統自動發送，請勿直接回覆。

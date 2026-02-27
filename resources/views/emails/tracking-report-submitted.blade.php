@@ -28,7 +28,7 @@
                 <p>{{ $reportContent }}</p>
             </div>
             <p>您可以點擊下方按鈕登入網站查看完整的回報內容與照片。</p>
-            <a href="{{ url('/user/adoptions') }}" class="btn">前往查看回報</a>
+            <a href="{{ url('/user/adoptions?tab=history') }}" class="btn">前往查看回報</a>
         </div>
         <div class="footer">
             此信件由「諾摩浪浪」系統自動發送，請勿直接回覆。
