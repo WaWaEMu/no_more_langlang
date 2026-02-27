@@ -161,12 +161,25 @@ class Pet extends Model
     public static function getAvailablePets(array $filters, int $perPage)
     {
         $userId = \Illuminate\Support\Facades\Auth::id();
+
         return self::with(['images', 'detail', 'user'])
             ->withExists([
                 'favoritedBy as is_favorite' => function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 }
             ])
+            ->when(!isset($filters['status']), function ($query) {
+                // Default: only show publicly actionable statuses
+                $query->whereIn('status', ['available', 'pending']);
+            })
+            ->when(isset($filters['status']), function ($query) use ($filters) {
+                // Adopted is permanently excluded from the public list
+                if ($filters['status'] === 'adopted') {
+                    $query->whereIn('status', ['available', 'pending']);
+                } else {
+                    $query->where('status', $filters['status']);
+                }
+            })
             ->filter($filters)
             ->search($filters['keyword'] ?? null)
             ->latest()

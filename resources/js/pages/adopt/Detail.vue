@@ -75,7 +75,18 @@
 
                             <!-- Visitor Actions -->
                             <template v-else>
-                                <button @click="handleApply" class="btn btn-primary flex-fill py-2 fw-semibold">
+                                <!-- Paused: disabled with message -->
+                                <button v-if="pet.status === 'paused'"
+                                    class="btn btn-secondary flex-fill py-2 fw-semibold" disabled>
+                                    <i class="bi bi-pause-circle me-2"></i>{{ $t('Adoption Paused') }}
+                                </button>
+                                <!-- Adopted: disabled with message -->
+                                <button v-else-if="pet.status === 'adopted'"
+                                    class="btn btn-secondary flex-fill py-2 fw-semibold" disabled>
+                                    <i class="bi bi-house-heart me-2"></i>{{ $t('Already Adopted') }}
+                                </button>
+                                <!-- Normal apply button -->
+                                <button v-else @click="handleApply" class="btn btn-primary flex-fill py-2 fw-semibold">
                                     <i class="bi bi-envelope-heart me-2"></i>{{ $t('Apply Adoption') }}
                                 </button>
                             </template>
@@ -123,7 +134,7 @@
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Age') }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.age }} {{ $t('years old')
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -141,7 +152,7 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Neuter Status')
-                                            }}</span>
+                                                }}</span>
                                             <span class="fw-semibold"
                                                 :class="pet.is_neuter ? 'text-success' : 'text-warning'">
                                                 {{ pet.is_neuter ? $t('Neutered') : $t('Not Neutered') }}
@@ -151,9 +162,9 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Is Stray Animal')
-                                            }}</span>
+                                                }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.is_stray ? $t('Yes') : $t('No')
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -182,7 +193,7 @@
                                 </div>
                                 <div v-if="pet.sendable_cities && pet.sendable_cities.length > 0" class="mt-3">
                                     <span class="small text-secondary fw-medium d-block mb-2">{{ $t('Sendable Cities')
-                                    }}</span>
+                                        }}</span>
                                     <div class="d-flex flex-wrap gap-2">
                                         <span v-for="city in pet.sendable_cities" :key="city" class="pet-detail__tag">
                                             {{ city }}

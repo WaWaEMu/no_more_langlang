@@ -57,7 +57,6 @@ export const statusOptions: OptionInter = {
         { value: "available", label: "Status.Available" },
         { value: "paused", label: "Status.Paused" },
         { value: "pending", label: "Status.Pending" },
-        { value: "adopted", label: "Status.Adopted" }
     ]
 }
 
