@@ -60,10 +60,20 @@ class SendReportReminders extends Command
         foreach ($cases as $case) {
             $dueDate = Carbon::parse($case->next_report_due_at)->startOfDay();
             $daysUntilDue = (int) $today->diffInDays($dueDate, false);
+            $frequency = $case->tracking_config['frequency'] ?? 'monthly';
 
             // --- Adopter reminders (due date is in the future or today) ---
-            if ($daysUntilDue === 7 || ($daysUntilDue >= 0 && $daysUntilDue <= 2)) {
-                $notification = $notificationService->notifyReportDueReminder($case, $daysUntilDue);
+            $shouldRemind = false;
+            if ($frequency === 'weekly') {
+                // Weekly reports only get the intensive reminders (2, 1, 0 days)
+                $shouldRemind = ($daysUntilDue >= 0 && $daysUntilDue <= 2);
+            } else {
+                // Monthly/Quarterly get the 7-day warm reminder + intensive reminders
+                $shouldRemind = ($daysUntilDue === 7 || ($daysUntilDue >= 0 && $daysUntilDue <= 2));
+            }
+
+            if ($shouldRemind) {
+                $notification = $notificationService->notifyReportDueReminder($case, max(0, $daysUntilDue));
                 if ($notification) {
                     $remindersSent++;
                 }
