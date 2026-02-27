@@ -17,7 +17,7 @@ class SendReportReminders extends Command
     /**
      * The console command description.
      */
-    protected $description = 'Send reminder notifications to adopters 7 days and 2 days before tracking reports are due';
+    protected $description = 'Send report reminders to adopters and overdue alerts to owners';
 
     /**
      * Execute the console command.
@@ -28,37 +28,64 @@ class SendReportReminders extends Command
         $sevenDaysFromNow = $today->copy()->addDays(7)->toDateString();
         $twoDaysFromNow = $today->copy()->addDays(2)->toDateString();
 
-        $dueCases = AdoptionCase::with('pet')
+        // Overdue trigger dates: exactly 1, 3, 7 days ago
+        $overdueDates = [
+            $today->copy()->subDays(1)->toDateString(),
+            $today->copy()->subDays(3)->toDateString(),
+            $today->copy()->subDays(7)->toDateString(),
+        ];
+
+        $cases = AdoptionCase::with('pet')
             ->where('status', AdoptionCase::STATUS_ACTIVE)
             ->whereNotNull('tracking_config')
             ->whereNotNull('next_report_due_at')
-            ->where(function($query) use ($sevenDaysFromNow, $twoDaysFromNow) {
-                // Trigger precisely at 7 days, or continuously if <= 2 days
-                $query->where(\DB::raw('DATE(next_report_due_at)'), $sevenDaysFromNow)
-                      ->orWhere(\DB::raw('DATE(next_report_due_at)'), '<=', $twoDaysFromNow);
+            ->where(function ($query) use ($sevenDaysFromNow, $twoDaysFromNow, $overdueDates) {
+                $query
+                    // Adopter reminders: precisely 7 days, or continuously <= 2 days
+                    ->where(\DB::raw('DATE(next_report_due_at)'), $sevenDaysFromNow)
+                    ->orWhere(\DB::raw('DATE(next_report_due_at)'), '<=', $twoDaysFromNow)
+                    // Owner overdue alerts: precisely 1, 3, 7 days overdue
+                    ->orWhereIn(\DB::raw('DATE(next_report_due_at)'), $overdueDates);
             })
             ->get();
 
-        if ($dueCases->isEmpty()) {
-            $this->info('No report reminders to send today based on the 7/2 rule.');
+        if ($cases->isEmpty()) {
+            $this->info('No reminders or alerts to send today.');
             return 0;
         }
 
-        $sent = 0;
-        foreach ($dueCases as $case) {
+        $remindersSent = 0;
+        $overdueAlertsSent = 0;
+
+        foreach ($cases as $case) {
             $dueDate = Carbon::parse($case->next_report_due_at)->startOfDay();
             $daysUntilDue = (int) $today->diffInDays($dueDate, false);
 
-            // Trigger if exactly 7 days remaining, OR if it's the final 2-day stretch
-            if ($daysUntilDue === 7 || $daysUntilDue <= 2) {
-                $notification = $notificationService->notifyReportDueReminder($case, max(0, $daysUntilDue));
+            // --- Adopter reminders (due date is in the future or today) ---
+            if ($daysUntilDue === 7 || ($daysUntilDue >= 0 && $daysUntilDue <= 2)) {
+                $notification = $notificationService->notifyReportDueReminder($case, $daysUntilDue);
                 if ($notification) {
-                    $sent++;
+                    $remindersSent++;
+                }
+            }
+
+            // --- Owner overdue alerts (due date has passed) ---
+            if ($daysUntilDue < 0) {
+                $daysOverdue = abs($daysUntilDue);
+
+                // Only trigger on exact days: 1, 3, 7
+                if (in_array($daysOverdue, [1, 3, 7])) {
+                    $notification = $notificationService->notifyReportOverdueToOwner($case, $daysOverdue);
+                    if ($notification) {
+                        $overdueAlertsSent++;
+                    }
                 }
             }
         }
 
-        $this->info("Sent {$sent} report reminder(s) out of {$dueCases->count()} identified case(s).");
+        $this->info("Adopter reminders sent: {$remindersSent}");
+        $this->info("Owner overdue alerts sent: {$overdueAlertsSent}");
+        $this->info("Total cases processed: {$cases->count()}");
         return 0;
     }
 }

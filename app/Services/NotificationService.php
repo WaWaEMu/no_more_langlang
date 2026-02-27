@@ -7,6 +7,7 @@ use App\Models\Pet;
 use App\Models\PetComment;
 use App\Mail\TrackingReportSubmittedMail;
 use App\Mail\ReportDueReminderMail;
+use App\Mail\ReportOverdueAlertMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -316,6 +317,48 @@ class NotificationService
             return $notification;
         } catch (\Exception $e) {
             Log::error('Failed to create report reminder notification: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Create an overdue alert notification + send email to the pet owner.
+     * Triggered at day +1, +3, +7 after the report due date.
+     *
+     * @param \App\Models\AdoptionCase $case
+     * @param int $daysOverdue
+     * @return Notification|null
+     */
+    public function notifyReportOverdueToOwner(
+        \App\Models\AdoptionCase $case,
+        int $daysOverdue
+    ): ?Notification {
+        try {
+            $petName = $case->pet->name ?? '毛孩';
+
+            // 1. In-app notification
+            $notification = Notification::store([
+                'user_id' => $case->owner_id,
+                'type' => 'tracking_report_overdue',
+                'message' => __("Notification: Report overdue alert", ['petName' => $petName, 'days' => $daysOverdue]),
+                'data' => [
+                    'pet_id' => $case->pet_id,
+                    'pet_name' => $petName,
+                    'adoption_case_id' => $case->id,
+                    'days_overdue' => $daysOverdue,
+                ],
+            ]);
+
+            // 2. Email notification to owner
+            $owner = \App\Models\User::find($case->owner_id);
+            if ($owner && $owner->email) {
+                Mail::to($owner->email)
+                    ->send(new ReportOverdueAlertMail($case, $daysOverdue));
+            }
+
+            return $notification;
+        } catch (\Exception $e) {
+            Log::error('Failed to create overdue report notification: ' . $e->getMessage());
             return null;
         }
     }

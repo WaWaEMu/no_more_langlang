@@ -303,5 +303,6 @@
     "Max 3 photos": "最多 3 張",
     "No Reports Yet": "尚無回報紀錄",
     "Notification: Tracking report submitted": ":petName 的認養人提交了追蹤回報",
-    "Notification: Report due reminder": ":petName 的追蹤回報期限已到，請記得提交回報"
+    "Notification: Report due reminder": ":petName 的追蹤回報期限已到，請記得提交回報",
+    "Notification: Report overdue alert": ":petName 的追蹤回報已逾期 :days 天，請留意認養人的狀況"
 }
