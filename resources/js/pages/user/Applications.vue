@@ -481,8 +481,11 @@ async function finalizeAdoption(application: any, pet: any) {
                 showConfirmButton: false
             })
 
-            // Redirect to adoptions page
-            router.push('/user/adoptions')
+            // Redirect to adoptions page with history tab
+            router.push({
+                path: '/user/adoptions',
+                query: { tab: 'history' }
+            })
         } catch (error: any) {
             Swal.fire({
                 icon: 'error',
