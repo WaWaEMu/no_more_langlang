@@ -420,11 +420,16 @@ async function handleHighlight() {
 
 async function finalizeAdoption(application: any, pet: any) {
     const result = await Swal.fire({
-        title: $t('Finalize Adoption Confirmation'),
+        title: $t('Finalize Adoption Confirmation', {
+            petName: pet.name,
+            adopterName: application.applicant_name
+        }),
         html: `
-            <p class="mb-3">${$t('Finalize Adoption Hint')}</p>
-            <div class="form-group text-start">
-                <label class="form-label fw-bold">${$t('Tracking Frequency')}</label>
+            <div class="mb-4 text-start text-secondary small">
+                ${$t('Finalize Adoption Hint')}
+            </div>
+            <div class="form-group text-start pt-3 border-top">
+                <label class="form-label fw-bold mb-2">${$t('Tracking Frequency')}</label>
                 <select id="tracking-frequency" class="form-select">
                     <option value="">${$t('Please select tracking frequency')}</option>
                     <option value="none">${$t('No Tracking')}</option>
