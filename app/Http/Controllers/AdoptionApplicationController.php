@@ -53,7 +53,7 @@ class AdoptionApplicationController extends Controller
                 'pet' => [
                     'id' => $app->pet->id,
                     'name' => $app->pet->name,
-                    'image' => $app->pet->images->first()?->path,
+                    'image' => $app->pet->image?->path,
                 ],
                 'name' => $app->name,
                 'phone' => $app->phone,

@@ -50,11 +50,7 @@ class AdoptionApplication extends Model
         return self::where('user_id', $userId)
             ->with([
                 'pet' => function ($query) {
-                    $query->with([
-                        'images' => function ($q) {
-                            $q->limit(1);
-                        }
-                    ]);
+                    $query->with('image');
                 }
             ])
             ->orderBy('created_at', 'desc')
@@ -67,11 +63,7 @@ class AdoptionApplication extends Model
     public static function getReceivedGroupedByPet(int $userId)
     {
         return Pet::where('user_id', $userId)
-            ->with([
-                'images' => function ($query) {
-                    $query->limit(1);
-                }
-            ])
+            ->with('image')
             ->withCount('adoptionApplications')
             ->having('adoption_applications_count', '>', 0)
             ->get()
@@ -85,7 +77,7 @@ class AdoptionApplication extends Model
                     'pet' => [
                         'id' => $pet->id,
                         'name' => $pet->name,
-                        'image' => $pet->images->first()?->path,
+                        'image' => $pet->image?->path,
                     ],
                     'applications' => $applications->map(function ($app) {
                         return [
