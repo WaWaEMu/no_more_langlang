@@ -112,9 +112,9 @@
                                                 </p>
                                             </div>
 
-                                            <div class="d-flex justify-content-end gap-2">
+                                            <div class="d-flex flex-column align-items-end gap-2">
                                                 <a v-if="app.line_id" :href="`https://line.me/ti/p/~${app.line_id}`"
-                                                    target="_blank" class="btn btn-sm btn-success text-white">
+                                                    target="_blank" class="btn btn-sm btn-success text-white mb-3">
                                                     <i class="bi bi-line me-1"></i>{{ $t('LINE Contact') }}
                                                 </a>
                                                 <div v-if="app.status === 'pending'" class="d-flex gap-2">
