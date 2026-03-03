@@ -42,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Services\AdoptionCaseServiceInterface::class,
             \App\Services\AdoptionCaseService::class
         );
+
+        $this->app->bind(
+            \App\Contracts\AdoptionFormTemplateServiceInterface::class,
+            \App\Services\AdoptionFormTemplateService::class
+        );
     }
 
     /**

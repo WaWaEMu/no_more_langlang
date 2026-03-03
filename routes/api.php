@@ -64,7 +64,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'index']);
     Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
 
+    // Adoption Form Templates
+    Route::get('/user/adoption-templates', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'index']);
+    Route::post('/user/adoption-templates', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'store']);
+    Route::get('/user/adoption-templates/{id}', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'show']);
+    Route::put('/user/adoption-templates/{id}', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'update']);
+    Route::delete('/user/adoption-templates/{id}', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'destroy']);
+
     // Tracking Reports
     Route::post('/adoption-cases/{id}/reports', [\App\Http\Controllers\AdoptionCaseController::class, 'submitReport']);
     Route::get('/adoption-cases/{id}/reports', [\App\Http\Controllers\AdoptionCaseController::class, 'getReports']);
+});
+
+// Public: Get a pet's application form schema (for adopters)
+Route::get('/adopt/{id}/form-schema', function ($id) {
+    $pet = \App\Models\Pet::with('adoptionFormTemplate')->findOrFail($id);
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'template' => $pet->adoptionFormTemplate?->only(['id', 'name', 'schema']),
+        ],
+    ]);
 });

@@ -64,6 +64,7 @@ class AdoptionApplicationController extends Controller
                 'message' => $app->message,
                 'owner_message' => $app->owner_message,
                 'status' => $app->status,
+                'custom_fields' => $app->custom_fields,
                 'created_at' => $app->created_at,
                 'updated_at' => $app->updated_at,
             ];

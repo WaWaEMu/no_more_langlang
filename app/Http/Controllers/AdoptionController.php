@@ -27,6 +27,8 @@ class AdoptionController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        $pet = Pet::with('adoptionFormTemplate')->findOrFail($id);
+
         // Basic validation
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -36,7 +38,29 @@ class AdoptionController extends Controller
             'experience' => 'required|string',
             'family_agreement' => 'required|boolean',
             'message' => 'required|string|max:1000',
+            'custom_fields' => 'nullable|array',
         ]);
+
+        // Dynamic validation for custom fields based on template schema
+        if ($pet->adoptionFormTemplate) {
+            $schema = $pet->adoptionFormTemplate->schema;
+            $customFields = $request->input('custom_fields', []);
+
+            foreach ($schema as $field) {
+                if (!empty($field['required'])) {
+                    $key = $field['label'];
+                    if (!isset($customFields[$key]) || $customFields[$key] === '') {
+                        return response()->json([
+                            'message' => "The field '{$field['label']}' is required.",
+                            'errors' => [
+                                "custom_fields.{$key}" => ["The {$field['label']} field is required."]
+                            ]
+                        ], 422);
+                    }
+                }
+            }
+            $validated['custom_fields'] = $customFields;
+        }
 
         try {
             // Use service to create adoption application
