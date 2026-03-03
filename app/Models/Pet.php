@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AdoptionFormTemplate;
 
 class Pet extends Model
 {
@@ -28,7 +29,8 @@ class Pet extends Model
         'gender',
         'age',
         'is_neuter',
-        'status'
+        'status',
+        'adoption_form_template_id',
     ];
 
     protected $appends = ['sendable_cities'];
@@ -62,6 +64,11 @@ class Pet extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function adoptionFormTemplate()
+    {
+        return $this->belongsTo(AdoptionFormTemplate::class);
     }
 
     public function attachSendableCities(array $cities): void

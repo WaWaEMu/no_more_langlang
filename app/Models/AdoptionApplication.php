@@ -21,10 +21,12 @@ class AdoptionApplication extends Model
         'message',
         'owner_message',
         'status',
+        'custom_fields',
     ];
 
     protected $casts = [
         'family_agreement' => 'boolean',
+        'custom_fields' => 'array',
     ];
 
     public function user()
@@ -95,6 +97,7 @@ class AdoptionApplication extends Model
                             'message' => $app->message,
                             'owner_message' => $app->owner_message,
                             'status' => $app->status,
+                            'custom_fields' => $app->custom_fields,
                             'created_at' => $app->created_at,
                             'updated_at' => $app->updated_at,
                         ];

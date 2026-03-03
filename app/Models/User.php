@@ -81,4 +81,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(AdoptionCase::class, 'owner_id');
     }
+
+    /**
+     * The adoption form templates created by this user.
+     */
+    public function adoptionFormTemplates()
+    {
+        return $this->hasMany(AdoptionFormTemplate::class);
+    }
 }
