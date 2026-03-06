@@ -175,7 +175,74 @@
                     </div>
                 </section>
 
-                <!-- Section 5: Images -->
+                <!-- Section 5: Adoption Template -->
+                <section class="apply-form__section">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h3 class="apply-form__section-title mb-0">{{ $t('Adoption Form Template') }}</h3>
+                        <RouterLink to="/user/adoption-templates" class="btn btn-sm btn-outline-secondary rounded-pill">
+                            <i class="bi bi-gear me-1"></i>{{ $t('Manage Templates') }}
+                        </RouterLink>
+                    </div>
+                    <p class="text-muted small mb-3">{{ $t('template_selector.hint') }}</p>
+
+                    <div class="mb-4">
+                        <label for="template-select" class="form-label apply-form__label">{{ $t('Select Template')
+                        }}</label>
+                        <select id="template-select" class="form-select" v-model="formState.adoption_form_template_id">
+                            <option :value="null">{{ $t('No template (basic form only)') }}</option>
+                            <option v-for="tpl in availableTemplates" :key="tpl.id" :value="tpl.id">
+                                {{ tpl.name }} ({{ tpl.schema?.length || 0 }} {{ $t('fields') }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Template Preview -->
+                    <div v-if="selectedTemplate" class="apply-form__template-preview">
+                        <div class="apply-form__template-preview-header">
+                            <i class="bi bi-eye me-2"></i>{{ $t('Custom Questions Preview') }} ({{ selectedTemplate.name
+                            }})
+                        </div>
+                        <div class="apply-form__template-preview-body">
+                            <div v-for="(field, fi) in selectedTemplate.schema" :key="fi"
+                                class="apply-form__template-preview-field">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i :class="fieldTypeIcon(field.type)" class="text-primary"></i>
+                                    <span>{{ field.label }}</span>
+                                    <span v-if="field.required" class="text-danger fw-bold">*</span>
+                                    <span class="apply-form__template-preview-type">{{ $t(`fieldType.${field.type}`)
+                                    }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Basic Fields Reference -->
+                    <div v-else class="apply-form__template-preview">
+                        <div class="apply-form__template-preview-header d-flex justify-content-between align-items-center"
+                            style="cursor: pointer; user-select: none;" @click="showBaseFields = !showBaseFields">
+                            <div>
+                                <i class="bi bi-info-circle me-2"></i>{{ $t('Basic Form Content') }}
+                            </div>
+                            <i class="bi" :class="showBaseFields ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                        </div>
+                        <Transition name="collapse">
+                            <div v-if="showBaseFields" class="apply-form__template-preview-body">
+                                <div class="text-muted small mb-2">{{ $t('basic_fields.preview_hint') }}</div>
+                                <div v-for="field in baseFields" :key="field.key"
+                                    class="apply-form__template-preview-field">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i :class="field.icon" class="text-secondary"></i>
+                                        <span>{{ field.label }}</span>
+                                        <span v-if="field.required" class="text-danger fw-bold">*</span>
+                                        <span class="apply-form__template-preview-type">{{ field.typeName }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </Transition>
+                    </div>
+                </section>
+
+                <!-- Section 6: Images -->
                 <section class="apply-form__section">
                     <h3 class="apply-form__section-title">送養相關圖片</h3>
                     <div class="d-flex gap-4 flex-wrap">
@@ -209,7 +276,7 @@
 </template>
 
 <script setup lang="ts" name="ApplyForm">
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch, computed, onMounted } from 'vue'
 import { areas } from '@/../data/areas'
 import { pets } from '@/../data/pets'
 import { statusOptions } from '@/../data/options'
@@ -242,7 +309,58 @@ const formState = reactive<PetFormInter>({
     health_description: '',
     adoption_condition: '',
     status: 'available',
+    adoption_form_template_id: null,
     blobs: []
+})
+
+// Basic fields for preview
+const baseFields = [
+    { key: 'name', label: '暱稱', icon: 'bi bi-person', typeName: '文字', required: true },
+    { key: 'phone', label: '電話', icon: 'bi bi-telephone', typeName: '文字', required: true },
+    { key: 'line_id', label: 'Line ID', icon: 'bi bi-chat-dots', typeName: '文字', required: false },
+    { key: 'housing', label: '居住環境', icon: 'bi bi-house-door', typeName: '下拉選單', required: true },
+    { key: 'experience', label: '養寵經驗', icon: 'bi bi-star', typeName: '下拉選單', required: true },
+    { key: 'family', label: '家人/室友是否同意', icon: 'bi bi-people', typeName: '單選', required: true },
+    { key: 'message', label: '自我介紹與動機', icon: 'bi bi-chat-square-text', typeName: '多行文字', required: true },
+]
+
+// Template data
+interface TemplateItem {
+    id: number
+    name: string
+    schema: Array<{ label: string; type: string; required: boolean; options?: string[] }>
+}
+const availableTemplates = ref<TemplateItem[]>([])
+const showBaseFields = ref(false)
+
+const selectedTemplate = computed(() => {
+    if (!formState.adoption_form_template_id) return null
+    return availableTemplates.value.find(t => t.id === formState.adoption_form_template_id) || null
+})
+
+function fieldTypeIcon(type: string): string {
+    const icons: Record<string, string> = {
+        text: 'bi bi-input-cursor-text',
+        textarea: 'bi bi-textarea-t',
+        select: 'bi bi-menu-button-wide',
+        radio: 'bi bi-record-circle',
+        checkbox: 'bi bi-check2-square',
+    }
+    return icons[type] || 'bi bi-question-circle'
+}
+
+async function fetchTemplates() {
+    try {
+        const res = await axios.get('/api/user/adoption-templates')
+        availableTemplates.value = res.data.data
+    } catch {
+        // Non-blocking: templates are optional
+        console.warn('Failed to fetch adoption templates')
+    }
+}
+
+onMounted(() => {
+    fetchTemplates()
 })
 const imgUrls = ref<string[]>(['', '', ''])
 const selectedImg = ref<{ index: number | null, url: string }>({
@@ -528,6 +646,71 @@ button[type="submit"].apply-form__btn:active {
 .form-check-input:checked {
     background-color: #3182ce;
     border-color: #3182ce;
+}
+
+/* Template Preview */
+.apply-form__template-preview {
+    background: #ffffff;
+    /* Contrast against parent's light gray */
+    border: 1px solid #cbd5e0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    /* Soft shadow for separation */
+}
+
+.apply-form__template-preview-header {
+    background: #edf2f7;
+    /* Slightly distinct but harmonious */
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #4a5568;
+    border-radius: 11px 11px 0 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.apply-form__template-preview-body {
+    padding: 0.75rem 1rem;
+}
+
+.apply-form__template-preview-field {
+    padding: 0.4rem 0.6rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    margin-bottom: 0.3rem;
+    font-size: 0.88rem;
+    color: #4a5568;
+}
+
+/* Collapse Transition */
+.collapse-enter-active,
+.collapse-leave-active {
+    transition: all 0.25s ease;
+    overflow: hidden;
+}
+
+.collapse-enter-from,
+.collapse-leave-to {
+    opacity: 0;
+    max-height: 0;
+}
+
+.collapse-enter-to,
+.collapse-leave-from {
+    opacity: 1;
+    max-height: 500px;
+}
+
+.apply-form__template-preview-type {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #a0aec0;
+    background: #f1f5f9;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
 }
 
 /* Mobile Responsive Styles */

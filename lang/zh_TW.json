@@ -341,5 +341,14 @@
     "Move Down": "下移",
     "base_fields.title": "基本欄位（固定，所有申請表皆包含）",
     "custom_fields.title": "自訂欄位",
-    "custom_fields.hint": "可自由增減，領養人在申請時會看到這些額外問題"
+    "custom_fields.hint": "可自由增減，領養人在申請時會看到這些額外問題",
+    "Adoption Form Template": "領養問卷範本",
+    "template_selector.hint": "選擇一個您先前建立的範本，領養人在申請時會看到這些額外問題。若不選擇，則領養人只需填寫基本申請表。",
+    "Select Template": "選擇範本",
+    "No template (basic form only)": "不使用範本（僅提供基本表單）",
+    "Template Preview": "範本預覽",
+    "Manage Templates": "管理範本",
+    "Basic Form Content": "基本表單內容",
+    "basic_fields.preview_hint": "所有領養申請預設皆包含以下核心欄位（不可修改）：",
+    "Custom Questions Preview": "自訂問題預覽"
 }

@@ -15,6 +15,7 @@ export interface PetFormInter {
   health_description: string;
   adoption_condition: string;
   status?: string;
+  adoption_form_template_id?: number | null;
   blobs: Blob[];
 }
 
@@ -52,17 +53,17 @@ export interface PetInter {
   adoption_case?: {
     id: number
     adopter: {
-        id: number
-        name: string
+      id: number
+      name: string
     }
     owner?: {
-        id: number
-        name: string
+      id: number
+      name: string
     }
     started_at: string
     status: string
     tracking_config?: {
-        frequency: string
+      frequency: string
     }
     next_report_due_at?: string
     last_report_at?: string
