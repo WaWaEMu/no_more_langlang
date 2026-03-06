@@ -102,6 +102,13 @@
                             </RouterLink>
                         </li>
                         <li>
+                            <RouterLink to="/user/adoption-templates" class="user-menu__dropdown-item"
+                                @click="closeMenu">
+                                <i class="bi bi-ui-checks-grid"></i>
+                                <span>領養表單管理</span>
+                            </RouterLink>
+                        </li>
+                        <li>
                             <RouterLink to="/user/favorites" class="user-menu__dropdown-item" @click="closeMenu">
                                 <i class="bi bi-bookmark-heart-fill"></i>
                                 <span>收藏清單</span>
