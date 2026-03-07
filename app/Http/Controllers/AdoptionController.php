@@ -34,7 +34,7 @@ class AdoptionController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'line_id' => 'nullable|string|max:50',
-            'housing_type' => 'required|string',
+
             'experience' => 'required|string',
             'family_agreement' => 'required|boolean',
             'message' => 'required|string|max:1000',

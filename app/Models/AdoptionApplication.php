@@ -15,7 +15,7 @@ class AdoptionApplication extends Model
         'name',
         'phone',
         'line_id',
-        'housing_type',
+
         'experience',
         'family_agreement',
         'message',
@@ -91,7 +91,7 @@ class AdoptionApplication extends Model
                             ] : null,
                             'phone' => $app->phone,
                             'line_id' => $app->line_id,
-                            'housing_type' => $app->housing_type,
+
                             'experience' => $app->experience,
                             'family_agreement' => $app->family_agreement,
                             'message' => $app->message,

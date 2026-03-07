@@ -89,10 +89,6 @@
                                                     <span>{{ app.phone }}</span>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <small class="text-muted d-block">{{ $t('Housing Environment') }}</small>
-                                                    <span>{{ $t(app.housing_type) }}</span>
-                                                </div>
-                                                <div class="col-md-6">
                                                     <small class="text-muted d-block">{{ $t('Pet Experience') }}</small>
                                                     <span>{{ $t(app.experience) }}</span>
                                                 </div>
@@ -106,7 +102,7 @@
                                             </div>
 
                                             <div class="application__message p-3 rounded-3 mb-3">
-                                                <small class="text-muted d-block mb-1">{{ $t('Self-intro and Motivation') }}</small>
+                                                <small class="text-muted d-block mb-1">{{ $t('Message to Owner (Briefly)') }}</small>
                                                 <p class="mb-0 text-secondary" style="white-space: pre-wrap;">
                                                     {{ app.message }}
                                                 </p>

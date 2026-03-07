@@ -58,21 +58,7 @@
                             <section class="application-form__section">
                                 <h3 class="application-form__section-title">{{ $t('Environment & Experience') }}</h3>
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="housing"
-                                            class="form-label application-form__label application-form__label--required">{{ $t('Housing Environment') }}</label>
-                                        <select id="housing" class="form-select application-form__input"
-                                            v-model="form.housing_type" required>
-                                            <option value="" disabled>{{ $t('Please select') }}</option>
-                                            <option value="apartment">{{ $t('Housing.Apartment') }}</option>
-                                            <option value="house">{{ $t('Housing.House') }}</option>
-                                            <option value="condo">{{ $t('Housing.Condo') }}</option>
-                                            <option value="suite">{{ $t('Housing.Suite') }}</option>
-                                            <option value="dormitory">{{ $t('Housing.Dormitory') }}</option>
-                                            <option value="other">{{ $t('Housing.Other') }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label for="experience"
                                             class="form-label application-form__label application-form__label--required">{{ $t('Pet Experience') }}</label>
                                         <select id="experience" class="form-select application-form__input"
@@ -107,14 +93,14 @@
 
                             <!-- Message -->
                             <section class="application-form__section">
-                                <h3 class="application-form__section-title">{{ $t('Message to Owner') }}
-                                </h3>
-                                <div class="mb-3">
+                                <h3 class="application-form__section-title">{{ $t('Message to Owner (Briefly)') }}</h3>
+                                <div class="col-12">
                                     <label for="message"
-                                        class="form-label application-form__label application-form__label--required">{{ $t('Self-introduction & Motivation') }}</label>
+                                        class="form-label application-form__label application-form__label--required">{{
+                                        $t('Message to Owner (Briefly)') }}</label>
                                     <textarea id="message" class="form-control application-form__input" rows="5"
                                         v-model="form.message" required
-                                        :placeholder="$t('Briefly introduce yourself...')"></textarea>
+                                        :placeholder="$t('Share your message or questions...')"></textarea>
                                 </div>
                             </section>
 
@@ -231,7 +217,7 @@ const form = reactive<{
     name: string
     phone: string
     line_id: string
-    housing_type: string
+
     experience: string
     family_agreement: boolean | null
     message: string
@@ -240,7 +226,7 @@ const form = reactive<{
     name: '',
     phone: '',
     line_id: '',
-    housing_type: '',
+
     experience: '',
     family_agreement: null,
     message: '',

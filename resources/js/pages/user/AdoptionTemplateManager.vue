@@ -186,10 +186,9 @@ const baseFields = [
     { key: 'name', label: '暱稱', icon: 'bi bi-person', typeName: '文字', required: true },
     { key: 'phone', label: '電話', icon: 'bi bi-telephone', typeName: '文字', required: true },
     { key: 'line_id', label: 'Line ID', icon: 'bi bi-chat-dots', typeName: '文字', required: false },
-    { key: 'housing', label: '居住環境', icon: 'bi bi-house-door', typeName: '下拉選單', required: true },
     { key: 'experience', label: '養寵經驗', icon: 'bi bi-star', typeName: '下拉選單', required: true },
     { key: 'family', label: '家人/室友是否同意', icon: 'bi bi-people', typeName: '單選', required: true },
-    { key: 'message', label: '自我介紹與動機', icon: 'bi bi-chat-square-text', typeName: '多行文字', required: true },
+    { key: 'message', label: '想對送養者說的話 (簡述即可)', icon: 'bi bi-chat-square-text', typeName: '多行文字', required: true },
 ]
 
 // Suggested custom fields to pre-populate for new templates
