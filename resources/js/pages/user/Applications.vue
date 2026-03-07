@@ -112,6 +112,22 @@
                                                 </p>
                                             </div>
 
+                                            <!-- Custom Fields Answers -->
+                                            <div v-if="app.custom_fields && Object.keys(app.custom_fields).length > 0"
+                                                class="applications__custom-fields p-3 rounded-3 mb-3">
+                                                <small class="text-primary fw-bold d-block mb-2">
+                                                    <i class="bi bi-list-check me-1"></i>{{ $t('Additional Answers') }}
+                                                </small>
+                                                <div class="row g-2">
+                                                    <div v-for="(value, key) in app.custom_fields" :key="key"
+                                                        class="col-md-6">
+                                                        <small class="text-muted d-block">{{ key }}</small>
+                                                        <span v-if="Array.isArray(value)">{{ value.join(', ') }}</span>
+                                                        <span v-else>{{ value || '-' }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="d-flex flex-column align-items-end gap-2">
                                                 <a v-if="app.line_id" :href="`https://line.me/ti/p/~${app.line_id}`"
                                                     target="_blank" class="btn btn-sm btn-success text-white mb-3">
@@ -257,6 +273,7 @@ interface Application {
     status: string
     created_at: string
     updated_at: string
+    custom_fields?: Record<string, any>
 }
 
 interface PetGroup {

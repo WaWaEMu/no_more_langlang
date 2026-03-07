@@ -118,6 +118,65 @@
                                 </div>
                             </section>
 
+                            <!-- Custom Fields (from template) -->
+                            <section v-if="templateSchema.length > 0" class="application-form__section">
+                                <h3 class="application-form__section-title">
+                                    <i class="bi bi-list-check me-2"></i>{{ $t('Additional Questions') }}
+                                </h3>
+                                <div class="row g-3">
+                                    <div v-for="(field, fi) in templateSchema" :key="fi"
+                                        :class="field.type === 'textarea' ? 'col-12' : 'col-md-6'">
+                                        <label class="form-label application-form__label"
+                                            :class="{ 'application-form__label--required': field.required }">
+                                            {{ field.label }}
+                                        </label>
+
+                                        <!-- text -->
+                                        <input v-if="field.type === 'text'" type="text"
+                                            class="form-control application-form__input"
+                                            v-model="form.custom_fields[field.label]" :required="field.required" />
+
+                                        <!-- textarea -->
+                                        <textarea v-else-if="field.type === 'textarea'"
+                                            class="form-control application-form__input" rows="3"
+                                            v-model="form.custom_fields[field.label]"
+                                            :required="field.required"></textarea>
+
+                                        <!-- select -->
+                                        <select v-else-if="field.type === 'select'"
+                                            class="form-select application-form__input"
+                                            v-model="form.custom_fields[field.label]" :required="field.required">
+                                            <option value="" disabled>{{ $t('Please select') }}</option>
+                                            <option v-for="opt in field.options" :key="opt" :value="opt">{{ opt }}
+                                            </option>
+                                        </select>
+
+                                        <!-- radio -->
+                                        <div v-else-if="field.type === 'radio'" class="d-flex flex-wrap gap-3 mt-1">
+                                            <div v-for="(opt, oi) in field.options" :key="oi" class="form-check">
+                                                <input class="form-check-input" type="radio"
+                                                    :name="`custom-radio-${fi}`" :id="`custom-radio-${fi}-${oi}`"
+                                                    :value="opt" v-model="form.custom_fields[field.label]"
+                                                    :required="field.required" />
+                                                <label class="form-check-label" :for="`custom-radio-${fi}-${oi}`">{{ opt
+                                                    }}</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- checkbox -->
+                                        <div v-else-if="field.type === 'checkbox'" class="d-flex flex-wrap gap-3 mt-1">
+                                            <div v-for="(opt, oi) in field.options" :key="oi" class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    :id="`custom-cb-${fi}-${oi}`" :value="opt"
+                                                    v-model="form.custom_fields[field.label]" />
+                                                <label class="form-check-label" :for="`custom-cb-${fi}-${oi}`">{{ opt
+                                                    }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
                             <!-- Actions -->
                             <div class="d-flex justify-content-between align-items-center mt-4 pt-4 border-top">
                                 <button type="button" class="btn btn-outline-secondary px-4 rounded-pill"
@@ -160,14 +219,32 @@ const petId = computed(() => route.params.id as string)
 const pet = ref<any>(null)
 const isSubmitting = ref(false)
 
-const form = reactive({
+interface TemplateField {
+    label: string
+    type: string
+    required: boolean
+    options?: string[]
+}
+const templateSchema = ref<TemplateField[]>([])
+
+const form = reactive<{
+    name: string
+    phone: string
+    line_id: string
+    housing_type: string
+    experience: string
+    family_agreement: boolean | null
+    message: string
+    custom_fields: Record<string, any>
+}>({
     name: '',
     phone: '',
     line_id: '',
     housing_type: '',
     experience: '',
     family_agreement: null,
-    message: ''
+    message: '',
+    custom_fields: {}
 })
 
 async function fetchPetDetail() {
@@ -182,6 +259,27 @@ async function fetchPetDetail() {
             text: $t('Unable to load pet details')
         })
         router.push('/adopt')
+    }
+}
+
+async function fetchFormSchema() {
+    try {
+        const res = await axios.get(`/api/adopt/${petId.value}/form-schema`)
+        const schema = res.data?.data?.template?.schema
+        if (schema && Array.isArray(schema)) {
+            templateSchema.value = schema
+            // Initialize custom_fields with empty values
+            schema.forEach((field: TemplateField) => {
+                if (field.type === 'checkbox') {
+                    form.custom_fields[field.label] = []
+                } else {
+                    form.custom_fields[field.label] = ''
+                }
+            })
+        }
+    } catch {
+        // Non-blocking: template is optional
+        console.warn('No form template found for this pet')
     }
 }
 
@@ -220,7 +318,7 @@ async function submitApplication() {
 }
 
 onMounted(async () => {
-    await Promise.all([fetchPetDetail(), authStore.fetchUser()])
+    await Promise.all([fetchPetDetail(), authStore.fetchUser(), fetchFormSchema()])
 })
 </script>
 

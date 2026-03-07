@@ -350,5 +350,7 @@
     "Manage Templates": "管理範本",
     "Basic Form Content": "基本表單內容",
     "basic_fields.preview_hint": "所有領養申請預設皆包含以下核心欄位（不可修改）：",
-    "Custom Questions Preview": "自訂問題預覽"
+    "Custom Questions Preview": "自訂問題預覽",
+    "Additional Questions": "飼主想進一步了解",
+    "Additional Answers": "進階回答"
 }
