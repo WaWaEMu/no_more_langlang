@@ -218,23 +218,23 @@ function formatDate(dateStr: string | undefined) {
 
 /* Tag Colors */
 .adoption-card__tag--weekly {
-    background-color: #bee3f8 !important;
-    color: #2c5282 !important;
+    background-color: rgba(44, 82, 130, 0.1) !important;
+    color: var(--color-denim-blue) !important;
 }
 
 .adoption-card__tag--monthly {
-    background-color: #feebc8 !important;
-    color: #9c4221 !important;
+    background-color: rgba(237, 137, 54, 0.1) !important;
+    color: #c05621 !important;
 }
 
 .adoption-card__tag--quarterly {
-    background-color: #c6f6d5 !important;
-    color: #22543d !important;
+    background-color: rgba(72, 187, 120, 0.1) !important;
+    color: #2f855a !important;
 }
 
 .adoption-card__tag--none {
-    background-color: #e2e8f0 !important;
-    color: #4a5568 !important;
+    background-color: var(--color-fog-gray) !important;
+    color: #718096 !important;
 }
 
 .adoption-card__extra {
@@ -242,7 +242,14 @@ function formatDate(dateStr: string | undefined) {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>

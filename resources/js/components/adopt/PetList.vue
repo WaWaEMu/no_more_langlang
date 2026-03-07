@@ -60,7 +60,8 @@
                 <div class="pet-list__card--tags">
                     <span class="pet-list__card--tag">{{ pet.color }}</span>
                     <span class="pet-list__card--tag">{{ pet.fur_type }}</span>
-                    <span class="pet-list__card--tag" :class="{ 'pet-list__card--tag-highlight': pet.is_neuter }">
+                    <span class="pet-list__card--tag"
+                        :class="pet.is_neuter ? 'pet-list__card--tag-neutered' : 'pet-list__card--tag-not-neutered'">
                         {{ pet.is_neuter ? '已結紮' : '未結紮' }}
                     </span>
                 </div>
@@ -390,17 +391,24 @@ async function handleStatusUpdate(petId: number, newStatus: string) {
 }
 
 .pet-list__card--tag {
-    background: #f7fafc;
-    color: #4a5568;
-    padding: 0.125rem 0.5rem;
-    border-radius: 12px;
+    background: var(--color-fog-gray, #E6E9EF);
+    color: #718096;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 500;
 }
 
-.pet-list__card--tag-highlight {
-    background: #ebf8ff;
-    color: #2c5282;
+.pet-list__card--tag-neutered {
+    background: rgba(44, 82, 130, 0.1);
+    color: var(--color-denim-blue, #2c5282);
+    font-weight: 600;
+}
+
+.pet-list__card--tag-not-neutered {
+    background: transparent;
+    color: #a0aec0;
+    border: 1px dashed #cbd5e0;
 }
 
 .pet-list__card--footer {
