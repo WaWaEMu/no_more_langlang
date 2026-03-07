@@ -53,10 +53,12 @@
                         </div>
 
                         <div class="template-mgr__card-actions">
-                            <button class="btn btn-sm btn-outline-primary" @click="openEditModal(tpl)">
+                            <button class="btn btn-sm template-mgr__btn--edit rounded-pill px-3"
+                                @click="openEditModal(tpl)">
                                 <i class="bi bi-pencil me-1"></i>{{ $t('Edit') }}
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" @click="confirmDelete(tpl)">
+                            <button class="btn btn-sm template-mgr__btn--delete rounded-pill px-3"
+                                @click="confirmDelete(tpl)">
                                 <i class="bi bi-trash me-1"></i>{{ $t('Delete') }}
                             </button>
                         </div>
@@ -131,10 +133,11 @@
                             </div>
 
                             <div class="template-mgr__modal-footer">
-                                <button class="btn btn-secondary" @click="closeModal">
+                                <button class="btn btn-outline-secondary rounded-pill px-4" @click="closeModal">
                                     {{ $t('Cancel') }}
                                 </button>
-                                <button class="btn btn-primary" @click="saveTemplate" :disabled="saving">
+                                <button class="btn btn-primary rounded-pill px-4" @click="saveTemplate"
+                                    :disabled="saving">
                                     <span v-if="saving" class="spinner-border spinner-border-sm me-1"></span>
                                     {{ isEditing ? $t('Save Changes') : $t('Create') }}
                                 </button>
@@ -630,16 +633,44 @@ function fieldTypeIcon(type: string): string {
 }
 
 .btn-primary {
-    background: #3182ce;
-    border-color: #3182ce;
+    background: #4A5568;
+    border-color: #4A5568;
     padding: 0.6rem 1.5rem;
     border-radius: 8px;
     font-weight: 600;
 }
 
 .btn-primary:hover {
-    background: #2c5282;
-    border-color: #2c5282;
+    background: #2D3748;
+    border-color: #2D3748;
+}
+
+.template-mgr__btn--edit {
+    background-color: var(--color-denim-blue, #2c5282);
+    color: #fff;
+    border: none;
+    transition: all 0.2s;
+}
+
+.template-mgr__btn--edit:hover {
+    background-color: #1a365d;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.template-mgr__btn--delete {
+    background-color: #fff;
+    color: #e53e3e;
+    border: 1px solid #fed7d7;
+    transition: all 0.2s;
+}
+
+.template-mgr__btn--delete:hover {
+    background-color: #fff5f5;
+    color: #c53030;
+    border-color: #feb2b2;
+    transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
