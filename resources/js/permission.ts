@@ -31,8 +31,11 @@ router.beforeEach(async (to, from, next) => {
         return next({ path: '/adopt' })
     }
 
-    // White list routes are always allowed (for non-logged-in users or other auth routes)
-    const isWhitelisted = whiteList.includes(to.path) || /^\/adopt\/\d+$/.test(to.path);
+    // Check if it's a 404 route (fall-through pathMatch)
+    const isNotFound = to.matched.some(record => record.path.includes(':pathMatch'));
+
+    // White list routes are always allowed
+    const isWhitelisted = whiteList.includes(to.path) || /^\/adopt\/\d+$/.test(to.path) || isNotFound;
     if (isWhitelisted) {
         return next()
     }
