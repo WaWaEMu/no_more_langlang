@@ -45,7 +45,7 @@ const isMenuOpen = ref(false);
 const navList = ref<{ id: string; label: string; path: string }[]>([
     { id: '00', label: 'Adopt', path: '/adopt' },
     { id: '01', label: 'New Adoption', path: '/adopt/new' },
-    { id: '02', label: 'Free API', path: '/freeApi' },
+
     { id: '03', label: 'Website Concept', path: '/about' }
 ])
 

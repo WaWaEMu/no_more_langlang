@@ -1,6 +1,5 @@
 {
     "App Name": "諾摩浪浪",
-    "Free API": "免費API",
     "Login to post adoption": "登入後即可登記送養，幫浪浪找新家！",
     "Login Required": "需要登入",
     "Login required message": "此功能需要登入後才能使用，是否前往登入頁面？",
@@ -231,7 +230,6 @@
     "Reset Password Failed": "重設密碼失敗",
     "Register Failed": "註冊失敗",
     "Register with Google": "使用 Google 帳號註冊",
-    "Free API Strong": "我也計劃開放 <strong>免費 API</strong>，讓其他網站的軟體工程師可以輕鬆置入「諾摩浪浪」待領養動物的資料，讓更多人看到這些需要家的毛孩子們。",
     "Enter Nickname": "請輸入您的暱稱",
     "Confirm Password Placeholder": "請再次輸入您的密碼",
     "Add pet failed": "新增寵物失敗",
