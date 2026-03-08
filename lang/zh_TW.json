@@ -1,5 +1,9 @@
 {
     "App Name": "諾摩浪浪",
+    "Page Not Found": "找不到頁面",
+    "404.Description": "很抱歉，您要找的頁面不存在或已被移除。",
+    "404.GoHome": "回到首頁",
+    "404.GoBack": "回到上一頁",
     "Login to post adoption": "登入後即可登記送養，幫浪浪找新家！",
     "Login Required": "需要登入",
     "Login required message": "此功能需要登入後才能使用，是否前往登入頁面？",

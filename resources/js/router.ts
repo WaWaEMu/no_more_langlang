@@ -100,6 +100,11 @@ const routes = [
         path: '/about',
         component: () => import('@/pages/About.vue'),
         meta: { title: t('Website Concept') }
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        component: () => import('@/pages/NotFound.vue'),
+        meta: { title: t('Page Not Found') }
     }
 ]
 
