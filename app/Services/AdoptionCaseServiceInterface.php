@@ -43,4 +43,13 @@ interface AdoptionCaseServiceInterface
      * @return Collection
      */
     public function getReports(AdoptionCase $case): Collection;
+
+    /**
+     * Create a manual adoption case (bypassing the application flow).
+     *
+     * @param array $data
+     * @param User $creator
+     * @return AdoptionCase
+     */
+    public function createManualCase(array $data, User $creator): AdoptionCase;
 }

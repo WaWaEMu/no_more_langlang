@@ -14,12 +14,16 @@ class AdoptionCase extends Model
     public const STATUS_COMPLETED = 'completed'; // 已完成
     public const STATUS_PAUSED = 'paused'; // 已暫停
 
+    public const SOURCE_PLATFORM = 'platform'; // 透過平台送養流程
+    public const SOURCE_MANUAL = 'manual'; // 使用者手動建案
+
     protected $fillable = [
         'pet_id',
         'adopter_id',
         'owner_id',
         'application_id',
         'status',
+        'source',
         'tracking_config',
         'next_report_due_at',
         'last_report_at',
@@ -70,6 +74,23 @@ class AdoptionCase extends Model
     {
         return $query->where('owner_id', $userId)
             ->with(['pet.images', 'adopter']);
+    }
+
+    /**
+     * Create a manual case (bypassing the adoption application flow).
+     */
+    public static function createManual(array $data): self
+    {
+        return self::create([
+            'pet_id' => $data['pet_id'],
+            'adopter_id' => $data['adopter_id'] ?? null,
+            'owner_id' => $data['owner_id'] ?? null,
+            'source' => self::SOURCE_MANUAL,
+            'status' => self::STATUS_ACTIVE,
+            'tracking_config' => $data['tracking_config'] ?? null,
+            'started_at' => now(),
+            'next_report_due_at' => self::calculateNextReportDate($data['tracking_config'] ?? null),
+        ]);
     }
 
     /**

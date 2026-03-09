@@ -129,4 +129,30 @@ class AdoptionCaseController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Create a manual adoption case (bypassing the application flow).
+     */
+    public function storeManual(\App\Http\Requests\ManualCaseRequest $request)
+    {
+        try {
+            $case = $this->adoptionCaseService->createManualCase(
+                $request->validated() + ['pet_image' => $request->file('pet_image')],
+                Auth::user()
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => '追蹤案件已建立',
+                'data' => $case->load(['pet.images', 'owner', 'adopter'])
+            ], 201);
+
+        } catch (\Exception $e) {
+            $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], $statusCode);
+        }
+    }
 }

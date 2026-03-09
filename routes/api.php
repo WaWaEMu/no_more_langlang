@@ -63,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Adoption Cases
     Route::get('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'index']);
     Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
+    Route::post('/adoption-cases/manual', [\App\Http\Controllers\AdoptionCaseController::class, 'storeManual']);
 
     // Adoption Form Templates
     Route::get('/user/adoption-templates', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'index']);

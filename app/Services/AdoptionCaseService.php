@@ -121,4 +121,64 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
     {
         return $case->reports()->with('reporter:id,name')->get();
     }
+
+    /**
+     * Create a manual adoption case (bypassing the application flow).
+     * Creates a simplified Pet record and an AdoptionCase in one transaction.
+     */
+    public function createManualCase(array $data, User $creator): AdoptionCase
+    {
+        return DB::transaction(function () use ($data, $creator) {
+            // 1. Handle pet image upload
+            $imagePath = null;
+            if (!empty($data['pet_image'])) {
+                $date = now()->format('Y_m_d');
+                $filename = 'manual_' . time() . '.' . $data['pet_image']->guessExtension();
+                $imagePath = $data['pet_image']->storeAs("images/{$date}", $filename, 'public');
+            }
+
+            // 2. Create simplified Pet record
+            $pet = Pet::create([
+                'title' => $data['pet_name'] . ' 的追蹤紀錄',
+                'name' => $data['pet_name'],
+                'type' => $data['pet_type'],
+                'user_id' => $creator->id,
+                'status' => Pet::STATUS_ADOPTED,
+                // Defaults for simplified creation
+                'color' => '未填寫',
+                'fur_type' => '未填寫',
+                'gender' => 'unknown',
+                'age' => '未知',
+                'is_neuter' => false,
+                'is_stray' => false,
+                'city' => '未填寫',
+                'town' => '未填寫',
+            ]);
+
+            // 3. Save pet image if uploaded
+            if ($imagePath) {
+                $pet->images()->create(['path' => $imagePath]);
+            }
+
+            // 4. Determine owner_id and adopter_id based on role
+            $ownerId = null;
+            $adopterId = null;
+
+            if ($data['role'] === 'owner') {
+                $ownerId = $creator->id;
+                $adopterId = $data['counterpart_id'] ?? null;
+            } else {
+                $adopterId = $creator->id;
+                $ownerId = $data['counterpart_id'] ?? null;
+            }
+
+            // 5. Create the adoption case
+            return AdoptionCase::createManual([
+                'pet_id' => $pet->id,
+                'owner_id' => $ownerId,
+                'adopter_id' => $adopterId,
+                'tracking_config' => $data['tracking_config'] ?? null,
+            ]);
+        });
+    }
 }
