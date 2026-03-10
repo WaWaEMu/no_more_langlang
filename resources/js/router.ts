@@ -97,6 +97,11 @@ const routes = [
         meta: { title: t('Adoption Templates') }
     },
     {
+        path: '/case/new',
+        component: () => import('@/pages/case/CreateCase.vue'),
+        meta: { title: t('Create Tracking Case') }
+    },
+    {
         path: '/about',
         component: () => import('@/pages/About.vue'),
         meta: { title: t('Website Concept') }

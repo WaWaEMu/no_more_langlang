@@ -65,6 +65,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
     Route::post('/adoption-cases/manual', [\App\Http\Controllers\AdoptionCaseController::class, 'storeManual']);
 
+});
+
+// User Lookup by exact email (privacy-safe, accessible by guests if frontend is whitelisted)
+Route::post('/users/lookup', [UserController::class, 'lookupByEmail']);
+
+// Adoption Form Templates
+Route::middleware('auth:sanctum')->group(function () {
+
     // Adoption Form Templates
     Route::get('/user/adoption-templates', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'index']);
     Route::post('/user/adoption-templates', [\App\Http\Controllers\AdoptionFormTemplateController::class, 'store']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\UserLookupRequest;
 
 class UserController extends Controller
 {
@@ -42,5 +43,30 @@ class UserController extends Controller
         $this->userService->updatePassword($request->user(), $request->password);
 
         return response()->json(['message' => 'Password updated successfully']);
+    }
+
+    /**
+     * Lookup user by exact email (Privacy-safe)
+     */
+    public function lookupByEmail(UserLookupRequest $request)
+    {
+        $currentUserId = $request->user('sanctum')?->id;
+
+        $user = $this->userService->lookupByEmail(
+            $request->input('email'),
+            $currentUserId
+        );
+
+        if (!$user) {
+            return response()->json([
+                'found' => false,
+                'message' => '找不到此 Email 對應的使用者',
+            ]);
+        }
+
+        return response()->json([
+            'found' => true,
+            'user' => $user,
+        ]);
     }
 }

@@ -45,7 +45,7 @@ const isMenuOpen = ref(false);
 const navList = ref<{ id: string; label: string; path: string }[]>([
     { id: '00', label: 'Adopt', path: '/adopt' },
     { id: '01', label: 'New Adoption', path: '/adopt/new' },
-
+    { id: '02', label: 'Create Case', path: '/case/new' },
     { id: '03', label: 'Website Concept', path: '/about' }
 ])
 
@@ -63,7 +63,8 @@ function closeMenu() {
 
 async function handleNavClick(navItem: any) {
     closeMenu()
-    if (navItem.path === '/adopt/new') {
+    const authRequiredPaths = ['/adopt/new', '/case/new']
+    if (authRequiredPaths.includes(navItem.path)) {
         if (await authStore.checkAuth(trans('Login to post adoption'))) {
             router.push(navItem.path)
         }

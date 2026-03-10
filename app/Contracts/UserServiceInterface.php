@@ -23,4 +23,13 @@ interface UserServiceInterface
      * @return void
      */
     public function updatePassword(User $user, string $password): void;
+
+    /**
+     * Lookup user by exact email.
+     *
+     * @param string $email
+     * @param int|null $excludeId
+     * @return User|null
+     */
+    public function lookupByEmail(string $email, ?int $excludeId = null): ?User;
 }

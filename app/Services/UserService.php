@@ -17,4 +17,14 @@ class UserService implements UserServiceInterface
     {
         $user->updatePassword($password);
     }
+
+    public function lookupByEmail(string $email, ?int $excludeId = null): ?User
+    {
+        return User::when($excludeId, function ($q) use ($excludeId) {
+            return $q->where('id', '!=', $excludeId);
+        })
+            ->where('email', $email)
+            ->select('id', 'name', 'email')
+            ->first();
+    }
 }
