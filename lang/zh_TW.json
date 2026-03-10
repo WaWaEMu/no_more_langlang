@@ -45,6 +45,7 @@
     "Housing.Suite": "套房",
     "Housing.Dormitory": "宿舍",
     "Housing.Other": "其他",
+    "Experience.None": "無",
     "Experience.Newbie": "新手",
     "Experience.Experienced": "有經驗",
     "Experience.Expert": "非常有經驗",
@@ -417,5 +418,12 @@
     "caseDetail.TrackingTimeline": "追蹤回報紀錄",
     "caseDetail.NoPermission": "您沒有權限查看此案件",
     "caseDetail.NotFound": "找不到此案件",
-    "caseDetail.LoadError": "載入案件失敗，請稍後再試"
+    "caseDetail.LoadError": "載入案件失敗，請稍後再試",
+    "caseDetail.ApplicationForm": "領養申請表單",
+    "caseDetail.ApplicantName": "申請人姓名",
+    "caseDetail.Phone": "聯絡電話",
+    "caseDetail.Experience": "飼養經驗",
+    "caseDetail.FamilyAgreement": "家人同意",
+    "caseDetail.Message": "給送養人的話",
+    "caseDetail.CustomFields": "補充問答"
 }

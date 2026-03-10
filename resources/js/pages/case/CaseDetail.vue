@@ -98,12 +98,12 @@
                                         <span class="case-detail__info-key">{{ $t('caseDetail.Source') }}</span>
                                         <span class="case-detail__info-val">
                                             {{ adoptionCase.source === 'manual' ? $t('caseDetail.SourceManual') :
-                                            $t('caseDetail.SourcePlatform') }}
+                                                $t('caseDetail.SourcePlatform') }}
                                         </span>
                                     </div>
                                     <div class="case-detail__info-row">
                                         <span class="case-detail__info-key">{{ $t('caseDetail.TrackingFrequency')
-                                            }}</span>
+                                        }}</span>
                                         <span class="case-detail__info-val">
                                             {{ getTrackingFrequencyText(adoptionCase.tracking_config?.frequency) }}
                                         </span>
@@ -111,7 +111,7 @@
                                     <div class="case-detail__info-row">
                                         <span class="case-detail__info-key">{{ $t('Adopted Date') }}</span>
                                         <span class="case-detail__info-val">{{ formatDate(adoptionCase.started_at)
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                     <div v-if="adoptionCase.next_report_due_at" class="case-detail__info-row">
                                         <span class="case-detail__info-key">{{ $t('Next Report Due') }}</span>
@@ -141,6 +141,87 @@
                                         <span class="case-detail__info-val">
                                             {{ adoptionCase.adopter?.name || $t('caseDetail.NotSpecified') }}
                                         </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adoption Application Form (only for platform cases) -->
+                    <div v-if="application" class="case-detail__card mb-4">
+                        <h5 class="case-detail__card-title">
+                            <i class="bi bi-file-earmark-text me-2"></i>{{ $t('caseDetail.ApplicationForm') }}
+                        </h5>
+
+                        <!-- Standard Fields (Structured) -->
+                        <div class="case-detail__standard-section p-3 rounded-4 mb-3">
+                            <h6 class="fw-bold text-secondary mb-3 small text-uppercase letter-spacing-1">
+                                <i class="bi bi-info-square me-1"></i>基本申請內容
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-6 col-md-4">
+                                    <div class="case-detail__grid-item">
+                                        <span class="case-detail__grid-label">{{ $t('caseDetail.ApplicantName')
+                                            }}</span>
+                                        <span class="case-detail__grid-value">{{ application.name }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="case-detail__grid-item">
+                                        <span class="case-detail__grid-label">{{ $t('caseDetail.Phone') }}</span>
+                                        <span class="case-detail__grid-value">{{ application.phone || '-' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="case-detail__grid-item">
+                                        <span class="case-detail__grid-label">LINE ID</span>
+                                        <span class="case-detail__grid-value">{{ application.line_id || '-' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="case-detail__grid-item">
+                                        <span class="case-detail__grid-label">{{ $t('caseDetail.Experience') }}</span>
+                                        <span class="case-detail__grid-value">{{
+                                            formatExperience(application.experience) }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="case-detail__grid-item">
+                                        <span class="case-detail__grid-label">{{ $t('caseDetail.FamilyAgreement')
+                                            }}</span>
+                                        <span class="case-detail__grid-value">
+                                            <i v-if="application.family_agreement"
+                                                class="bi bi-check-circle-fill text-success me-1"></i>
+                                            <i v-else class="bi bi-x-circle-fill text-danger me-1"></i>
+                                            {{ application.family_agreement ? '是' : '否' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="application.message" class="mt-3 pt-3 border-top border-light">
+                                <span class="case-detail__grid-label mb-1 d-block">{{ $t('caseDetail.Message') }}</span>
+                                <div class="case-detail__grid-value text-break"
+                                    style="font-style: italic; color: #4a5568;">
+                                    「{{ application.message }}」
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Fields (Q&A Style) -->
+                        <div v-if="application.custom_fields && Object.keys(application.custom_fields).length > 0"
+                            class="case-detail__custom-section mt-4 pt-3 border-top">
+                            <h6 class="fw-bold text-dark mb-3">
+                                <i class="bi bi-patch-question text-primary me-2"></i>{{ $t('caseDetail.CustomFields')
+                                }}
+                            </h6>
+                            <div class="case-detail__qa-list">
+                                <div v-for="(value, key) in application.custom_fields" :key="key"
+                                    class="case-detail__qa-item mb-3 p-3 rounded-3">
+                                    <div class="case-detail__qa-question fw-bold mb-2">
+                                        <span class="text-primary me-2">Q.</span>{{ key }}
+                                    </div>
+                                    <div class="case-detail__qa-answer text-secondary">
+                                        <span class="fw-bold me-2">A.</span>{{ formatFieldValue(value) }}
                                     </div>
                                 </div>
                             </div>
@@ -196,6 +277,8 @@ const role = ref<'owner' | 'adopter'>('owner')
 const reportRefreshKey = ref(0)
 
 const pet = computed(() => adoptionCase.value?.pet || {})
+const application = computed(() => adoptionCase.value?.application || null)
+const formSchema = computed(() => adoptionCase.value?.pet?.adoption_form_template?.schema || [])
 
 const petImageUrl = computed(() => {
     const images = pet.value?.images
@@ -240,6 +323,22 @@ function formatDate(dateStr?: string) {
 
 function onReportSubmitted() {
     reportRefreshKey.value++
+}
+
+function formatFieldValue(value: any): string {
+    if (Array.isArray(value)) return value.join('、')
+    if (typeof value === 'boolean') return value ? '是' : '否'
+    return String(value || '-')
+}
+
+function formatExperience(exp: string): string {
+    const map: Record<string, string> = {
+        'none': $t('Experience.None'),
+        'newbie': $t('Experience.Newbie'),
+        'experienced': $t('Experience.Experienced'),
+        'expert': $t('Experience.Expert'),
+    }
+    return map[exp] || exp || '-'
 }
 
 onMounted(async () => {
@@ -351,6 +450,45 @@ onMounted(async () => {
 .case-detail__info-val {
     font-size: 0.875rem;
     color: #2d3748;
+    font-weight: 600;
+}
+
+.case-detail__qa-item {
+    background: #f8fafc;
+    border-left: 4px solid var(--color-denim-blue);
+    transition: background 0.2s ease;
+}
+
+.case-detail__qa-item:hover {
+    background: #f1f5f9;
+}
+
+.case-detail__qa-question {
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.case-detail__qa-answer {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.case-detail__standard-section {
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+
+.case-detail__grid-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.case-detail__grid-value {
+    font-size: 1.05rem;
+    color: #1e293b;
     font-weight: 600;
 }
 

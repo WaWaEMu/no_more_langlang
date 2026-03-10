@@ -195,8 +195,10 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
         $case = AdoptionCase::with([
             'pet.images',
             'pet.detail',
+            'pet.adoptionFormTemplate',
             'owner:id,name,email',
             'adopter:id,name,email',
+            'application.user:id,name',
             'reports.reporter:id,name',
         ])->findOrFail($id);
 
