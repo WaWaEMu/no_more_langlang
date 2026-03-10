@@ -186,4 +186,27 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
             ]);
         });
     }
+
+    /**
+     * Get details of a single adoption case for a specific user.
+     */
+    public function getCaseDetails(int $id, User $user): array
+    {
+        $case = AdoptionCase::with([
+            'pet.images',
+            'pet.detail',
+            'owner:id,name,email',
+            'adopter:id,name,email',
+            'reports.reporter:id,name',
+        ])->findOrFail($id);
+
+        if ($case->owner_id !== $user->id && $case->adopter_id !== $user->id) {
+            throw new \Exception('無權限查看此案件', 403);
+        }
+
+        return [
+            'case' => $case,
+            'role' => $case->owner_id === $user->id ? 'owner' : 'adopter',
+        ];
+    }
 }

@@ -102,6 +102,11 @@ const routes = [
         meta: { title: t('Create Tracking Case') }
     },
     {
+        path: '/case/:id(\\d+)',
+        component: () => import('@/pages/case/CaseDetail.vue'),
+        meta: { title: t('Case Detail') }
+    },
+    {
         path: '/about',
         component: () => import('@/pages/About.vue'),
         meta: { title: t('Website Concept') }

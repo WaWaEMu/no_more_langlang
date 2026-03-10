@@ -35,6 +35,30 @@ class AdoptionCaseController extends Controller
         ]);
     }
 
+    /**
+     * Get a single adoption case with full details.
+     * Only the owner or adopter can view.
+     */
+    public function show($id)
+    {
+        try {
+            $result = $this->adoptionCaseService->getCaseDetails($id, Auth::user());
+
+            return response()->json([
+                'success' => true,
+                'data' => $result['case'],
+                'role' => $result['role'],
+            ]);
+
+        } catch (\Exception $e) {
+            $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], $statusCode);
+        }
+    }
+
     public function store(\App\Http\Requests\AdoptionCaseRequest $request)
     {
         try {

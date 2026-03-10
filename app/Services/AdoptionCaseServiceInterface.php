@@ -52,4 +52,13 @@ interface AdoptionCaseServiceInterface
      * @return AdoptionCase
      */
     public function createManualCase(array $data, User $creator): AdoptionCase;
+
+    /**
+     * Get details of a single adoption case for a specific user.
+     *
+     * @param int $id
+     * @param User $user
+     * @return array Contains 'case' and 'role'
+     */
+    public function getCaseDetails(int $id, User $user): array;
 }
