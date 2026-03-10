@@ -370,9 +370,6 @@
     "case.PetName": "寵物名稱",
     "case.PetNamePlaceholder": "例如：小橘、米克斯...",
     "case.PetType": "寵物類型",
-    "case.TypeDog": "狗狗",
-    "case.TypeCat": "貓咪",
-    "case.TypeOther": "其他",
     "case.PetImage": "寵物照片（選填）",
     "case.UploadHint": "點擊或拖曳圖片上傳",
     "case.TrackingConfig": "追蹤回報設定",
@@ -401,5 +398,7 @@
     "case.LookupInvalidEmail": "請輸入有效的 Email 地址",
     "case.LookupNotFound": "找不到此 Email 對應的使用者",
     "case.LookupError": "查詢失敗，請稍後再試",
-    "case.NotSpecified": "尚未指定"
+    "case.NotSpecified": "尚未指定",
+    "dog": "狗狗",
+    "cat": "貓咪"
 }

@@ -117,7 +117,7 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Pet Type') }}</span>
-                                            <span class="fw-semibold text-dark">{{ pet.type }}</span>
+                                            <span class="fw-semibold text-dark">{{ $t(pet.type.toLowerCase()) }}</span>
                                         </div>
                                     </div>
                                     <div class="col">

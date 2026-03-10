@@ -10,7 +10,7 @@
                     <div class="ms-3">
                         <h5 class="card-title fw-bold mb-0 text-dark">{{ pet.name }}</h5>
                         <small class="text-muted fw-semibold adoption-card__subtitle">
-                            {{ pet.type }} / {{ pet.age }}
+                            {{ $t(pet.type.toLowerCase()) }} / {{ pet.age }}
                         </small>
                     </div>
                 </div>

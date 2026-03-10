@@ -8,7 +8,7 @@
                     <i class="bi bi-image"></i>
                 </div>
                 <div class="pet-list__card--badge">
-                    {{ pet.type }}
+                    {{ $t(pet.type.toLowerCase()) }}
                 </div>
                 <div :class="['pet-list__card--status', `pet-list__card--status-${pet.status}`]">
                     {{ getStatusLabel(pet.status) }}

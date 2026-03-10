@@ -129,8 +129,8 @@ defineEmits([
 ])
 
 const petTypes = [
-    { value: 'dog', label: 'case.TypeDog', icon: 'bi bi-emoji-smile' },
-    { value: 'cat', label: 'case.TypeCat', icon: 'bi bi-emoji-heart-eyes' },
+    { value: 'dog', label: 'dog', icon: 'bi bi-emoji-smile' },
+    { value: 'cat', label: 'cat', icon: 'bi bi-emoji-heart-eyes' },
 ]
 
 const frequencies = [
