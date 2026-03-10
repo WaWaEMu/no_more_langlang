@@ -91,6 +91,36 @@
                     </span>
                 </div>
                 <div class="create-case__summary-item">
+                    <span class="create-case__summary-key">性別</span>
+                    <span class="create-case__summary-value">
+                        {{ modelValue.gender === 'male' ? '男生' : modelValue.gender === 'female' ? '女生' : '-' }}
+                    </span>
+                </div>
+                <div class="create-case__summary-item">
+                    <span class="create-case__summary-key">年紀</span>
+                    <span class="create-case__summary-value">{{ modelValue.age || '-' }}</span>
+                </div>
+                <div class="create-case__summary-item">
+                    <span class="create-case__summary-key">花紋</span>
+                    <span class="create-case__summary-value">{{ modelValue.color || '-' }}</span>
+                </div>
+                <div class="create-case__summary-item">
+                    <span class="create-case__summary-key">毛型</span>
+                    <span class="create-case__summary-value">{{ modelValue.fur_type || '-' }}</span>
+                </div>
+                <div class="create-case__summary-item">
+                    <span class="create-case__summary-key">結紮</span>
+                    <span class="create-case__summary-value">
+                        {{ modelValue.is_neuter === true ? '已結紮' : modelValue.is_neuter === false ? '未結紮' : '-' }}
+                    </span>
+                </div>
+                <div class="create-case__summary-item">
+                    <span class="create-case__summary-key">地點</span>
+                    <span class="create-case__summary-value">
+                        {{ modelValue.city && modelValue.town ? `${modelValue.city} ${modelValue.town}` : '-' }}
+                    </span>
+                </div>
+                <div class="create-case__summary-item">
                     <span class="create-case__summary-key">{{ $t('case.TrackingFrequency') }}</span>
                     <span class="create-case__summary-value">
                         {{$t(frequencies.find(f => f.value === modelValue.frequency)?.label || '')}}
@@ -113,6 +143,14 @@ defineProps<{
         role: string
         pet_name: string
         pet_type: string
+        gender: string
+        age: string
+        color: string
+        fur_type: string
+        is_neuter: boolean | null
+        is_stray: boolean | null
+        city: string
+        town: string
         frequency: string
     }
     searchQuery: string

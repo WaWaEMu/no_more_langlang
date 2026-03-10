@@ -137,27 +137,32 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
                 $imagePath = $data['pet_image']->storeAs("images/{$date}", $filename, 'public');
             }
 
-            // 2. Create simplified Pet record
+            // 2. Create Pet record with full details
+            $typeMap = ['dog' => '狗狗', 'cat' => '貓咪'];
+
             $pet = Pet::create([
                 'title' => $data['pet_name'] . ' 的追蹤紀錄',
                 'name' => $data['pet_name'],
-                'type' => $data['pet_type'],
+                'type' => $typeMap[$data['pet_type']] ?? $data['pet_type'],
                 'user_id' => $creator->id,
                 'status' => Pet::STATUS_ADOPTED,
-                // Defaults for simplified creation
-                'color' => '未填寫',
-                'fur_type' => '未填寫',
-                'gender' => 'unknown',
-                'age' => '未知',
-                'is_neuter' => false,
-                'is_stray' => false,
-                'city' => '未填寫',
-                'town' => '未填寫',
+                'gender' => $data['gender'],
+                'age' => $data['age'],
+                'color' => $data['color'],
+                'fur_type' => $data['fur_type'],
+                'is_neuter' => $data['is_neuter'],
+                'is_stray' => $data['is_stray'],
+                'city' => $data['city'],
+                'town' => $data['town'],
             ]);
 
             // 3. Save pet image if uploaded
             if ($imagePath) {
-                $pet->images()->create(['path' => $imagePath]);
+                $pet->images()->create([
+                    'path' => $imagePath,
+                    'type' => 'preview',
+                    'index' => 0,
+                ]);
             }
 
             // 4. Determine owner_id and adopter_id based on role

@@ -22,6 +22,14 @@ export function useManualCaseCreation() {
         role: '' as string,
         pet_name: '',
         pet_type: '' as string,
+        gender: '' as string,
+        age: '' as string,
+        color: '' as string,
+        fur_type: '' as string,
+        is_neuter: null as boolean | null,
+        is_stray: null as boolean | null,
+        city: '' as string,
+        town: '' as string,
         pet_image: null as File | null,
         frequency: 'monthly' as string,
         counterpart_id: null as number | null,
@@ -29,7 +37,18 @@ export function useManualCaseCreation() {
 
     const canProceed = computed(() => {
         if (step.value === 1) return form.value.role !== ''
-        if (step.value === 2) return form.value.pet_name.trim() !== '' && form.value.pet_type !== ''
+        if (step.value === 2) {
+            return form.value.pet_name.trim() !== ''
+                && form.value.pet_type !== ''
+                && form.value.gender !== ''
+                && form.value.age !== ''
+                && form.value.color !== ''
+                && form.value.fur_type !== ''
+                && form.value.is_neuter !== null
+                && form.value.is_stray !== null
+                && form.value.city !== ''
+                && form.value.town !== ''
+        }
         return true
     })
 
@@ -93,6 +112,14 @@ export function useManualCaseCreation() {
             formData.append('role', form.value.role)
             formData.append('pet_name', form.value.pet_name)
             formData.append('pet_type', form.value.pet_type)
+            formData.append('gender', form.value.gender)
+            formData.append('age', form.value.age)
+            formData.append('color', form.value.color)
+            formData.append('fur_type', form.value.fur_type)
+            formData.append('is_neuter', form.value.is_neuter ? '1' : '0')
+            formData.append('is_stray', form.value.is_stray ? '1' : '0')
+            formData.append('city', form.value.city)
+            formData.append('town', form.value.town)
             if (form.value.pet_image) {
                 formData.append('pet_image', form.value.pet_image)
             }
