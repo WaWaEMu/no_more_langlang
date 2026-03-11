@@ -61,4 +61,32 @@ interface AdoptionCaseServiceInterface
      * @return array Contains 'case' and 'role'
      */
     public function getCaseDetails(int $id, User $user): array;
+
+    /**
+     * Create a diary entry for an adoption case.
+     *
+     * @param AdoptionCase $case
+     * @param array $data
+     * @param User $author
+     * @return \App\Models\CaseDiaryEntry
+     */
+    public function createDiaryEntry(AdoptionCase $case, array $data, User $author): \App\Models\CaseDiaryEntry;
+
+    /**
+     * Get all diary entries for an adoption case.
+     *
+     * @param AdoptionCase $case
+     * @return Collection
+     */
+    public function getDiaryEntries(AdoptionCase $case): Collection;
+
+    /**
+     * Add a comment to a diary entry.
+     *
+     * @param \App\Models\CaseDiaryEntry $entry
+     * @param string $content
+     * @param User $author
+     * @return \App\Models\DiaryComment
+     */
+    public function addDiaryComment(\App\Models\CaseDiaryEntry $entry, string $content, User $author): \App\Models\DiaryComment;
 }

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\AdoptionCase;
 use App\Models\AdoptionApplication;
+use App\Models\CaseDiaryEntry;
+use App\Models\DiaryComment;
 use App\Models\Pet;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -210,5 +212,50 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
             'case' => $case,
             'role' => $case->owner_id === $user->id ? 'owner' : 'adopter',
         ];
+    }
+
+    /**
+     * Create a diary entry for an adoption case.
+     */
+    public function createDiaryEntry(AdoptionCase $case, array $data, User $author): CaseDiaryEntry
+    {
+        // Handle multi-photo upload
+        $date = now()->format('Y_m_d');
+        $photoPaths = [];
+
+        foreach ($data['photos'] as $index => $photo) {
+            $filename = "diary_{$case->id}_" . time() . "_{$index}." . $photo->guessExtension();
+            $photoPaths[] = $photo->storeAs("images/diary/{$date}", $filename, 'public');
+        }
+
+        return CaseDiaryEntry::create([
+            'adoption_case_id' => $case->id,
+            'author_id' => $author->id,
+            'photos' => $photoPaths,
+            'content' => $data['content'] ?? null,
+            'location' => $data['location'] ?? null,
+        ]);
+    }
+
+    /**
+     * Get all diary entries for an adoption case.
+     */
+    public function getDiaryEntries(AdoptionCase $case): Collection
+    {
+        return $case->diaryEntries()
+            ->with(['author:id,name', 'comments.author:id,name'])
+            ->get();
+    }
+
+    /**
+     * Add a comment to a diary entry.
+     */
+    public function addDiaryComment(CaseDiaryEntry $entry, string $content, User $author): DiaryComment
+    {
+        return DiaryComment::create([
+            'diary_entry_id' => $entry->id,
+            'author_id' => $author->id,
+            'content' => $content,
+        ]);
     }
 }

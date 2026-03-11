@@ -66,6 +66,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/adoption-cases/manual', [\App\Http\Controllers\AdoptionCaseController::class, 'storeManual']);
     Route::get('/adoption-cases/{id}', [\App\Http\Controllers\AdoptionCaseController::class, 'show']);
 
+    // Case Diary
+    Route::get('/adoption-cases/{id}/diary', [\App\Http\Controllers\AdoptionCaseController::class, 'getDiary']);
+    Route::post('/adoption-cases/{id}/diary', [\App\Http\Controllers\AdoptionCaseController::class, 'storeDiary']);
+    Route::post('/diary-entries/{entryId}/comments', [\App\Http\Controllers\AdoptionCaseController::class, 'storeDiaryComment']);
+
 });
 
 // User Lookup by exact email (privacy-safe, accessible by guests if frontend is whitelisted)

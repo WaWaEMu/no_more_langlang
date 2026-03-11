@@ -179,4 +179,111 @@ class AdoptionCaseController extends Controller
             ], $statusCode);
         }
     }
+
+    /**
+     * Store a diary entry for an adoption case.
+     * Both owner and adopter can create diary entries.
+     */
+    public function storeDiary(\App\Http\Requests\DiaryEntryRequest $request, $id)
+    {
+        try {
+            $case = AdoptionCase::findOrFail($id);
+            $user = Auth::user();
+
+            if ($case->adopter_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '只有領養人可以發佈日誌'
+                ], 403);
+            }
+
+            $entry = $this->adoptionCaseService->createDiaryEntry(
+                $case,
+                $request->validated() + ['photos' => $request->file('photos')],
+                $user
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => '日誌發佈成功',
+                'data' => $entry->load('author:id,name')
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all diary entries for an adoption case.
+     * Both owner and adopter can view diary entries.
+     */
+    public function getDiary($id)
+    {
+        try {
+            $case = AdoptionCase::findOrFail($id);
+            $user = Auth::user();
+
+            if ($case->owner_id !== $user->id && $case->adopter_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '無權限查看此案件的日誌'
+                ], 403);
+            }
+
+            $entries = $this->adoptionCaseService->getDiaryEntries($case);
+
+            return response()->json([
+                'success' => true,
+                'data' => $entries
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
+
+    /**
+     * Store a comment on a diary entry.
+     * Both owner and adopter of the related case can comment.
+     */
+    public function storeDiaryComment(\App\Http\Requests\DiaryCommentRequest $request, $entryId)
+    {
+        try {
+            $entry = \App\Models\CaseDiaryEntry::findOrFail($entryId);
+            $case = $entry->adoptionCase;
+            $user = Auth::user();
+
+            if ($case->owner_id !== $user->id && $case->adopter_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '無權限操作此案件'
+                ], 403);
+            }
+
+            $comment = $this->adoptionCaseService->addDiaryComment(
+                $entry,
+                $request->validated()['content'],
+                $user
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => '回覆成功',
+                'data' => $comment->load('author:id,name')
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
 }
