@@ -64,6 +64,11 @@ class AdoptionCase extends Model
         return $this->hasMany(TrackingReport::class)->orderBy('reported_at', 'desc');
     }
 
+    public function diaryEntries()
+    {
+        return $this->hasMany(CaseDiaryEntry::class)->orderBy('created_at', 'desc');
+    }
+
     public function scopeForAdopter($query, $userId)
     {
         return $query->where('adopter_id', $userId)
