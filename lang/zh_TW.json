@@ -451,5 +451,8 @@
     "diary.LocVet": "獸醫院",
     "diary.LocPetShop": "寵物用品店",
     "diary.LocRestaurant": "寵物餐廳",
-    "diary.ReplyPlaceholder": "回覆這則日誌..."
+    "diary.ReplyPlaceholder": "回覆這則日誌...",
+    "caseDetail.TabOverview": "案件總覽",
+    "caseDetail.TabDiary": "生活日誌",
+    "caseDetail.TabTracking": "追蹤回報"
 }
