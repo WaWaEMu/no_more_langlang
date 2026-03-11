@@ -228,6 +228,23 @@
                         </div>
                     </div>
 
+                    <!-- 📸 Pet Life Diary Section -->
+                    <div class="case-detail__card mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="case-detail__card-title mb-0">
+                                <i class="bi bi-camera me-2"></i>{{ $t('diary.SectionTitle') }}
+                            </h5>
+                            <button v-if="adoptionCase.status === 'active' && role === 'adopter'"
+                                class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal"
+                                data-bs-target="#diaryEntryModal">
+                                <i class="bi bi-plus-lg me-1"></i>
+                                {{ $t('diary.AddEntry') }}
+                            </button>
+                        </div>
+
+                        <DiaryTimeline :case-id="adoptionCase.id" :refresh-key="diaryRefreshKey" />
+                    </div>
+
                     <!-- Tracking Reports Section -->
                     <div class="case-detail__card mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -250,6 +267,10 @@
                     <!-- Report Form Modal -->
                     <TrackingReportForm v-if="role === 'adopter' && adoptionCase.id" :case-id="adoptionCase.id"
                         :pet-name="pet.name" :pet-image="petImageUrl" @submitted="onReportSubmitted" />
+
+                    <!-- Diary Entry Modal -->
+                    <DiaryEntryForm v-if="role === 'adopter' && adoptionCase.id" :case-id="adoptionCase.id"
+                        :pet-name="pet.name" :pet-image="petImageUrl" @submitted="onDiarySubmitted" />
                 </div>
             </div>
         </template>
@@ -265,6 +286,8 @@ import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import TrackingReportTimeline from '@/components/adoptions/TrackingReportTimeline.vue'
 import TrackingReportForm from '@/components/adoptions/TrackingReportForm.vue'
+import DiaryTimeline from '@/components/diary/DiaryTimeline.vue'
+import DiaryEntryForm from '@/components/diary/DiaryEntryForm.vue'
 
 const $t = trans
 const route = useRoute()
@@ -275,6 +298,7 @@ const error = ref('')
 const adoptionCase = ref<any>(null)
 const role = ref<'owner' | 'adopter'>('owner')
 const reportRefreshKey = ref(0)
+const diaryRefreshKey = ref(0)
 
 const pet = computed(() => adoptionCase.value?.pet || {})
 const application = computed(() => adoptionCase.value?.application || null)
@@ -323,6 +347,10 @@ function formatDate(dateStr?: string) {
 
 function onReportSubmitted() {
     reportRefreshKey.value++
+}
+
+function onDiarySubmitted() {
+    diaryRefreshKey.value++
 }
 
 function formatFieldValue(value: any): string {
