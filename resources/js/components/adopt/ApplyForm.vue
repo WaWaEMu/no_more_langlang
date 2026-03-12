@@ -56,7 +56,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="status" class="form-label apply-form__label required">{{ $t('Adoption Status')
-                                }}</label>
+                            }}</label>
                             <select id="status" class="form-select" v-model="formState.status" required>
                                 <option v-for="option in statusOptions.items" :key="String(option.value)"
                                     :value="option.value" :disabled="option.disabled">
@@ -187,7 +187,7 @@
 
                     <div class="mb-4">
                         <label for="template-select" class="form-label apply-form__label">{{ $t('Select Template')
-                        }}</label>
+                            }}</label>
                         <select id="template-select" class="form-select" v-model="formState.adoption_form_template_id">
                             <option :value="null">{{ $t('No template (basic form only)') }}</option>
                             <option v-for="tpl in availableTemplates" :key="tpl.id" :value="tpl.id">
@@ -210,7 +210,7 @@
                                     <span>{{ field.label }}</span>
                                     <span v-if="field.required" class="text-danger fw-bold">*</span>
                                     <span class="apply-form__template-preview-type">{{ $t(`fieldType.${field.type}`)
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                         </div>
@@ -506,33 +506,31 @@ async function submit() {
 
 <style scoped>
 .apply-form__wrapper {
-    /* Swap: Now using the Fog Gray color for the wrapper */
-    background: linear-gradient(135deg, #d1d9e6 0%, #b8c5d6 100%);
+    background: #ffffff;
     width: 100%;
     max-width: 960px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    border: 1px solid #d1d9e6;
+    box-shadow: 0 8px 32px rgba(44, 82, 130, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #dde3ec;
     padding: 3rem;
 }
 
 .apply-form__section {
-    /* Keep the user's preferred gradient */
     background: var(--color-fog-gray);
     border-radius: 16px;
     padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #d1d9e6;
 }
 
 .apply-form__section-title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--color-denim-blue);
+    color: var(--color-denim-blue-dark);
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-denim-blue);
-    display: inline-block;
+    padding-left: 0.75rem;
+    border-left: 4px solid var(--color-denim-blue);
+    display: block;
 }
 
 .apply-form__label {
@@ -549,29 +547,27 @@ async function submit() {
 }
 
 .apply-form__city-container {
-    background-color: #fff;
-    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    border: 1px solid #d1d9e6;
+    border-radius: 8px;
 }
 
 .apply-form__upload-card {
-    /* Use responsive width that adapts to screen size */
     width: min(150px, 45vw);
     max-width: 100%;
 }
 
 .apply-form__upload--placeholder {
     background-color: #fff;
-    /* Use same responsive width */
     width: min(150px, 45vw);
     height: min(150px, 45vw);
     aspect-ratio: 1 / 1;
     border-radius: 6px 6px 0 0;
-    border: 2px dashed #cbd5e0;
+    border: 2px dashed #a0aec0;
     border-bottom: none;
 }
 
 .apply-form__upload--img {
-    /* Use same responsive width */
     width: min(150px, 45vw);
     height: min(150px, 45vw);
     border-radius: 6px 6px 0 0;
@@ -588,7 +584,7 @@ async function submit() {
     letter-spacing: 0.025em;
 }
 
-/* Update Image Button (Secondary) - Dark Warm Gray */
+/* Update Image Button */
 .apply-form__btn--img {
     background-color: #4a5568;
     color: #ffffff;
@@ -601,37 +597,43 @@ async function submit() {
 }
 
 .apply-form__btn--img:hover {
-    background-color: #2d3748;
+    background-color: var(--color-denim-blue-dark);
     color: #ffffff;
 }
 
-/* Submit Button (Primary) - Muted Clay/Latte Gradient */
+/* Submit Button */
 button[type="submit"].apply-form__btn {
-    background: #2c5282;
+    background: var(--color-denim-blue);
     color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 4px 6px rgba(44, 82, 130, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.25);
     padding: 0.75rem 3rem;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
 }
 
 button[type="submit"].apply-form__btn:hover {
-    background: #2a4365;
+    background: var(--color-denim-blue-dark);
     transform: translateY(-1px);
-    box-shadow: 0 6px 8px rgba(44, 82, 130, 0.25);
+    box-shadow: 0 6px 16px rgba(44, 82, 130, 0.3);
 }
 
 button[type="submit"].apply-form__btn:active {
     transform: translateY(0);
 }
 
+/* Divider before submit */
+.border-top {
+    border-color: #d1d9e6 !important;
+}
+
 /* Inputs */
 .form-control,
 .form-select {
     background-color: #fff;
-    border: 1px solid #cbd5e0;
+    border: 1px solid #c4cdd9;
     color: #2d3748;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 0.6rem 0.75rem;
     transition: all 0.2s;
 }
@@ -639,36 +641,33 @@ button[type="submit"].apply-form__btn:active {
 .form-control:focus,
 .form-select:focus {
     background-color: #fff;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+    border-color: var(--color-denim-blue);
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.15);
 }
 
 .form-check-input:checked {
-    background-color: #3182ce;
-    border-color: #3182ce;
+    background-color: var(--color-denim-blue);
+    border-color: var(--color-denim-blue);
 }
 
 /* Template Preview */
 .apply-form__template-preview {
     background: #ffffff;
-    /* Contrast against parent's light gray */
-    border: 1px solid #cbd5e0;
+    border: 1px solid #d1d9e6;
     border-radius: 12px;
     overflow: hidden;
     margin-top: 0.75rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    /* Soft shadow for separation */
+    box-shadow: 0 2px 8px rgba(44, 82, 130, 0.07);
 }
 
 .apply-form__template-preview-header {
     background: #edf2f7;
-    /* Slightly distinct but harmonious */
-    padding: 0.6rem 1rem;
+    padding: 0.65rem 1rem;
     font-weight: 600;
     font-size: 0.85rem;
-    color: #4a5568;
+    color: var(--color-denim-blue-dark);
     border-radius: 11px 11px 0 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #d1d9e6;
 }
 
 .apply-form__template-preview-body {
@@ -677,7 +676,7 @@ button[type="submit"].apply-form__btn:active {
 
 .apply-form__template-preview-field {
     padding: 0.4rem 0.6rem;
-    background: #fff;
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     margin-bottom: 0.3rem;
@@ -707,8 +706,8 @@ button[type="submit"].apply-form__btn:active {
 .apply-form__template-preview-type {
     margin-left: auto;
     font-size: 0.75rem;
-    color: #a0aec0;
-    background: #f1f5f9;
+    color: #718096;
+    background: #edf2f7;
     padding: 0.1rem 0.5rem;
     border-radius: 4px;
 }
