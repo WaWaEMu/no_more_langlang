@@ -454,5 +454,11 @@
     "diary.ReplyPlaceholder": "回覆這則日誌...",
     "caseDetail.TabOverview": "案件總覽",
     "caseDetail.TabDiary": "生活日誌",
-    "caseDetail.TabTracking": "追蹤回報"
+    "caseDetail.TabTracking": "追蹤回報",
+    "diary.NoContent": "（無文字內容）",
+    "diary.Comments": "則留言",
+    "diary.ReadMore": "查看全文",
+    "diary.ReadLess": "收起全文",
+    "diary.ViewDetails": "查看詳細日誌",
+    "diary.PostedBy": "發布者"
 }
