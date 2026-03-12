@@ -1,7 +1,9 @@
 <template>
     <div class="fw-semibold justify-content-between navbar__wrap pe-4 d-flex align-items-center">
         <div class="d-flex align-items-center navbar__container">
-            <h1 class="my-4 navbar__title">{{ $t('App Name') }}</h1>
+            <RouterLink to="/" class="navbar__brand" aria-label="Home">
+                {{ $t('App Name') }}
+            </RouterLink>
 
             <!-- Mobile Toggle Button -->
             <button class="navbar__toggler d-md-none" @click="toggleMenu" aria-label="Toggle navigation">
@@ -84,10 +86,45 @@ async function handleNavClick(navItem: any) {
     z-index: 1000;
 }
 
-.navbar__title {
+.navbar__brand {
+    text-decoration: none;
     margin: 0 200px;
-    color: #2c5282;
-    font-weight: 700;
+    font-size: 2.25rem;
+    font-weight: 950;
+    color: var(--color-denim-blue-dark);
+    letter-spacing: -0.01em;
+    padding: 1.75rem 0;
+    line-height: 1.1;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.navbar__brand::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    right: -8px;
+    top: 65%;
+    transform: translateY(-50%) scaleX(0);
+    height: 20%;
+    background-color: var(--color-denim-blue);
+    opacity: 0.15;
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.navbar__brand:hover {
+    color: var(--color-denim-blue);
+    transform: translateY(-2px);
+}
+
+.navbar__brand:hover::before {
+    transform: translateY(-50%) scaleX(1);
+    transform-origin: left;
 }
 
 .navbar__isActive {
@@ -115,9 +152,9 @@ async function handleNavClick(navItem: any) {
         padding: 0 1rem;
     }
 
-    .navbar__title {
+    .navbar__brand {
         margin: 0 1rem 0 0;
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
 
     .navbar__toggler {
