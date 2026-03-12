@@ -23,6 +23,19 @@ body {
     border-color: var(--color-denim-blue-dark) !important;
 }
 
+.btn-outline-primary {
+    color: var(--color-denim-blue) !important;
+    border-color: var(--color-denim-blue) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background-color: var(--color-denim-blue) !important;
+    border-color: var(--color-denim-blue) !important;
+    color: #fff !important;
+}
+
 .text-primary {
     color: var(--color-denim-blue) !important;
 }

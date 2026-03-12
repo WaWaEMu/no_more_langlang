@@ -4,7 +4,8 @@ import { t } from '@/lang'
 const routes = [
     {
         path: '/',
-        redirect: '/adopt'
+        component: () => import('@/pages/Home.vue'),
+        meta: { title: t('landing.Home') }
     },
     {
         path: '/adopt',
