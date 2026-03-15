@@ -5,10 +5,10 @@
         <header class="landing__hero py-5">
             <div class="container py-lg-5">
                 <div class="row align-items-center g-5">
-                    <div class="col-lg-6 text-start">
+                    <div class="col-lg-6 text-center text-lg-start">
                         <h1 class="landing__hero-title mb-4">{{ $t('landing.Hero.Title') }}</h1>
                         <p class="landing__hero-sub mb-3">{{ $t('landing.Hero.Sub') }}</p>
-                        <ul class="landing__hero-list list-unstyled mb-5 text-start">
+                        <ul class="landing__hero-list list-unstyled mb-5 text-start d-inline-block">
                             <li class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i>{{
                                 $t('landing.Hero.Point1') }}</li>
                             <li class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i>{{
@@ -16,16 +16,18 @@
                             <li class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i>{{
                                 $t('landing.Hero.Point3') }}</li>
                         </ul>
-                        <div class="d-flex gap-3 flex-wrap">
-                            <button @click="handleStart" class="btn btn-primary btn-lg px-4 py-3 fw-bold shadow">
+                        <div class="d-flex gap-2 gap-md-3 flex-wrap justify-content-center justify-content-lg-start">
+                            <button @click="handleStart"
+                                class="btn btn-primary btn-lg px-3 px-md-4 py-2 py-md-3 fw-bold shadow landing__hero-btn">
                                 <i class="bi bi-rocket-takeoff me-2"></i>{{ $t('landing.Hero.CTA.Start') }}
                             </button>
-                            <RouterLink to="/adopt" class="btn btn-outline-primary btn-lg px-4 py-3 fw-bold">
+                            <RouterLink to="/adopt"
+                                class="btn btn-outline-primary btn-lg px-3 px-md-4 py-2 py-md-3 fw-bold landing__hero-btn">
                                 {{ $t('landing.Hero.CTA.Adopt') }}
                             </RouterLink>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 d-none d-lg-flex justify-content-center">
                         <!-- UI Mockup Illustration - Visualizing the 'Tool' aspect -->
                         <div class="landing__mockup-wrap">
                             <div class="landing__mockup shadow-lg rounded-4 p-4 bg-white">
@@ -121,28 +123,28 @@
         <section class="landing__features py-5 bg-white border-top border-bottom">
             <div class="container py-5">
                 <div class="row g-4 gx-lg-5">
-                    <div class="col-md-6 col-lg-3 text-start">
+                    <div class="col-md-6 col-lg-3 text-center text-md-start">
                         <div class="landing__feature-icon mb-3">
                             <i class="bi bi-clock-history"></i>
                         </div>
                         <h4 class="fw-bold mb-3">{{ $t('landing.Feature1.Title') }}</h4>
                         <p class="text-muted small">{{ $t('landing.Feature1.Sub') }}</p>
                     </div>
-                    <div class="col-md-6 col-lg-3 text-start">
+                    <div class="col-md-6 col-lg-3 text-center text-md-start">
                         <div class="landing__feature-icon mb-3 text-success">
                             <i class="bi bi-camera"></i>
                         </div>
                         <h4 class="fw-bold mb-3">{{ $t('landing.Feature2.Title') }}</h4>
                         <p class="text-muted small">{{ $t('landing.Feature2.Sub') }}</p>
                     </div>
-                    <div class="col-md-6 col-lg-3 text-start">
+                    <div class="col-md-6 col-lg-3 text-center text-md-start">
                         <div class="landing__feature-icon mb-3 text-info">
                             <i class="bi bi-clipboard-data"></i>
                         </div>
                         <h4 class="fw-bold mb-3">{{ $t('landing.Feature3.Title') }}</h4>
                         <p class="text-muted small">{{ $t('landing.Feature3.Sub') }}</p>
                     </div>
-                    <div class="col-md-6 col-lg-3 text-start">
+                    <div class="col-md-6 col-lg-3 text-center text-md-start">
                         <div class="landing__feature-icon mb-3 text-primary">
                             <i class="bi bi-file-earmark-text"></i>
                         </div>
@@ -215,7 +217,7 @@ async function handleStart() {
 }
 
 .landing__hero-title {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.2;
     color: var(--color-denim-blue-dark);
@@ -231,6 +233,8 @@ async function handleStart() {
 .landing__mockup-wrap {
     position: relative;
     padding: 20px;
+    width: 100%;
+    max-width: 520px;
 }
 
 .landing__mockup {
@@ -241,6 +245,16 @@ async function handleStart() {
 
 .landing__mockup:hover {
     transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+}
+
+@media (max-width: 991px) {
+    .landing__mockup-wrap {
+        max-width: 420px;
+    }
+
+    .landing__mockup {
+        transform: none !important;
+    }
 }
 
 .mockup-title {
@@ -293,10 +307,20 @@ async function handleStart() {
     color: #fff;
 }
 
+.landing__hero-btn {
+    font-size: 0.95rem;
+}
+
+@media (min-width: 768px) {
+    .landing__hero-btn {
+        font-size: 1.25rem;
+    }
+}
+
 /* Steps */
 .landing__step-num {
-    width: 50px;
-    height: 50px;
+    width: 32px;
+    height: 32px;
     background: var(--color-denim-blue);
     color: white;
     border-radius: 50%;
@@ -305,8 +329,16 @@ async function handleStart() {
     justify-content: center;
     margin: 0 auto;
     font-weight: 800;
-    font-size: 1.5rem;
+    font-size: 1rem;
     box-shadow: 0 4px 10px rgba(44, 82, 130, 0.3);
+}
+
+@media (min-width: 768px) {
+    .landing__step-num {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
 }
 
 .landing__step-item {
