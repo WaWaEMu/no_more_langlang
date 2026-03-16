@@ -168,6 +168,7 @@ class AdoptionCase extends Model
             'weekly' => self::nextWeeklyDate($trackingDay),
             'monthly' => self::nextMonthlyDate(1, $trackingDay),
             'quarterly' => self::nextQuarterlyDate($startMonth, $trackingDay),
+            'none' => null,
             default => null,
         };
     }

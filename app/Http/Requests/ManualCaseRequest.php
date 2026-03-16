@@ -28,7 +28,7 @@ class ManualCaseRequest extends FormRequest
             'town' => 'required|string|max:10',
             'counterpart_id' => 'nullable|exists:users,id',
             'tracking_config' => 'nullable|array',
-            'tracking_config.frequency' => 'nullable|in:weekly,monthly,quarterly',
+            'tracking_config.frequency' => 'nullable|in:weekly,monthly,quarterly,none',
         ];
     }
 
@@ -54,7 +54,7 @@ class ManualCaseRequest extends FormRequest
             'pet_image.image' => '請上傳有效的圖片檔案',
             'pet_image.max' => '圖片大小不可超過 5MB',
             'counterpart_id.exists' => '指定的使用者不存在',
-            'tracking_config.frequency.in' => '追蹤頻率必須為：每週、每月或每季',
+            'tracking_config.frequency.in' => '追蹤頻率必須為：每週、每月、每季或不追蹤',
         ];
     }
 }

@@ -137,6 +137,7 @@ const frequencies = [
     { value: 'weekly', label: 'case.FreqWeekly', icon: 'bi bi-calendar-event' },
     { value: 'monthly', label: 'case.FreqMonthly', icon: 'bi bi-calendar-month' },
     { value: 'quarterly', label: 'case.FreqQuarterly', icon: 'bi bi-calendar-range' },
+    { value: 'none', label: 'case.FreqNone', icon: 'bi bi-bell-slash' },
 ]
 
 const weekdays = [
@@ -157,6 +158,7 @@ const quarterOptions = [
 
 const isValid = computed(() => {
     if (!form.frequency) return false
+    if (form.frequency === 'none') return true
     if (form.frequency === 'weekly' || form.frequency === 'monthly') {
         return form.tracking_day !== null
     }
@@ -224,7 +226,7 @@ defineExpose({ show })
 <style scoped>
 .edit-tracking__freq-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
 }
 

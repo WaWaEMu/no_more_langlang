@@ -305,7 +305,7 @@ class AdoptionCaseController extends Controller
             }
 
             $validated = $request->validate([
-                'frequency' => 'required|string|in:weekly,monthly,quarterly',
+                'frequency' => 'required|string|in:weekly,monthly,quarterly,none',
                 'tracking_day' => 'nullable|integer|between:1,31',
                 'tracking_start_month' => 'nullable|integer|between:1,12',
             ]);

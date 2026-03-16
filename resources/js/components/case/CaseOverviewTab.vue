@@ -110,13 +110,13 @@
                                 <div class="case-overview__grid-item">
                                     <span class="case-overview__grid-label">{{ $t('caseDetail.Experience') }}</span>
                                     <span class="case-overview__grid-value">{{ formatExperience(application.experience)
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <div class="col-6 col-md-4">
                                 <div class="case-overview__grid-item">
                                     <span class="case-overview__grid-label">{{ $t('caseDetail.FamilyAgreement')
-                                    }}</span>
+                                        }}</span>
                                     <span class="case-overview__grid-value">
                                         <i v-if="application.family_agreement"
                                             class="bi bi-check-circle-fill text-success me-1"></i>
@@ -178,6 +178,7 @@ function getTrackingFrequencyText(frequency?: string) {
         'weekly': $t('Weekly'),
         'monthly': $t('Monthly'),
         'quarterly': $t('Quarterly'),
+        'none': $t('case.FreqNone'),
     }
     return texts[frequency] || frequency
 }

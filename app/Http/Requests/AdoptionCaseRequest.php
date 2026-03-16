@@ -26,7 +26,7 @@ class AdoptionCaseRequest extends FormRequest
             'adopter_id' => 'required|exists:users,id',
             'application_id' => 'required|exists:adoption_applications,id',
             'tracking_config' => 'nullable|array',
-            'tracking_config.frequency' => 'nullable|in:weekly,monthly,quarterly'
+            'tracking_config.frequency' => 'nullable|in:weekly,monthly,quarterly,none'
         ];
     }
 
@@ -44,7 +44,7 @@ class AdoptionCaseRequest extends FormRequest
             'adopter_id.exists' => '指定的認養人不存在',
             'application_id.required' => '申請 ID 為必填項目',
             'application_id.exists' => '指定的申請不存在',
-            'tracking_config.frequency.in' => '追蹤頻率必須為：每週、每月或每季'
+            'tracking_config.frequency.in' => '追蹤頻率必須為：每週、每月、每季或不追蹤'
         ];
     }
 }

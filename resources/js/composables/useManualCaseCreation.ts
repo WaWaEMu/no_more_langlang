@@ -56,7 +56,9 @@ export function useManualCaseCreation() {
             const hasFrequency = form.value.frequency !== ''
             let hasTrackingDetails = false
 
-            if (form.value.frequency === 'weekly') {
+            if (form.value.frequency === 'none') {
+                hasTrackingDetails = true
+            } else if (form.value.frequency === 'weekly') {
                 hasTrackingDetails = form.value.tracking_day !== null
             } else if (form.value.frequency === 'monthly') {
                 hasTrackingDetails = form.value.tracking_day !== null

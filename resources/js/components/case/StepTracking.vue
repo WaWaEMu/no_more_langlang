@@ -288,6 +288,7 @@ const frequencies = [
     { value: 'weekly', label: 'case.FreqWeekly', desc: 'case.FreqWeeklyDesc', icon: 'bi bi-calendar-week' },
     { value: 'monthly', label: 'case.FreqMonthly', desc: 'case.FreqMonthlyDesc', icon: 'bi bi-calendar-month' },
     { value: 'quarterly', label: 'case.FreqQuarterly', desc: 'case.FreqQuarterlyDesc', icon: 'bi bi-calendar3' },
+    { value: 'none', label: 'case.FreqNone', desc: 'case.FreqNoneDesc', icon: 'bi bi-bell-slash' },
 ]
 
 const weekdays = [
@@ -437,7 +438,7 @@ const weekdays = [
 
 .create-case__freq-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
 }
 
