@@ -89,4 +89,13 @@ interface AdoptionCaseServiceInterface
      * @return \App\Models\DiaryComment
      */
     public function addDiaryComment(\App\Models\CaseDiaryEntry $entry, string $content, User $author): \App\Models\DiaryComment;
+
+    /**
+     * Update the tracking configuration for an adoption case.
+     *
+     * @param AdoptionCase $case
+     * @param array $config
+     * @return AdoptionCase
+     */
+    public function updateTrackingConfig(AdoptionCase $case, array $config): AdoptionCase;
 }

@@ -22,9 +22,15 @@
                         </div>
                         <div class="case-overview__info-row">
                             <span class="case-overview__info-key">{{ $t('caseDetail.TrackingFrequency') }}</span>
-                            <span class="case-overview__info-val">
-                                {{ getTrackingFrequencyText(adoptionCase.tracking_config?.frequency) }}
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="case-overview__info-val">
+                                    {{ getTrackingFrequencyFullText(adoptionCase.tracking_config) }}
+                                </span>
+                                <button v-if="role === 'owner' && adoptionCase.status === 'active'"
+                                    class="btn btn-sm btn-outline-primary py-0 px-2" @click="$emit('edit-tracking')">
+                                    {{ $t('Edit') }}
+                                </button>
+                            </div>
                         </div>
                         <div class="case-overview__info-row">
                             <span class="case-overview__info-key">{{ $t('Adopted Date') }}</span>
@@ -104,13 +110,13 @@
                                 <div class="case-overview__grid-item">
                                     <span class="case-overview__grid-label">{{ $t('caseDetail.Experience') }}</span>
                                     <span class="case-overview__grid-value">{{ formatExperience(application.experience)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <div class="col-6 col-md-4">
                                 <div class="case-overview__grid-item">
                                     <span class="case-overview__grid-label">{{ $t('caseDetail.FamilyAgreement')
-                                        }}</span>
+                                    }}</span>
                                     <span class="case-overview__grid-value">
                                         <i v-if="application.family_agreement"
                                             class="bi bi-check-circle-fill text-success me-1"></i>
@@ -161,6 +167,7 @@ const $t = trans
 interface Props {
     adoptionCase: any
     application: any
+    role: 'owner' | 'adopter'
 }
 
 defineProps<Props>()
@@ -173,6 +180,37 @@ function getTrackingFrequencyText(frequency?: string) {
         'quarterly': $t('Quarterly'),
     }
     return texts[frequency] || frequency
+}
+
+function getTrackingFrequencyFullText(config: any) {
+    if (!config?.frequency) return $t('No Tracking')
+
+    const base = getTrackingFrequencyText(config.frequency)
+
+    if (config.frequency === 'weekly' && config.tracking_day) {
+        return `${base} (${$t(`case.Weekday.${config.tracking_day}`)})`
+    }
+
+    if (config.frequency === 'monthly' && config.tracking_day) {
+        return `${base} (${config.tracking_day} 日)`
+    }
+
+    if (config.frequency === 'quarterly' && config.tracking_day && config.tracking_start_month) {
+        const months = getQuarterlyCycleMonths(config.tracking_start_month)
+        return `${base} (${months} ${config.tracking_day} 日)`
+    }
+
+    return base
+}
+
+function getQuarterlyCycleMonths(startMonth: number): string {
+    const months = []
+    for (let i = 0; i < 4; i++) {
+        let m = startMonth + (i * 3)
+        if (m > 12) m -= 12
+        months.push(m)
+    }
+    return months.sort((a, b) => a - b).join('、') + ' 月'
 }
 
 function formatDate(dateStr?: string) {

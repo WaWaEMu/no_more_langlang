@@ -108,7 +108,11 @@
 
                     <!-- Tab Content -->
                     <CaseOverviewTab v-show="activeTab === 'overview'" :adoption-case="adoptionCase"
-                        :application="application" />
+                        :application="application" :role="role" @refresh="refreshCase"
+                        @edit-tracking="editTrackingModal?.show()" />
+
+                    <EditTrackingModal ref="editTrackingModal" :case-id="adoptionCase.id"
+                        :initial-config="adoptionCase.tracking_config" @updated="refreshCase" />
 
                     <CaseDiaryTab v-show="activeTab === 'diary'" :case-id="adoptionCase.id" :role="role"
                         :status="adoptionCase.status" :pet-name="pet.name" :pet-image="petImageUrl" />
@@ -132,6 +136,7 @@ import Content from '@/components/Content.vue'
 import CaseOverviewTab from '@/components/case/CaseOverviewTab.vue'
 import CaseDiaryTab from '@/components/case/CaseDiaryTab.vue'
 import CaseTrackingTab from '@/components/case/CaseTrackingTab.vue'
+import EditTrackingModal from '@/components/case/EditTrackingModal.vue'
 
 const $t = trans
 const route = useRoute()
@@ -142,6 +147,7 @@ const error = ref('')
 const adoptionCase = ref<any>(null)
 const role = ref<'owner' | 'adopter'>('owner')
 const activeTab = ref<'overview' | 'diary' | 'tracking'>('overview')
+const editTrackingModal = ref<any>(null)
 
 const pet = computed(() => adoptionCase.value?.pet || {})
 const application = computed(() => adoptionCase.value?.application || null)
@@ -172,12 +178,20 @@ const statusBadgeClass = computed(() => {
     return map[adoptionCase.value?.status] || 'bg-secondary'
 })
 
-onMounted(async () => {
-    loading.value = true
+async function refreshCase() {
     try {
         const res = await axios.get(`/api/adoption-cases/${route.params.id}`)
         adoptionCase.value = res.data.data
         role.value = res.data.role
+    } catch (err) {
+        console.error('Failed to refresh case:', err)
+    }
+}
+
+onMounted(async () => {
+    loading.value = true
+    try {
+        await refreshCase()
     } catch (err: any) {
         if (err.response?.status === 403) {
             error.value = $t('caseDetail.NoPermission')

@@ -258,4 +258,17 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
             'content' => $content,
         ]);
     }
+
+    /**
+     * Update the tracking configuration for an adoption case.
+     */
+    public function updateTrackingConfig(AdoptionCase $case, array $config): AdoptionCase
+    {
+        $case->update([
+            'tracking_config' => $config,
+            'next_report_due_at' => AdoptionCase::calculateNextReportDate($config),
+        ]);
+
+        return $case;
+    }
 }

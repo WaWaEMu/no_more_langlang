@@ -286,4 +286,43 @@ class AdoptionCaseController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Update tracking configuration for an adoption case.
+     */
+    public function updateTrackingConfig(Request $request, $id)
+    {
+        try {
+            $case = AdoptionCase::findOrFail($id);
+            $user = Auth::user();
+
+            // Only the owner can update tracking config
+            if ($case->owner_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '只有送養人可以修改追蹤設定'
+                ], 403);
+            }
+
+            $validated = $request->validate([
+                'frequency' => 'required|string|in:weekly,monthly,quarterly',
+                'tracking_day' => 'nullable|integer|between:1,31',
+                'tracking_start_month' => 'nullable|integer|between:1,12',
+            ]);
+
+            $case = $this->adoptionCaseService->updateTrackingConfig($case, $validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => '追蹤設定已更新',
+                'data' => $case
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
 }

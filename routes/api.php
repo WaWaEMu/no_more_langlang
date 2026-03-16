@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/adoption-cases', [\App\Http\Controllers\AdoptionCaseController::class, 'store']);
     Route::post('/adoption-cases/manual', [\App\Http\Controllers\AdoptionCaseController::class, 'storeManual']);
     Route::get('/adoption-cases/{id}', [\App\Http\Controllers\AdoptionCaseController::class, 'show']);
+    Route::patch('/adoption-cases/{id}/tracking-config', [\App\Http\Controllers\AdoptionCaseController::class, 'updateTrackingConfig']);
 
     // Case Diary
     Route::get('/adoption-cases/{id}/diary', [\App\Http\Controllers\AdoptionCaseController::class, 'getDiary']);
