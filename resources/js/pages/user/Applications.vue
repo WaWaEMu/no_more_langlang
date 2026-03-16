@@ -445,7 +445,7 @@ async function finalizeAdoption(application: any, pet: any) {
                 <label class="form-label fw-bold mb-2">${$t('Tracking Frequency')}</label>
                 <select id="tracking-frequency" class="form-select">
                     <option value="">${$t('Please select tracking frequency')}</option>
-                    <option value="none">${$t('No Tracking')}</option>
+                    <option value="none">${$t('No Tracking')}（${$t('case.FreqNoneDesc')}）</option>
                     <option value="weekly">${$t('Weekly')}</option>
                     <option value="monthly">${$t('Monthly')}</option>
                     <option value="quarterly">${$t('Quarterly')}</option>

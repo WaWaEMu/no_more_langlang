@@ -21,12 +21,32 @@
                                 @click="handleFrequencyChange(freq.value)">
                                 <i :class="freq.icon"></i>
                                 <span class="edit-tracking__freq-label">{{ $t(freq.label) }}</span>
+                                <span class="edit-tracking__freq-desc d-block small text-muted opacity-75 mt-1"
+                                    style="font-size: 0.7rem; line-height: 1.2;">
+                                    {{ $t(freq.desc) }}
+                                </span>
                             </button>
                         </div>
                     </div>
 
                     <!-- Day Picker -->
                     <div v-if="form.frequency" class="animate__animated animate__fadeIn">
+                        <!-- None Selection Hint -->
+                        <div v-if="form.frequency === 'none'"
+                            class="alert alert-light border-0 shadow-sm py-3 px-4 mb-0">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-white rounded-circle p-2 shadow-sm">
+                                    <i class="bi bi-info-circle text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 text-dark fw-medium small">{{ $t('case.FreqNone') }}</p>
+                                    <p class="mb-0 text-muted extra-small">
+                                        {{ $t('case.FreqNoneDesc') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Weekly -->
                         <div v-if="form.frequency === 'weekly'">
                             <label class="form-label fw-bold small text-uppercase text-muted mb-3">
@@ -134,10 +154,10 @@ const form = reactive({
 const saving = ref(false)
 
 const frequencies = [
-    { value: 'weekly', label: 'case.FreqWeekly', icon: 'bi bi-calendar-event' },
-    { value: 'monthly', label: 'case.FreqMonthly', icon: 'bi bi-calendar-month' },
-    { value: 'quarterly', label: 'case.FreqQuarterly', icon: 'bi bi-calendar-range' },
-    { value: 'none', label: 'case.FreqNone', icon: 'bi bi-bell-slash' },
+    { value: 'weekly', label: 'case.FreqWeekly', desc: 'case.FreqWeeklyDesc', icon: 'bi bi-calendar-event' },
+    { value: 'monthly', label: 'case.FreqMonthly', desc: 'case.FreqMonthlyDesc', icon: 'bi bi-calendar-month' },
+    { value: 'quarterly', label: 'case.FreqQuarterly', desc: 'case.FreqQuarterlyDesc', icon: 'bi bi-calendar-range' },
+    { value: 'none', label: 'case.FreqNone', desc: 'case.FreqNoneDesc', icon: 'bi bi-bell-slash' },
 ]
 
 const weekdays = [
