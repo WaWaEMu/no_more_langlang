@@ -108,8 +108,8 @@
 
                     <!-- Tab Content -->
                     <CaseOverviewTab v-show="activeTab === 'overview'" :adoption-case="adoptionCase"
-                        :application="application" :role="role" @refresh="refreshCase"
-                        @edit-tracking="editTrackingModal?.show()" />
+                        :application="application" :role="role" :current-user-id="authStore.user?.id"
+                        @refresh="refreshCase" @edit-tracking="editTrackingModal?.show()" />
 
                     <EditTrackingModal ref="editTrackingModal" :case-id="adoptionCase.id"
                         :initial-config="adoptionCase.tracking_config" @updated="refreshCase" />
@@ -137,10 +137,12 @@ import CaseOverviewTab from '@/components/case/CaseOverviewTab.vue'
 import CaseDiaryTab from '@/components/case/CaseDiaryTab.vue'
 import CaseTrackingTab from '@/components/case/CaseTrackingTab.vue'
 import EditTrackingModal from '@/components/case/EditTrackingModal.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const $t = trans
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 const loading = ref(true)
 const error = ref('')

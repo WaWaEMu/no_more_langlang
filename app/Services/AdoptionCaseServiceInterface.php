@@ -98,4 +98,6 @@ interface AdoptionCaseServiceInterface
      * @return AdoptionCase
      */
     public function updateTrackingConfig(AdoptionCase $case, array $config): AdoptionCase;
+
+    public function deleteCase(AdoptionCase $case): bool;
 }

@@ -271,4 +271,22 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
 
         return $case;
     }
+
+    public function deleteCase(AdoptionCase $case): bool
+    {
+        return DB::transaction(function () use ($case) {
+            $pet = $case->pet;
+
+            if ($case->source === AdoptionCase::SOURCE_MANUAL) {
+                // Manual cases: delete the pet entirely (will cascade delete the case)
+                return $pet->delete();
+            } else {
+                // Platform cases: revert pet status back to available
+                if ($pet) {
+                    $pet->update(['status' => Pet::STATUS_AVAILABLE]);
+                }
+                return $case->delete();
+            }
+        });
+    }
 }

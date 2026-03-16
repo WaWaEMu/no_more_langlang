@@ -325,4 +325,33 @@ class AdoptionCaseController extends Controller
             ], 500);
         }
     }
+
+    public function destroy($id)
+    {
+        try {
+            $case = AdoptionCase::with('pet')->findOrFail($id);
+            $user = Auth::user();
+
+            // Only the person who created the pet/case can delete it
+            if ($case->pet->user_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => '只有建立此案件的人可以執行刪除'
+                ], 403);
+            }
+
+            $this->adoptionCaseService->deleteCase($case);
+
+            return response()->json([
+                'success' => true,
+                'message' => '案件已成功刪除'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => config('app.debug') ? $e->getMessage() : '系統發生錯誤，請稍後再試'
+            ], 500);
+        }
+    }
 }

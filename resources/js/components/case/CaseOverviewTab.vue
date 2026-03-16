@@ -43,6 +43,13 @@
                             </span>
                         </div>
                     </div>
+
+                    <!-- Delete Actions -->
+                    <div class="mt-4 pt-3 border-top text-end">
+                        <button class="btn btn-link text-danger text-decoration-none p-0 small" @click="confirmDelete">
+                            <i class="bi bi-trash3 me-1"></i>{{ $t('caseDetail.DeleteCase') }}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -110,13 +117,13 @@
                                 <div class="case-overview__grid-item">
                                     <span class="case-overview__grid-label">{{ $t('caseDetail.Experience') }}</span>
                                     <span class="case-overview__grid-value">{{ formatExperience(application.experience)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <div class="col-6 col-md-4">
                                 <div class="case-overview__grid-item">
                                     <span class="case-overview__grid-label">{{ $t('caseDetail.FamilyAgreement')
-                                        }}</span>
+                                    }}</span>
                                     <span class="case-overview__grid-value">
                                         <i v-if="application.family_agreement"
                                             class="bi bi-check-circle-fill text-success me-1"></i>
@@ -161,16 +168,68 @@
 
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 const $t = trans
+const router = useRouter()
 
 interface Props {
     adoptionCase: any
     application: any
     role: 'owner' | 'adopter'
+    currentUserId?: number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+async function confirmDelete() {
+    // Permission check: only pet creator (original uploader) can delete the case
+    const isCreator = props.currentUserId === props.adoptionCase.pet?.user_id
+
+    if (!isCreator) {
+        await Swal.fire({
+            icon: 'info',
+            title: $t('caseDetail.DeleteCase'),
+            text: $t('caseDetail.OnlyCreatorCanDelete'),
+            confirmButtonText: $t('Got it'),
+            confirmButtonColor: 'var(--color-denim-blue)',
+        })
+        return
+    }
+
+    const result = await Swal.fire({
+        icon: 'warning',
+        title: $t('caseDetail.DeleteConfirm'),
+        text: $t('caseDetail.DeleteWarning'),
+        showCancelButton: true,
+        confirmButtonText: $t('Delete'),
+        cancelButtonText: $t('Cancel'),
+        confirmButtonColor: '#e53e3e',
+        cancelButtonColor: '#94a3b8',
+    })
+
+    if (result.isConfirmed) {
+        try {
+            await axios.delete(`/api/adoption-cases/${props.adoptionCase.id}`)
+            await Swal.fire({
+                icon: 'success',
+                title: $t('caseDetail.DeleteSuccess'),
+                timer: 1500,
+                showConfirmButton: false,
+            })
+            router.push('/user/adoptions')
+        } catch (error) {
+            console.error('Failed to delete case:', error)
+            Swal.fire({
+                icon: 'error',
+                title: $t('caseDetail.DeleteError'),
+                confirmButtonText: $t('Got it'),
+            })
+        }
+    }
+}
 
 function getTrackingFrequencyText(frequency?: string) {
     if (!frequency) return $t('No Tracking')
