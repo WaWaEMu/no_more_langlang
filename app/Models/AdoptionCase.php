@@ -149,6 +149,11 @@ class AdoptionCase extends Model
 
     /**
      * Calculate the next report due date based on tracking config.
+     *
+     * Supports optional 'tracking_day' and 'tracking_start_month':
+     *   - weekly:    tracking_day = 1 (Mon) ~ 7 (Sun)
+     *   - monthly:   tracking_day = 1 ~ 31
+     *   - quarterly: tracking_start_month = 1~3 (defines cycle), tracking_day = 1 ~ 31
      */
     public static function calculateNextReportDate(?array $config): ?\Carbon\Carbon
     {
@@ -156,11 +161,121 @@ class AdoptionCase extends Model
             return null;
         }
 
+        $trackingDay = isset($config['tracking_day']) ? (int) $config['tracking_day'] : null;
+        $startMonth = isset($config['tracking_start_month']) ? (int) $config['tracking_start_month'] : null;
+
         return match ($config['frequency']) {
-            'weekly' => now()->addWeek(),
-            'monthly' => now()->addMonth(),
-            'quarterly' => now()->addMonths(3),
+            'weekly' => self::nextWeeklyDate($trackingDay),
+            'monthly' => self::nextMonthlyDate(1, $trackingDay),
+            'quarterly' => self::nextQuarterlyDate($startMonth, $trackingDay),
             default => null,
         };
+    }
+
+    /**
+     * Find the next occurrence of a given day-of-week.
+     * $dayOfWeek: 1 (Mon) ~ 7 (Sun), ISO standard.
+     */
+    private static function nextWeeklyDate(?int $dayOfWeek): \Carbon\Carbon
+    {
+        if ($dayOfWeek === null) {
+            return now()->addWeek();
+        }
+
+        // ISO: 1=Mon...7=Sun → Carbon: 0=Sun, 1=Mon...6=Sat
+        $carbonDay = $dayOfWeek === 7 ? 0 : $dayOfWeek;
+
+        return now()->next($carbonDay)->startOfDay();
+    }
+
+    /**
+     * Find the target day in the month that is as close as possible in the future.
+     * Clamps to the last day of the month for short months.
+     */
+    private static function nextMonthlyDate(int $monthsAhead, ?int $dayOfMonth): \Carbon\Carbon
+    {
+        if ($dayOfMonth === null) {
+            return now()->addMonths($monthsAhead);
+        }
+
+        $now = now();
+        $target = $now->copy();
+
+        // If monthsAhead is 1 (Monthly), we check if this month's target day is in the future.
+        // If monthsAhead > 1 (e.g. quarterly fallback), we just add the months.
+        if ($monthsAhead === 1) {
+            $lastDayThisMonth = $target->daysInMonth;
+            $checkDay = min($dayOfMonth, $lastDayThisMonth);
+
+            // If the target day in THIS month is in the future, use it.
+            if ($checkDay > $now->day) {
+                return $target->day($checkDay)->startOfDay();
+            }
+
+            // Otherwise, skip to next month as usual
+            $target->addMonth();
+        } else {
+            $target->addMonths($monthsAhead);
+        }
+
+        $lastDay = $target->daysInMonth;
+        $day = min($dayOfMonth, $lastDay);
+
+        return $target->day($day)->startOfDay();
+    }
+
+    /**
+     * Find the next quarterly report date based on a cycle starting month.
+     * E.g. startMonth=1 → cycle is Jan, Apr, Jul, Oct.
+     * Finds the next future month in that cycle and applies the day.
+     */
+    private static function nextQuarterlyDate(?int $startMonth, ?int $dayOfMonth): \Carbon\Carbon
+    {
+        if ($startMonth === null) {
+            return self::nextMonthlyDate(3, $dayOfMonth);
+        }
+
+        $now = now();
+        $currentMonth = $now->month;
+        $currentDay = $now->day;
+
+        // Generate the 4 months in this cycle for the current year and next year
+        $cycleMonths = [];
+        for ($i = 0; $i < 4; $i++) {
+            $m = $startMonth + ($i * 3);
+            // Normalize to 1-12 range
+            $m = (($m - 1) % 12) + 1;
+            $cycleMonths[] = $m;
+        }
+
+        // Find the next future month in the cycle
+        $targetYear = $now->year;
+        $targetMonth = null;
+
+        foreach ($cycleMonths as $m) {
+            if ($m > $currentMonth) {
+                $targetMonth = $m;
+                break;
+            } elseif ($m === $currentMonth) {
+                // Same month: check if the day is still in the future
+                $checkDay = $dayOfMonth ? min($dayOfMonth, cal_days_in_month(CAL_GREGORIAN, $m, $targetYear)) : $currentDay + 1;
+                if ($checkDay > $currentDay) {
+                    $targetMonth = $m;
+                    break;
+                }
+            }
+        }
+
+        // If no future month found this year, take the first month of the cycle next year
+        if ($targetMonth === null) {
+            $targetMonth = $cycleMonths[0];
+            $targetYear++;
+        }
+
+        $target = \Carbon\Carbon::create($targetYear, $targetMonth, 1);
+        $lastDay = $target->daysInMonth;
+        $day = $dayOfMonth ? min($dayOfMonth, $lastDay) : 1;
+
+        return $target->day($day)->startOfDay();
     }
 }

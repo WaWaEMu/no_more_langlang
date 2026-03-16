@@ -52,11 +52,86 @@
             <div class="create-case__freq-grid">
                 <button type="button" v-for="freq in frequencies" :key="freq.value" class="create-case__freq-btn"
                     :class="{ 'create-case__freq-btn--selected': modelValue.frequency === freq.value }"
-                    @click="$emit('update:modelValue', { ...modelValue, frequency: freq.value })">
+                    @click="handleFrequencyChange(freq.value)">
                     <i :class="freq.icon"></i>
                     <span class="create-case__freq-label">{{ $t(freq.label) }}</span>
                     <span class="create-case__freq-desc">{{ $t(freq.desc) }}</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Day Picker (conditionally shown after selecting a frequency) -->
+        <div v-if="modelValue.frequency" class="create-case__form-group">
+            <!-- Weekly: Weekday buttons -->
+            <div v-if="modelValue.frequency === 'weekly'">
+                <label class="create-case__label">
+                    {{ $t('case.TrackingDay') }}
+                    <span class="create-case__label-hint">
+                        {{ $t(`case.TrackingDayHint.${modelValue.frequency}`) }}
+                    </span>
+                </label>
+                <div class="create-case__weekday-grid">
+                    <button type="button" v-for="day in weekdays" :key="day.value" class="create-case__weekday-btn"
+                        :class="{ 'create-case__weekday-btn--selected': modelValue.tracking_day === day.value }"
+                        @click="$emit('update:modelValue', { ...modelValue, tracking_day: day.value })">
+                        {{ $t(day.label) }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Monthly: Day dropdown -->
+            <div v-else-if="modelValue.frequency === 'monthly'">
+                <label class="create-case__label">
+                    {{ $t('case.TrackingDay') }}
+                    <span class="create-case__label-hint">
+                        {{ $t(`case.TrackingDayHint.${modelValue.frequency}`) }}
+                    </span>
+                </label>
+                <div class="create-case__day-select-wrap">
+                    <select class="form-select create-case__input" :value="modelValue.tracking_day"
+                        @change="$emit('update:modelValue', { ...modelValue, tracking_day: Number(($event.target as HTMLSelectElement).value) })">
+                        <option :value="undefined" disabled>{{ $t('Please select') }}</option>
+                        <option v-for="d in 31" :key="d" :value="d">{{ d }} 日</option>
+                    </select>
+                    <p class="create-case__day-hint">
+                        <i class="bi bi-info-circle me-1"></i>
+                        {{ $t('case.TrackingDayShortMonthNote') }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quarterly: Start month + Day dropdown -->
+            <div v-else-if="modelValue.frequency === 'quarterly'">
+                <div class="mb-4">
+                    <label class="create-case__label mb-3">
+                        {{ $t('case.QuarterStartMonth') }}
+                        <span class="create-case__label-hint">
+                            {{ $t(`case.TrackingDayHint.${modelValue.frequency}`) }}
+                        </span>
+                    </label>
+                    <div class="create-case__quarter-grid">
+                        <button type="button" v-for="q in quarterOptions" :key="q.startMonth"
+                            class="create-case__quarter-btn"
+                            :class="{ 'create-case__quarter-btn--selected': modelValue.tracking_start_month === q.startMonth }"
+                            @click="$emit('update:modelValue', { ...modelValue, tracking_start_month: q.startMonth })">
+                            <span class="create-case__quarter-label">{{ q.label }}</span>
+                            <span class="create-case__quarter-months">{{ q.months }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="create-case__day-select-wrap">
+                    <label class="create-case__label mb-2">{{ $t('case.TrackingDay') }}</label>
+                    <select class="form-select create-case__input" :value="modelValue.tracking_day"
+                        @change="$emit('update:modelValue', { ...modelValue, tracking_day: Number(($event.target as HTMLSelectElement).value) })">
+                        <option :value="undefined" disabled>{{ $t('Please select') }}</option>
+                        <option v-for="d in 31" :key="d" :value="d">{{ d }} 日</option>
+                    </select>
+                    <p class="create-case__day-hint">
+                        <i class="bi bi-info-circle me-1"></i>
+                        {{ $t('case.TrackingDayShortMonthNote') }}
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -126,6 +201,20 @@
                         {{$t(frequencies.find(f => f.value === modelValue.frequency)?.label || '')}}
                     </span>
                 </div>
+                <div class="create-case__summary-item" v-if="modelValue.tracking_day">
+                    <span class="create-case__summary-key">{{ $t('case.TrackingDay') }}</span>
+                    <span class="create-case__summary-value">
+                        <template v-if="modelValue.frequency === 'weekly'">
+                            {{ $t('case.FreqWeekly') }}{{ $t(`case.Weekday.${modelValue.tracking_day}`) }}
+                        </template>
+                        <template v-else-if="modelValue.frequency === 'quarterly' && modelValue.tracking_start_month">
+                            {{ getQuarterlyCycleText(modelValue.tracking_start_month) }} {{ modelValue.tracking_day }} 日
+                        </template>
+                        <template v-else>
+                            {{ modelValue.tracking_day }} 日
+                        </template>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -138,7 +227,7 @@ interface User {
     email: string
 }
 
-defineProps<{
+const props = defineProps<{
     modelValue: {
         role: string
         pet_name: string
@@ -152,6 +241,8 @@ defineProps<{
         city: string
         town: string
         frequency: string
+        tracking_day: number | null
+        tracking_start_month: number | null
     }
     searchQuery: string
     lookupLoading: boolean
@@ -159,12 +250,34 @@ defineProps<{
     selectedCounterpart: User | null
 }>()
 
-defineEmits([
+const emit = defineEmits([
     'update:modelValue',
     'update:searchQuery',
     'lookup-user',
     'remove-counterpart'
 ])
+
+function handleFrequencyChange(newFreq: string) {
+    // Reset tracking_day and tracking_start_month when frequency changes
+    emit('update:modelValue', {
+        ...props.modelValue,
+        frequency: newFreq,
+        tracking_day: null,
+        tracking_start_month: null,
+    })
+}
+
+function getQuarterlyCycleText(startMonth: number): string {
+    const months = [startMonth, startMonth + 3, startMonth + 6, startMonth + 9]
+        .map(m => ((m - 1) % 12) + 1)
+    return months.join('、') + ' 月'
+}
+
+const quarterOptions = [
+    { startMonth: 1, label: 'Q1', months: '1、4、7、10 月' },
+    { startMonth: 2, label: 'Q2', months: '2、5、8、11 月' },
+    { startMonth: 3, label: 'Q3', months: '3、6、9、12 月' },
+]
 
 const petTypes = [
     { value: 'dog', label: 'dog', icon: 'bi bi-emoji-smile' },
@@ -175,6 +288,16 @@ const frequencies = [
     { value: 'weekly', label: 'case.FreqWeekly', desc: 'case.FreqWeeklyDesc', icon: 'bi bi-calendar-week' },
     { value: 'monthly', label: 'case.FreqMonthly', desc: 'case.FreqMonthlyDesc', icon: 'bi bi-calendar-month' },
     { value: 'quarterly', label: 'case.FreqQuarterly', desc: 'case.FreqQuarterlyDesc', icon: 'bi bi-calendar3' },
+]
+
+const weekdays = [
+    { value: 1, label: 'case.Weekday.1' },
+    { value: 2, label: 'case.Weekday.2' },
+    { value: 3, label: 'case.Weekday.3' },
+    { value: 4, label: 'case.Weekday.4' },
+    { value: 5, label: 'case.Weekday.5' },
+    { value: 6, label: 'case.Weekday.6' },
+    { value: 7, label: 'case.Weekday.7' },
 ]
 </script>
 <style scoped>
@@ -354,6 +477,89 @@ const frequencies = [
 
 .create-case__freq-desc {
     font-size: 0.75rem;
+    color: #a0aec0;
+}
+
+/* Weekday Picker */
+.create-case__weekday-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.create-case__weekday-btn {
+    padding: 0.6rem 0;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f7fafc;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #4a5568;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.create-case__weekday-btn:hover {
+    border-color: var(--color-denim-blue);
+    color: var(--color-denim-blue);
+}
+
+.create-case__weekday-btn--selected {
+    border-color: var(--color-denim-blue);
+    background: rgba(44, 82, 130, 0.08);
+    color: var(--color-denim-blue);
+}
+
+/* Day of Month Select */
+.create-case__day-select-wrap {
+    max-width: 280px;
+}
+
+.create-case__day-hint {
+    font-size: 0.75rem;
+    color: #a0aec0;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+/* Quarter Picker */
+.create-case__quarter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.create-case__quarter-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 1rem 0.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f7fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.create-case__quarter-btn:hover {
+    border-color: var(--color-denim-blue);
+}
+
+.create-case__quarter-btn--selected {
+    border-color: var(--color-denim-blue);
+    background: rgba(44, 82, 130, 0.04);
+}
+
+.create-case__quarter-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-denim-blue);
+}
+
+.create-case__quarter-months {
+    font-size: 0.7rem;
     color: #a0aec0;
 }
 

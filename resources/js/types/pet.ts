@@ -64,6 +64,8 @@ export interface PetInter {
     status: string
     tracking_config?: {
       frequency: string
+      tracking_day?: number
+      tracking_start_month?: number
     }
     next_report_due_at?: string
     last_report_at?: string

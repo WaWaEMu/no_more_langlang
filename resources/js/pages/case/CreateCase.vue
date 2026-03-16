@@ -44,8 +44,8 @@
                         :disabled="!canProceed" @click="step++">
                         {{ $t('case.Next') }}<i class="bi bi-arrow-right ms-1"></i>
                     </button>
-                    <button v-else type="button" class="btn btn-primary create-case__btn" :disabled="submitting"
-                        @click="submitCase">
+                    <button v-else type="button" class="btn btn-primary create-case__btn"
+                        :disabled="submitting || !canProceed" @click="submitCase">
                         <span v-if="submitting" class="spinner-border spinner-border-sm me-2"></span>
                         <i v-else class="bi bi-check-lg me-1"></i>
                         {{ $t('case.Submit') }}

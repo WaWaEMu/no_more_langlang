@@ -32,6 +32,8 @@ export function useManualCaseCreation() {
         town: '' as string,
         pet_image: null as File | null,
         frequency: 'monthly' as string,
+        tracking_day: null as number | null,
+        tracking_start_month: null as number | null,
         counterpart_id: null as number | null,
     })
 
@@ -48,6 +50,21 @@ export function useManualCaseCreation() {
                 && form.value.is_stray !== null
                 && form.value.city !== ''
                 && form.value.town !== ''
+        }
+        if (step.value === 3) {
+            const hasCounterpart = form.value.counterpart_id !== null
+            const hasFrequency = form.value.frequency !== ''
+            let hasTrackingDetails = false
+
+            if (form.value.frequency === 'weekly') {
+                hasTrackingDetails = form.value.tracking_day !== null
+            } else if (form.value.frequency === 'monthly') {
+                hasTrackingDetails = form.value.tracking_day !== null
+            } else if (form.value.frequency === 'quarterly') {
+                hasTrackingDetails = form.value.tracking_day !== null && form.value.tracking_start_month !== null
+            }
+
+            return hasCounterpart && hasFrequency && hasTrackingDetails
         }
         return true
     })
@@ -125,6 +142,12 @@ export function useManualCaseCreation() {
             }
             if (form.value.frequency) {
                 formData.append('tracking_config[frequency]', form.value.frequency)
+                if (form.value.tracking_day !== null) {
+                    formData.append('tracking_config[tracking_day]', String(form.value.tracking_day))
+                }
+                if (form.value.tracking_start_month !== null) {
+                    formData.append('tracking_config[tracking_start_month]', String(form.value.tracking_start_month))
+                }
             }
             if (form.value.counterpart_id) {
                 formData.append('counterpart_id', String(form.value.counterpart_id))
