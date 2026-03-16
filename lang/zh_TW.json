@@ -384,7 +384,7 @@
     "case.FreqQuarterly": "每季",
     "case.FreqQuarterlyDesc": "每 90 天回報一次",
     "case.FreqNone": "不追蹤",
-    "case.FreqNoneDesc": "建立案件但不設定自動提醒",
+    "case.FreqNoneDesc": "暫無自動提醒，可依需求隨時開啟。",
     "case.TrackingDay": "回報日",
     "case.TrackingDayHint.weekly": "選擇每週的回報日",
     "case.TrackingDayHint.monthly": "選擇每月的回報日",

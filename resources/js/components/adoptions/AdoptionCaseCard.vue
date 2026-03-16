@@ -26,14 +26,23 @@
                 </div>
             </div>
 
-            <!-- Report Alert -->
-            <div v-if="pet.adoption_case?.next_report_due_at"
-                class="alert adoption-card__alert py-2 px-3 mb-3 d-flex align-items-center gap-2 rounded-3 shadow-sm">
-                <i class="bi bi-calendar-event text-primary"></i>
-                <small class="text-dark">
-                    <strong class="text-primary">{{ $t('Next Report Due') }}:</strong>
-                    {{ formatDate(pet.adoption_case.next_report_due_at) }}
-                </small>
+            <!-- Report Alert / Status -->
+            <div v-if="pet.adoption_case"
+                class="alert adoption-card__alert py-2 px-3 mb-3 d-flex align-items-center gap-2 rounded-3 shadow-sm"
+                :class="{ 'adoption-card__alert--none': pet.adoption_case.tracking_config?.frequency === 'none' }">
+                <template v-if="pet.adoption_case.next_report_due_at">
+                    <i class="bi bi-calendar-event text-primary"></i>
+                    <small class="text-dark">
+                        <strong class="text-primary">{{ $t('Next Report Due') }}:</strong>
+                        {{ formatDate(pet.adoption_case.next_report_due_at) }}
+                    </small>
+                </template>
+                <template v-else>
+                    <i class="bi bi-bell-slash text-muted"></i>
+                    <small class="text-muted">
+                        {{ $t('case.FreqNoneDesc') }}
+                    </small>
+                </template>
             </div>
 
             <!-- Adoption Base Info -->
@@ -79,7 +88,8 @@ function getTrackingBadgeClass(frequency: string) {
     const classes = {
         'weekly': 'adoption-card__tag--weekly',
         'monthly': 'adoption-card__tag--monthly',
-        'quarterly': 'adoption-card__tag--quarterly'
+        'quarterly': 'adoption-card__tag--quarterly',
+        'none': 'adoption-card__tag--none'
     }
     return classes[frequency as keyof typeof classes] || 'adoption-card__tag--none'
 }
@@ -88,7 +98,8 @@ function getTrackingFrequencyText(frequency: string) {
     const texts = {
         'weekly': trans('Weekly'),
         'monthly': trans('Monthly'),
-        'quarterly': trans('Quarterly')
+        'quarterly': trans('Quarterly'),
+        'none': trans('case.FreqNone')
     }
     return texts[frequency as keyof typeof texts] || frequency
 }
@@ -151,6 +162,11 @@ function formatDate(dateStr: string | undefined) {
 .adoption-card__alert {
     background-color: rgba(49, 130, 206, 0.06);
     border: 1px solid rgba(49, 130, 206, 0.1);
+}
+
+.adoption-card__alert--none {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
 }
 
 .adoption-card__info-box {
