@@ -31,8 +31,20 @@
                     <div class="case-detail__hero mb-4">
                         <div class="row g-4 align-items-center">
                             <div class="col-md-4 text-center">
-                                <img :src="petImageUrl" :alt="pet.name"
-                                    class="case-detail__pet-image rounded-4 shadow" />
+                                <div class="case-detail__image-container mb-3">
+                                    <img :src="petImageUrl" :alt="pet.name"
+                                        class="case-detail__pet-image rounded-4 shadow" />
+                                </div>
+                                <!-- Thumbnails -->
+                                <div v-if="pet.images?.length > 1"
+                                    class="d-flex justify-content-center gap-2 flex-wrap">
+                                    <div v-for="(img, idx) in pet.images" :key="img.id"
+                                        class="case-detail__thumb-wrapper"
+                                        :class="{ 'case-detail__thumb-wrapper--active': selectedImgIndex === Number(idx) }"
+                                        @click="selectedImgIndex = Number(idx)">
+                                        <img :src="`/storage/${img.path}`" class="case-detail__thumb" />
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="d-flex align-items-center gap-3 mb-2">
@@ -150,6 +162,7 @@ const adoptionCase = ref<any>(null)
 const role = ref<'owner' | 'adopter'>('owner')
 const activeTab = ref<'overview' | 'diary' | 'tracking'>('overview')
 const editTrackingModal = ref<any>(null)
+const selectedImgIndex = ref(0)
 
 const pet = computed(() => adoptionCase.value?.pet || {})
 const application = computed(() => adoptionCase.value?.application || null)
@@ -157,7 +170,8 @@ const application = computed(() => adoptionCase.value?.application || null)
 const petImageUrl = computed(() => {
     const images = pet.value?.images
     if (images && images.length > 0) {
-        return `/storage/${images[0].path}`
+        const target = images[selectedImgIndex.value] || images[0]
+        return `/storage/${target.path}`
     }
     return '/images/default-pet.png'
 })
@@ -226,6 +240,32 @@ onMounted(async () => {
     max-width: 280px;
     aspect-ratio: 1;
     object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.case-detail__thumb-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    padding: 2px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.case-detail__thumb-wrapper:hover {
+    border-color: #cbd5e0;
+}
+
+.case-detail__thumb-wrapper--active {
+    border-color: var(--color-denim-blue);
+}
+
+.case-detail__thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
 .case-detail__stat {
