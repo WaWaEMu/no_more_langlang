@@ -52,7 +52,6 @@ export function useManualCaseCreation() {
                 && form.value.town !== ''
         }
         if (step.value === 3) {
-            const hasCounterpart = form.value.counterpart_id !== null
             const hasFrequency = form.value.frequency !== ''
             let hasTrackingDetails = false
 
@@ -66,7 +65,7 @@ export function useManualCaseCreation() {
                 hasTrackingDetails = form.value.tracking_day !== null && form.value.tracking_start_month !== null
             }
 
-            return hasCounterpart && hasFrequency && hasTrackingDetails
+            return hasFrequency && hasTrackingDetails
         }
         return true
     })
