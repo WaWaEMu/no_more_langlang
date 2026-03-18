@@ -17,7 +17,8 @@ class ManualCaseRequest extends FormRequest
             'role' => 'required|in:owner,adopter',
             'pet_name' => 'required|string|max:50',
             'pet_type' => 'required|in:dog,cat',
-            'pet_image' => 'nullable|image|max:5120',
+            'pet_images' => 'nullable|array|max:3',
+            'pet_images.*' => 'image|max:5120',
             'gender' => 'required|in:male,female',
             'age' => 'required|string|max:10',
             'color' => 'required|string|max:20',
@@ -51,10 +52,29 @@ class ManualCaseRequest extends FormRequest
             'is_stray.required' => '請選擇是否為浪浪',
             'city.required' => '請選擇所在縣市',
             'town.required' => '請選擇鄉鎮區',
-            'pet_image.image' => '請上傳有效的圖片檔案',
-            'pet_image.max' => '圖片大小不可超過 5MB',
+            'pet_images.max' => '最多只能上傳 3 張圖片',
+            'pet_images.*.image' => '請上傳有效的圖片檔案',
+            'pet_images.*.max' => '每張圖片大小不可超過 5MB',
+            'pet_images.*.uploaded' => '圖片上傳失敗，請檢查檔案大小或網路連線',
             'counterpart_id.exists' => '指定的使用者不存在',
             'tracking_config.frequency.in' => '追蹤頻率必須為：每週、每月、每季或暫不追蹤',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'pet_name' => '寵物名稱',
+            'pet_type' => '寵物類型',
+            'pet_images' => '寵物照片',
+            'gender' => '性別',
+            'age' => '年紀',
+            'color' => '花紋',
+            'fur_type' => '毛型',
+            'is_neuter' => '結紮狀態',
+            'is_stray' => '是否為浪浪',
+            'city' => '所在縣市',
+            'town' => '鄉鎮區',
         ];
     }
 }

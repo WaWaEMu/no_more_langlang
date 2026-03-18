@@ -135,22 +135,31 @@
         <!-- Pet Image Upload -->
         <div class="create-case__form-group">
             <label class="create-case__label">{{ $t('case.PetImage') }}</label>
-            <div class="create-case__upload" @click="fileInput?.click()" @dragover.prevent @drop.prevent="handleDrop">
-                <input type="file" ref="fileInput" accept="image/*" class="d-none" @change="handleFileChange" />
-                <div v-if="imagePreview" class="create-case__preview">
-                    <img :src="imagePreview" alt="Preview" />
-                    <button type="button" class="create-case__preview-remove" @click.stop="$emit('remove-image')">
-                        <i class="bi bi-x-lg"></i>
+            <p class="create-case__hint-small">第 1 張為封面照片，最多上傳 3 張。</p>
+            <div class="d-flex gap-4 flex-wrap">
+                <div v-for="(url, index) in imagePreviews" :key="index"
+                    class="d-flex flex-column create-case__upload-card">
+                    <div v-if="!url"
+                        class="create-case__upload--placeholder d-flex justify-content-center align-items-center w-100 h-100">
+                        <i class="bi bi-image text-secondary fs-1"></i>
+                    </div>
+                    <div v-else class="create-case__upload--img-container">
+                        <img :src="url" class="create-case__upload--img">
+                    </div>
+                    <button type="button" @click="$emit('open-cropper', index)"
+                        class="create-case__upload--btn btn fw-medium" data-bs-toggle="modal"
+                        data-bs-target="#update-img-modal">
+                        {{ url ? '更換圖片' : '上傳圖片' }}
                     </button>
                 </div>
-                <div v-else class="create-case__upload-placeholder">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                    <span>{{ $t('case.UploadHint') }}</span>
-                </div>
+            </div>
+            <div v-if="imageError" class="create-case__upload-error">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ imageError }}
             </div>
         </div>
     </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
@@ -170,12 +179,15 @@ const props = defineProps<{
         city: string
         town: string
     }
-    imagePreview: string | null
+    imagePreviews: (string | null)[]
+    imageError?: string | null
 }>()
 
-const emit = defineEmits(['update:modelValue', 'file-change', 'drop-file', 'remove-image'])
-
-const fileInput = ref<HTMLInputElement | null>(null)
+const emit = defineEmits<{
+    (e: 'update:modelValue', patch: Record<string, any>): void
+    (e: 'open-cropper', idx: number): void
+    (e: 'remove-image', idx: number): void
+}>()
 
 const petTypes = [
     { value: 'dog', label: 'dog', icon: 'bi bi-emoji-smile' },
@@ -203,14 +215,6 @@ const districtsForCity = computed(() => {
 
 function update(patch: Record<string, any>) {
     emit('update:modelValue', { ...props.modelValue, ...patch })
-}
-
-function handleFileChange(e: Event) {
-    emit('file-change', e)
-}
-
-function handleDrop(e: DragEvent) {
-    emit('drop-file', e)
 }
 </script>
 <style scoped>
@@ -311,60 +315,65 @@ function handleDrop(e: DragEvent) {
     font-weight: 600;
 }
 
-.create-case__upload {
-    border: 2px dashed #cbd5e0;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: #f7fafc;
-}
-
-.create-case__upload:hover {
-    border-color: var(--color-denim-blue);
-    background: rgba(44, 82, 130, 0.02);
-}
-
-.create-case__upload-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+.create-case__hint-small {
+    font-size: 0.8rem;
     color: #a0aec0;
+    margin-bottom: 0.75rem;
 }
 
-.create-case__upload-placeholder i {
-    font-size: 2rem;
+/* 3-slot image grid (matched with ApplyForm.vue) */
+.create-case__upload-card {
+    width: min(150px, 45vw);
+    max-width: 100%;
 }
 
-.create-case__preview {
+.create-case__upload--placeholder {
+    background-color: #fff;
+    width: min(150px, 45vw);
+    height: min(150px, 45vw);
+    aspect-ratio: 1 / 1;
+    border-radius: 6px 6px 0 0;
+    border: 2px dashed #a0aec0;
+    border-bottom: none;
+}
+
+.create-case__upload--img-container {
     position: relative;
-    display: inline-block;
+    width: min(150px, 45vw);
+    height: min(150px, 45vw);
 }
 
-.create-case__preview img {
-    max-height: 180px;
-    border-radius: 8px;
+.create-case__upload--img {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px 6px 0 0;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 }
 
-.create-case__preview-remove {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #e53e3e;
-    color: white;
+.create-case__upload--btn {
     border: none;
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    outline: none;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #4a5568;
+    color: #ffffff;
+    border: 1px solid #4a5568;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    font-size: 0.875rem;
     cursor: pointer;
 }
+
+.create-case__upload--btn:hover {
+    background-color: var(--color-denim-blue-dark);
+    color: #ffffff;
+}
+
+
 
 @media (max-width: 576px) {
     .create-case__type-grid {
@@ -374,5 +383,14 @@ function handleDrop(e: DragEvent) {
     .create-case__body {
         padding: 1.25rem;
     }
+}
+
+.create-case__upload-error {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #e53e3e;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 </style>

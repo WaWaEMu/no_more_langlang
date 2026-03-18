@@ -24,13 +24,16 @@
                 <!-- Steps Content -->
                 <Transition name="step-fade" mode="out-in">
                     <StepRole v-if="step === 1" v-model="form.role" />
-                    <StepPetInfo v-else-if="step === 2" v-model="form" :image-preview="imagePreview"
-                        @file-change="handleFileChange" @drop-file="handleDrop" @remove-image="removeImage" />
+                    <StepPetInfo v-else-if="step === 2" v-model="form" :image-previews="imagePreviews"
+                        :image-error="imageError" @open-cropper="openCropper" @remove-image="removeImage" />
                     <StepTracking v-else-if="step === 3" v-model="form" v-model:search-query="searchQuery"
                         :lookup-loading="lookupLoading" :lookup-error="lookupError"
                         :selected-counterpart="selectedCounterpart" @lookup-user="lookupUser"
                         @remove-counterpart="removeCounterpart" />
                 </Transition>
+
+                <!-- Image Cropper Modal -->
+                <UpdateImg @update:confirm-img="onConfirmImg" />
 
                 <!-- Navigation Buttons -->
                 <div class="create-case__actions">
@@ -62,7 +65,9 @@ import Content from '@/components/Content.vue'
 import StepRole from '@/components/case/StepRole.vue'
 import StepPetInfo from '@/components/case/StepPetInfo.vue'
 import StepTracking from '@/components/case/StepTracking.vue'
+import UpdateImg from '@/components/modals/UpdateImg.vue'
 import { useManualCaseCreation } from '@/composables/useManualCaseCreation'
+import { Modal } from 'bootstrap'
 
 const steps = [
     { label: 'case.StepRole' },
@@ -73,20 +78,32 @@ const steps = [
 const {
     step,
     submitting,
-    imagePreview,
+    imagePreviews,
+    imageError,
+    showModal,
     searchQuery,
     lookupLoading,
     lookupError,
     selectedCounterpart,
     form,
     canProceed,
-    handleFileChange,
-    handleDrop,
+    openCropper,
+    saveCroppedImage,
     removeImage,
     lookupUser,
     removeCounterpart,
     submitCase
 } = useManualCaseCreation()
+
+function onConfirmImg(payload: { previewUrl: string, blob: Blob }) {
+    saveCroppedImage(payload)
+    // Hide modal manually
+    const modalElement = document.getElementById('update-img-modal')
+    if (modalElement) {
+        const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement)
+        modalInstance.hide()
+    }
+}
 </script>
 
 <style scoped>

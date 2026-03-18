@@ -131,12 +131,17 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
     public function createManualCase(array $data, User $creator): AdoptionCase
     {
         return DB::transaction(function () use ($data, $creator) {
-            // 1. Handle pet image upload
-            $imagePath = null;
-            if (!empty($data['pet_image'])) {
-                $date = now()->format('Y_m_d');
-                $filename = 'manual_' . time() . '.' . $data['pet_image']->guessExtension();
-                $imagePath = $data['pet_image']->storeAs("images/{$date}", $filename, 'public');
+            // 1. Handle pet image uploads (array)
+            $date = now()->format('Y_m_d');
+            $imageEntries = [];
+            if (!empty($data['pet_images'])) {
+                foreach ($data['pet_images'] as $index => $image) {
+                    if ($image) {
+                        $filename = "manual_{$index}_" . time() . '.' . $image->guessExtension();
+                        $path = $image->storeAs("images/{$date}", $filename, 'public');
+                        $imageEntries[] = ['path' => $path, 'type' => 'preview', 'index' => $index];
+                    }
+                }
             }
 
             // 2. Create Pet record with full details
@@ -158,13 +163,9 @@ class AdoptionCaseService implements AdoptionCaseServiceInterface
                 'town' => $data['town'],
             ]);
 
-            // 3. Save pet image if uploaded
-            if ($imagePath) {
-                $pet->images()->create([
-                    'path' => $imagePath,
-                    'type' => 'preview',
-                    'index' => 0,
-                ]);
+            // 3. Save pet images if uploaded
+            foreach ($imageEntries as $entry) {
+                $pet->images()->create($entry);
             }
 
             // 4. Determine owner_id and adopter_id based on role

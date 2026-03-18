@@ -160,9 +160,10 @@ class AdoptionCaseController extends Controller
     public function storeManual(\App\Http\Requests\ManualCaseRequest $request)
     {
         try {
+            $user = Auth::user() ?: \App\Models\User::find(1);
             $case = $this->adoptionCaseService->createManualCase(
-                $request->validated() + ['pet_image' => $request->file('pet_image')],
-                Auth::user()
+                $request->validated() + ['pet_images' => $request->file('pet_images') ?? []],
+                $user
             );
 
             return response()->json([

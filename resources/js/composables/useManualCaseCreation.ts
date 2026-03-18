@@ -4,14 +4,21 @@ import { trans } from 'laravel-vue-i18n'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
+const MAX_PHOTOS = 3
+
 export function useManualCaseCreation() {
     const $t = trans
     const router = useRouter()
 
     const step = ref(1)
     const submitting = ref(false)
-    const imagePreview = ref<string | null>(null)
-    const fileInput = ref<HTMLInputElement | null>(null)
+    const imageError = ref<string | null>(null)
+    const showModal = ref(false)
+    const selectedImgIndex = ref<number>(0)
+
+    // Array-based image state (3 slots)
+    const imagePreviews = ref<(string | null)[]>(Array(MAX_PHOTOS).fill(null))
+    const imageBlobs = ref<(Blob | null)[]>(Array(MAX_PHOTOS).fill(null))
 
     const searchQuery = ref('')
     const lookupLoading = ref(false)
@@ -30,7 +37,6 @@ export function useManualCaseCreation() {
         is_stray: null as boolean | null,
         city: '' as string,
         town: '' as string,
-        pet_image: null as File | null,
         frequency: 'monthly' as string,
         tracking_day: null as number | null,
         tracking_start_month: null as number | null,
@@ -70,26 +76,24 @@ export function useManualCaseCreation() {
         return true
     })
 
-    function handleFileChange(e: Event) {
-        const target = e.target as HTMLInputElement
-        const file = target.files?.[0]
-        if (file) {
-            form.value.pet_image = file
-            imagePreview.value = URL.createObjectURL(file)
-        }
+    /** Called when user clicks a slot to open the cropper */
+    function openCropper(index: number) {
+        selectedImgIndex.value = index
+        showModal.value = true
     }
 
-    function handleDrop(e: DragEvent) {
-        const file = e.dataTransfer?.files?.[0]
-        if (file && file.type.startsWith('image/')) {
-            form.value.pet_image = file
-            imagePreview.value = URL.createObjectURL(file)
-        }
+    /** Save cropped blob/preview into the active slot */
+    function saveCroppedImage(payload: { previewUrl: string, blob: Blob }) {
+        const { previewUrl, blob } = payload
+        imageError.value = null
+        imagePreviews.value[selectedImgIndex.value] = previewUrl
+        imageBlobs.value[selectedImgIndex.value] = blob
     }
 
-    function removeImage() {
-        form.value.pet_image = null
-        imagePreview.value = null
+    /** Remove image at a specific slot */
+    function removeImage(index: number) {
+        imagePreviews.value[index] = null
+        imageBlobs.value[index] = null
     }
 
     async function lookupUser() {
@@ -138,9 +142,14 @@ export function useManualCaseCreation() {
             formData.append('is_stray', form.value.is_stray ? '1' : '0')
             formData.append('city', form.value.city)
             formData.append('town', form.value.town)
-            if (form.value.pet_image) {
-                formData.append('pet_image', form.value.pet_image)
-            }
+
+            // Append each non-null blob as pet_images[]
+            imageBlobs.value.forEach((blob, i) => {
+                if (blob) {
+                    formData.append(`pet_images[${i}]`, blob, `pet_image_${i}.jpg`)
+                }
+            })
+
             if (form.value.frequency) {
                 formData.append('tracking_config[frequency]', form.value.frequency)
                 if (form.value.tracking_day !== null) {
@@ -165,7 +174,6 @@ export function useManualCaseCreation() {
                 confirmButtonColor: '#2c5282',
             })
 
-            // Navigate to the appropriate management page
             if (form.value.role === 'owner') {
                 router.push('/user/adoptions?tab=history')
             } else {
@@ -187,16 +195,19 @@ export function useManualCaseCreation() {
     return {
         step,
         submitting,
-        imagePreview,
-        fileInput,
+        imagePreviews,
+        imageBlobs,
+        imageError,
+        showModal,
+        selectedImgIndex,
         searchQuery,
         lookupLoading,
         lookupError,
         selectedCounterpart,
         form,
         canProceed,
-        handleFileChange,
-        handleDrop,
+        openCropper,
+        saveCroppedImage,
         removeImage,
         lookupUser,
         removeCounterpart,
