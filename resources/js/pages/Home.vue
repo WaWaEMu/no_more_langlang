@@ -199,7 +199,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 async function handleStart() {
-    if (await authStore.checkAuth($t('Login to manage cases'))) {
+    if (await authStore.checkAuth($t('Login required message'))) {
         router.push('/user/adoptions')
     }
 }
