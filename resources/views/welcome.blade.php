@@ -36,10 +36,21 @@
     @if(isset($schema))
         @foreach($schema as $s)
             <script type="application/ld+json">
-                                                        {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-                                                    </script>
+                                                                {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+                                                            </script>
         @endforeach
     @endif
+
+    <!-- Google Site Name -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "諾摩浪浪",
+        "alternateName": ["Nuomo Langlang", "No More Lang Lang"],
+        "url": "https://nomorelanglang.com/"
+    }
+    </script>
 </head>
 
 <body class="antialiased">
