@@ -25,6 +25,7 @@
     <meta property="og:title" content="{{ $meta['title'] ?? '諾摩浪浪' }}">
     <meta property="og:description" content="{{ $meta['description'] ?? '' }}">
     <meta property="og:image" content="{{ $meta['image'] ?? asset('images/og-image.jpg') }}">
+    <meta property="og:image:alt" content="{{ $meta['image_alt'] ?? ($meta['title'] ?? '諾摩浪浪') }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -32,12 +33,13 @@
     <meta property="twitter:title" content="{{ $meta['title'] ?? '諾摩浪浪' }}">
     <meta property="twitter:description" content="{{ $meta['description'] ?? '' }}">
     <meta property="twitter:image" content="{{ $meta['image'] ?? asset('images/og-image.jpg') }}">
+    <meta property="twitter:image:alt" content="{{ $meta['image_alt'] ?? ($meta['title'] ?? '諾摩浪浪') }}">
 
     @if(isset($schema))
         @foreach($schema as $s)
             <script type="application/ld+json">
-                                                                {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-                                                            </script>
+                                                                        {!! json_encode($s, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+                                                                    </script>
         @endforeach
     @endif
 

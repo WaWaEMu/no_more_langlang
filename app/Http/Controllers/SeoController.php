@@ -37,6 +37,7 @@ class SeoController extends Controller
             'title' => $defaultTitle,
             'description' => $defaultDescription,
             'image' => $defaultImage,
+            'image_alt' => $defaultTitle,
             'url' => $url,
         ];
 
@@ -44,6 +45,7 @@ class SeoController extends Controller
         if ($path === 'adopt') {
             $meta['title'] = __('SEO Adopt Title');
             $meta['description'] = __('SEO Adopt Description');
+            $meta['image_alt'] = __('SEO Adopt Name');
         }
 
         // Specific logic for Pet Detail Page: /adopt/{id}
@@ -56,6 +58,7 @@ class SeoController extends Controller
                 $meta['title'] = __("SEO Pet Title", ['name' => $pet->name, 'title' => $pet->title]);
                 // Use the adoption description if available, otherwise fallback to default
                 $meta['description'] = $pet->detail->adoption_description ?? $defaultDescription;
+                $meta['image_alt'] = __("SEO Pet Image Alt", ['name' => $pet->name]);
 
                 // Use the first pet image as the OG image
                 if ($pet->images->count() > 0) {
