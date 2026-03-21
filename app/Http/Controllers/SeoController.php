@@ -154,7 +154,7 @@ class SeoController extends Controller
                         '@type' => 'Offer',
                         'price' => '0',
                         'priceCurrency' => 'TWD',
-                        'availability' => 'https://schema.org/InStock'
+                        'availability' => $this->mapStatusToAvailability($pet->status)
                     ],
                     'category' => 'Pet Adoption',
                     'additionalProperty' => []
@@ -211,5 +211,20 @@ class SeoController extends Controller
         }
 
         return $schemas;
+    }
+
+    /**
+     * Map pet status to Schema.org availability.
+     */
+    private function mapStatusToAvailability($status)
+    {
+        $map = [
+            'available' => 'https://schema.org/InStock',
+            'pending' => 'https://schema.org/InStock',
+            'paused' => 'https://schema.org/OutOfStock',
+            'adopted' => 'https://schema.org/OutOfStock',
+        ];
+
+        return $map[$status] ?? 'https://schema.org/InStock';
     }
 }
