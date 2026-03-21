@@ -40,6 +40,12 @@ class SeoController extends Controller
             'url' => $url,
         ];
 
+        // Specific logic for Pet List Page: /adopt
+        if ($path === 'adopt') {
+            $meta['title'] = __('SEO Adopt Title');
+            $meta['description'] = __('SEO Adopt Description');
+        }
+
         // Specific logic for Pet Detail Page: /adopt/{id}
         // We use regex to match the pattern and extract the ID
         if (preg_match('/^adopt\/(\d+)$/', $path, $matches)) {
@@ -77,6 +83,28 @@ class SeoController extends Controller
             'logo' => asset('images/logo.png'),
             'description' => __('SEO Default Description'),
         ];
+
+        // Adopt List Page Schema
+        if ($path === 'adopt') {
+            $schemas[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => [
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 1,
+                        'name' => __('SEO Home Name'),
+                        'item' => url('/')
+                    ],
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 2,
+                        'name' => __('SEO Adopt Name'),
+                        'item' => url('/adopt')
+                    ]
+                ]
+            ];
+        }
 
         // Pet Detail Page Schema
         if (preg_match('/^adopt\/(\d+)$/', $path, $matches)) {
