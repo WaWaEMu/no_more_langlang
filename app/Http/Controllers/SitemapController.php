@@ -20,8 +20,8 @@ class SitemapController extends Controller
         // seconds: 60 * 60 * 24 (24 hours)
         return \Illuminate\Support\Facades\Cache::remember('sitemap.xml', 60 * 60 * 24, function () {
             // 1. Fetch data with Eager Loading
-            // with('images') 會一次把所有寵物的圖片撈出來，避免 N+1 問題
-            $pets = Pet::with('images')->get();
+            // with(['images', 'detail']) 會一次把所有寵物的圖片與詳細資料撈出來，避免 N+1 問題
+            $pets = Pet::with(['images', 'detail'])->get();
             $lastPet = Pet::orderBy('updated_at', 'desc')->first();
 
             // 2. Render view to string

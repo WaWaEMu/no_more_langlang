@@ -30,6 +30,9 @@
                 <image:image>
                     <image:loc>{{ asset('storage/' . $image->path) }}</image:loc>
                     <image:title>{{ $pet->title }}</image:title>
+                    @if ($pet->detail && $pet->detail->adoption_description)
+                        <image:caption>{{ Str::limit(strip_tags($pet->detail->adoption_description), 150) }}</image:caption>
+                    @endif
                 </image:image>
             @endforeach
         </url>
