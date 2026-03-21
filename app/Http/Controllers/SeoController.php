@@ -87,6 +87,51 @@ class SeoController extends Controller
             'description' => __('SEO Default Description'),
         ];
 
+        // Home Page Schema: HowTo
+        if ($path === '' || $path === '/') {
+            $schemas[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'HowTo',
+                'name' => __('landing.Step.Title'),
+                'description' => __('SEO Default Description'),
+                'step' => [
+                    [
+                        '@type' => 'HowToStep',
+                        'name' => __('landing.Step1'),
+                        'url' => url('/auth/register'),
+                        'itemListElement' => [
+                            [
+                                '@type' => 'HowToDirection',
+                                'text' => __('landing.Step1')
+                            ]
+                        ]
+                    ],
+                    [
+                        '@type' => 'HowToStep',
+                        'name' => __('landing.Step2'),
+                        'url' => url('/case/new'),
+                        'itemListElement' => [
+                            [
+                                '@type' => 'HowToDirection',
+                                'text' => __('landing.Step2')
+                            ]
+                        ]
+                    ],
+                    [
+                        '@type' => 'HowToStep',
+                        'name' => __('landing.Step3'),
+                        'url' => url('/user/adoptions'),
+                        'itemListElement' => [
+                            [
+                                '@type' => 'HowToDirection',
+                                'text' => __('landing.Step3')
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
+
         // Adopt List Page Schema
         if ($path === 'adopt') {
             $schemas[] = [
