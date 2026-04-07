@@ -29,5 +29,13 @@ interface PetServiceInterface
      * @param int $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getUserFavorites(int $userId);
+    /**
+     * Replace a single pet image.
+     */
+    public function replaceImage($pet, $imageId, $imageFile);
+
+    /**
+     * Add a new image to a pet listing.
+     */
+    public function addImage($pet, $imageFile);
 }

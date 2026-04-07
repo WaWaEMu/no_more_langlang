@@ -208,23 +208,8 @@ class PetController extends Controller
             'image' => 'required|file|image|max:5120',
         ]);
 
-        $petImage = $pet->images()->where('id', $imageId)->firstOrFail();
-
         try {
-            // Delete old file from storage
-            if ($petImage->path) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($petImage->path);
-            }
-
-            // Store new image
-            $file = $request->file('image');
-            $date = now()->format('Y_m_d');
-            $extension = $file->guessExtension();
-            $filename = $pet->id . '_' . $petImage->index . '_' . time() . '.' . $extension;
-            $path = $file->storeAs("images/{$date}", $filename, 'public');
-
-            // Update DB record
-            $petImage->update(['path' => $path]);
+            $path = $this->petService->replaceImage($pet, $imageId, $request->file('image'));
 
             return response()->json([
                 'success' => true,
@@ -234,6 +219,48 @@ class PetController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to replace pet image: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to replace image'], 500);
+        }
+    }
+
+    /**
+     * Add a new image to an existing pet listing (max 3).
+     */
+    public function addImage(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+        $pet = Pet::findOrFail($id);
+
+        if ($pet->user_id !== $user->id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        // Count existing images
+        if ($pet->images()->count() >= 3) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Max Photos Reached'),
+            ], 422);
+        }
+
+        $request->validate([
+            'image' => 'required|file|image|max:5120',
+        ]);
+
+        try {
+            $newImage = $this->petService->addImage($pet, $request->file('image'));
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Photo Added'),
+                'image' => $newImage,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to add pet image: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to add image'], 500);
         }
     }
 }
