@@ -28,6 +28,7 @@ Route::get('/adopt/{id}', [PetController::class, 'show']);
 Route::post('/adopt/{id}/favorite', [PetController::class, 'toggleFavorite'])->middleware('auth:sanctum');
 Route::delete('/adopt/{id}', [PetController::class, 'destroy'])->middleware('auth:sanctum');
 Route::put('/adopt/{id}/status', [PetController::class, 'updateStatus'])->middleware('auth:sanctum');
+Route::post('/adopt/{id}/images/{imageId}', [PetController::class, 'replaceImage'])->middleware('auth:sanctum');
 
 
 // RESTful API Routes

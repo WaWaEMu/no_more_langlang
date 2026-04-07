@@ -187,4 +187,54 @@ class PetController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to update status'], 500);
         }
     }
+
+    /**
+     * Replace a single pet image.
+     */
+    public function replaceImage(Request $request, $id, $imageId)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $user = Auth::user();
+        $pet = Pet::findOrFail($id);
+
+        if ($pet->user_id !== $user->id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        $request->validate([
+            'image' => 'required|file|image|max:5120',
+        ]);
+
+        $petImage = $pet->images()->where('id', $imageId)->firstOrFail();
+
+        try {
+            // Delete old file from storage
+            if ($petImage->path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($petImage->path);
+            }
+
+            // Store new image
+            $file = $request->file('image');
+            $date = now()->format('Y_m_d');
+            $extension = $file->guessExtension();
+            $filename = $pet->id . '_' . $petImage->index . '_' . time() . '.' . $extension;
+            $path = $file->storeAs("images/{$date}", $filename, 'public');
+
+            // Update DB record
+            $petImage->update(['path' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Photo Updated'),
+                'path' => $path,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to replace pet image: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to replace image'], 500);
+        }
+    }
 }
+
