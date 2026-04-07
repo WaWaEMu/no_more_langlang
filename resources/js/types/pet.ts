@@ -44,7 +44,7 @@ export interface PetInter {
   town: string
   sendable_cities: string[]
   detail: PetDetail
-  images: Array<{ path: string }>
+  images: Array<{ id: number; path: string }>
   user: { id: number; name: string }
   created_at: string
   updated_at: string

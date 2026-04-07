@@ -29,6 +29,11 @@
                             <div v-if="pet.images && pet.images.length > 0" class="pet-detail__main-image">
                                 <img :src="`/storage/${pet.images[currentImageIndex].path}`" :alt="pet.name"
                                     class="w-100 h-100 object-fit-cover" />
+                                <!-- Owner: Replace Photo Button -->
+                                <button v-if="isOwner" class="pet-detail__replace-btn" data-bs-toggle="modal"
+                                    data-bs-target="#update-img-modal">
+                                    <i class="bi bi-pencil-square me-1"></i>{{ $t('Replace Photo') }}
+                                </button>
                             </div>
                             <!-- Thumbnail navigation if multiple images -->
                             <div v-if="pet.images && pet.images.length > 1" class="d-flex gap-2 overflow-x-auto p-1">
@@ -134,7 +139,7 @@
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Age') }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.age }} {{ $t('years old')
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -152,7 +157,7 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Neuter Status')
-                                                }}</span>
+                                            }}</span>
                                             <span class="fw-semibold"
                                                 :class="pet.is_neuter ? 'text-success' : 'text-warning'">
                                                 {{ pet.is_neuter ? $t('Neutered') : $t('Not Neutered') }}
@@ -162,9 +167,9 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Is Stray Animal')
-                                                }}</span>
+                                            }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.is_stray ? $t('Yes') : $t('No')
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +198,7 @@
                                 </div>
                                 <div v-if="pet.sendable_cities && pet.sendable_cities.length > 0" class="mt-3">
                                     <span class="small text-secondary fw-medium d-block mb-2">{{ $t('Sendable Cities')
-                                        }}</span>
+                                    }}</span>
                                     <div class="d-flex flex-wrap gap-2">
                                         <span v-for="city in pet.sendable_cities" :key="city" class="pet-detail__tag">
                                             {{ city }}
@@ -276,6 +281,9 @@
                 <!-- Comment Section -->
                 <PetComment v-if="pet" :pet-id="pet.id" :pet-owner-id="pet.user.id" />
             </div>
+
+            <!-- Image Cropper Modal (only rendered for owner) -->
+            <UpdateImg v-if="isOwner" @update:confirm-img="handleReplaceImage" />
         </template>
     </Content>
 </template>
@@ -289,6 +297,7 @@ import { PetInter } from '@/types/pet'
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import PetComment from '@/components/adopt/PetComment.vue'
+import UpdateImg from '@/components/modals/UpdateImg.vue'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { trans } from 'laravel-vue-i18n'
@@ -304,6 +313,7 @@ const pet = ref<PetInter | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const currentImageIndex = ref(0)
+const replacingImage = ref(false)
 
 // Check if current user is the owner
 const isOwner = computed(() => {
@@ -398,6 +408,53 @@ function getStatusLabel(status: string) {
     return labels[status] ? $t(labels[status]) : status
 }
 
+async function handleReplaceImage(payload: { previewUrl: string, blob: Blob }) {
+    if (!pet.value || replacingImage.value) return
+
+    const currentImage = pet.value.images[currentImageIndex.value]
+    if (!currentImage) return
+
+    replacingImage.value = true
+
+    const formData = new FormData()
+    formData.append('image', payload.blob, 'cropped.jpg')
+
+    try {
+        const res = await axios.post(
+            `/api/adopt/${pet.value.id}/images/${currentImage.id}`,
+            formData,
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+        )
+
+        if (res.data.success) {
+            // Update path in-place with cache-busting timestamp
+            pet.value.images[currentImageIndex.value].path = res.data.path
+
+            // Close modal programmatically by clicking a dismiss button
+            const closeBtn = document.querySelector('#update-img-modal [data-bs-dismiss="modal"]') as HTMLButtonElement
+            if (closeBtn) {
+                closeBtn.click()
+            }
+
+            await Swal.fire({
+                icon: 'success',
+                title: $t('Photo Updated'),
+                timer: 1500,
+                showConfirmButton: false
+            })
+        }
+    } catch (err: any) {
+        console.error('Failed to replace image:', err)
+        Swal.fire({
+            icon: 'error',
+            title: $t('Replace Failed'),
+            text: $t('Please try again later'),
+        })
+    } finally {
+        replacingImage.value = false
+    }
+}
+
 // Watch for route param changes
 watch(() => route.params.id, (newId, oldId) => {
     if (newId && newId !== oldId) {
@@ -426,6 +483,7 @@ onMounted(() => {
 
 /* Image Gallery - Custom aspect ratio and styling */
 .pet-detail__main-image {
+    position: relative;
     width: 100%;
     aspect-ratio: 1;
     border-radius: 16px;
@@ -527,6 +585,31 @@ onMounted(() => {
 .pet-detail__owner-link:hover {
     color: var(--color-denim-blue-dark);
     transform: translateX(4px);
+}
+
+/* Replace Photo button (owner only) */
+.pet-detail__replace-btn {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(44, 82, 130, 0.9);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 5;
+    backdrop-filter: blur(4px);
+}
+
+.pet-detail__replace-btn:hover {
+    background: rgba(44, 82, 130, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.4);
 }
 
 /* Responsive */
