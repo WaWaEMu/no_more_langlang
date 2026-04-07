@@ -30,18 +30,25 @@
                                 <img :src="`/storage/${pet.images[currentImageIndex].path}`" :alt="pet.name"
                                     class="w-100 h-100 object-fit-cover" />
                                 <!-- Owner: Replace Photo Button -->
-                                <button v-if="isOwner" class="pet-detail__replace-btn" data-bs-toggle="modal"
-                                    data-bs-target="#update-img-modal">
+                                <button v-if="isOwner" class="pet-detail__replace-btn" @click="isAddingImage = false"
+                                    data-bs-toggle="modal" data-bs-target="#update-img-modal">
                                     <i class="bi bi-pencil-square me-1"></i>{{ $t('Replace Photo') }}
                                 </button>
                             </div>
                             <!-- Thumbnail navigation if multiple images -->
-                            <div v-if="pet.images && pet.images.length > 1" class="d-flex gap-2 overflow-x-auto p-1">
+                            <div v-if="isOwner || (pet.images && pet.images.length > 1)"
+                                class="d-flex gap-2 overflow-x-auto p-1 align-items-center">
                                 <button v-for="(image, index) in pet.images" :key="index"
                                     @click="currentImageIndex = index" class="pet-detail__thumbnail"
                                     :class="{ 'active': currentImageIndex === index }">
                                     <img :src="`/storage/${image.path}`" :alt="`${pet.name} ${index + 1}`"
                                         class="w-100 h-100 object-fit-cover" />
+                                </button>
+                                <!-- Owner: Add Photo Button -->
+                                <button v-if="isOwner && pet.images.length < 3" class="pet-detail__add-thumbnail"
+                                    @click="isAddingImage = true" data-bs-toggle="modal"
+                                    data-bs-target="#update-img-modal">
+                                    <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
                         </div>
@@ -139,7 +146,7 @@
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Age') }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.age }} {{ $t('years old')
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -157,7 +164,7 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Neuter Status')
-                                            }}</span>
+                                                }}</span>
                                             <span class="fw-semibold"
                                                 :class="pet.is_neuter ? 'text-success' : 'text-warning'">
                                                 {{ pet.is_neuter ? $t('Neutered') : $t('Not Neutered') }}
@@ -167,9 +174,9 @@
                                     <div class="col">
                                         <div class="d-flex flex-column gap-1">
                                             <span class="small text-secondary fw-medium">{{ $t('Is Stray Animal')
-                                            }}</span>
+                                                }}</span>
                                             <span class="fw-semibold text-dark">{{ pet.is_stray ? $t('Yes') : $t('No')
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -198,7 +205,7 @@
                                 </div>
                                 <div v-if="pet.sendable_cities && pet.sendable_cities.length > 0" class="mt-3">
                                     <span class="small text-secondary fw-medium d-block mb-2">{{ $t('Sendable Cities')
-                                    }}</span>
+                                        }}</span>
                                     <div class="d-flex flex-wrap gap-2">
                                         <span v-for="city in pet.sendable_cities" :key="city" class="pet-detail__tag">
                                             {{ city }}
@@ -283,7 +290,7 @@
             </div>
 
             <!-- Image Cropper Modal (only rendered for owner) -->
-            <UpdateImg v-if="isOwner" @update:confirm-img="handleReplaceImage" />
+            <UpdateImg v-if="isOwner" @update:confirm-img="handleConfirmImage" />
         </template>
     </Content>
 </template>
@@ -314,6 +321,7 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const currentImageIndex = ref(0)
 const replacingImage = ref(false)
+const isAddingImage = ref(false)
 
 // Check if current user is the owner
 const isOwner = computed(() => {
@@ -408,29 +416,44 @@ function getStatusLabel(status: string) {
     return labels[status] ? $t(labels[status]) : status
 }
 
-async function handleReplaceImage(payload: { previewUrl: string, blob: Blob }) {
+async function handleConfirmImage(payload: { previewUrl: string, blob: Blob }) {
     if (!pet.value || replacingImage.value) return
 
-    const currentImage = pet.value.images[currentImageIndex.value]
-    if (!currentImage) return
-
     replacingImage.value = true
-
     const formData = new FormData()
     formData.append('image', payload.blob, 'cropped.jpg')
 
     try {
-        const res = await axios.post(
-            `/api/adopt/${pet.value.id}/images/${currentImage.id}`,
-            formData,
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-        )
+        let res;
+        if (isAddingImage.value) {
+            // Add new image
+            res = await axios.post(
+                `/api/adopt/${pet.value.id}/images`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            )
+        } else {
+            // Replace existing image
+            const currentImage = pet.value.images[currentImageIndex.value]
+            if (!currentImage) throw new Error('No image selected')
+            res = await axios.post(
+                `/api/adopt/${pet.value.id}/images/${currentImage.id}`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            )
+        }
 
         if (res.data.success) {
-            // Update path in-place with cache-busting timestamp
-            pet.value.images[currentImageIndex.value].path = res.data.path
+            if (isAddingImage.value) {
+                // Append new image to the list
+                pet.value.images.push(res.data.image)
+                currentImageIndex.value = pet.value.images.length - 1
+            } else {
+                // Update existing path
+                pet.value.images[currentImageIndex.value].path = res.data.path
+            }
 
-            // Close modal programmatically by clicking a dismiss button
+            // Close modal programmatically
             const closeBtn = document.querySelector('#update-img-modal [data-bs-dismiss="modal"]') as HTMLButtonElement
             if (closeBtn) {
                 closeBtn.click()
@@ -438,16 +461,16 @@ async function handleReplaceImage(payload: { previewUrl: string, blob: Blob }) {
 
             await Swal.fire({
                 icon: 'success',
-                title: $t('Photo Updated'),
+                title: isAddingImage.value ? $t('Photo Added') : $t('Photo Updated'),
                 timer: 1500,
                 showConfirmButton: false
             })
         }
     } catch (err: any) {
-        console.error('Failed to replace image:', err)
+        console.error('Failed to update image:', err)
         Swal.fire({
             icon: 'error',
-            title: $t('Replace Failed'),
+            title: isAddingImage.value ? $t('Add Failed') : $t('Replace Failed'),
             text: $t('Please try again later'),
         })
     } finally {
@@ -610,6 +633,28 @@ onMounted(() => {
     background: rgba(44, 82, 130, 1);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(44, 82, 130, 0.4);
+}
+
+.pet-detail__add-thumbnail {
+    width: 64px;
+    height: 64px;
+    background: var(--color-fog-gray);
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a0aec0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.pet-detail__add-thumbnail:hover {
+    border-color: var(--color-denim-blue);
+    color: var(--color-denim-blue);
+    background: #eef2f7;
 }
 
 /* Responsive */
