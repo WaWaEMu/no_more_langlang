@@ -56,7 +56,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="status" class="form-label apply-form__label required">{{ $t('Adoption Status')
-                            }}</label>
+                                }}</label>
                             <select id="status" class="form-select" v-model="formState.status" required>
                                 <option v-for="option in statusOptions.items" :key="String(option.value)"
                                     :value="option.value" :disabled="option.disabled">
@@ -187,7 +187,7 @@
 
                     <div class="mb-4">
                         <label for="template-select" class="form-label apply-form__label">{{ $t('Select Template')
-                            }}</label>
+                        }}</label>
                         <select id="template-select" class="form-select" v-model="formState.adoption_form_template_id">
                             <option :value="null">{{ $t('No template (basic form only)') }}</option>
                             <option v-for="tpl in availableTemplates" :key="tpl.id" :value="tpl.id">
@@ -210,7 +210,7 @@
                                     <span>{{ field.label }}</span>
                                     <span v-if="field.required" class="text-danger fw-bold">*</span>
                                     <span class="apply-form__template-preview-type">{{ $t(`fieldType.${field.type}`)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -232,9 +232,9 @@
                                     class="apply-form__template-preview-field">
                                     <div class="d-flex align-items-center gap-2">
                                         <i :class="field.icon" class="text-secondary"></i>
-                                        <span>{{ field.label }}</span>
+                                        <span>{{ $t(field.label) }}</span>
                                         <span v-if="field.required" class="text-danger fw-bold">*</span>
-                                        <span class="apply-form__template-preview-type">{{ field.typeName }}</span>
+                                        <span class="apply-form__template-preview-type">{{ $t(field.typeName) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -315,13 +315,12 @@ const formState = reactive<PetFormInter>({
 
 // Basic fields for preview
 const baseFields = [
-    { key: 'name', label: '暱稱', icon: 'bi bi-person', typeName: '文字', required: true },
-    { key: 'phone', label: '電話', icon: 'bi bi-telephone', typeName: '文字', required: true },
-    { key: 'line_id', label: 'Line ID', icon: 'bi bi-chat-dots', typeName: '文字', required: false },
-    { key: 'housing', label: '居住環境', icon: 'bi bi-house-door', typeName: '下拉選單', required: true },
-    { key: 'experience', label: '養寵經驗', icon: 'bi bi-star', typeName: '下拉選單', required: true },
-    { key: 'family', label: '家人/室友是否同意', icon: 'bi bi-people', typeName: '單選', required: true },
-    { key: 'message', label: '自我介紹與動機', icon: 'bi bi-chat-square-text', typeName: '多行文字', required: true },
+    { key: 'name', label: 'Nickname', icon: 'bi bi-person', typeName: 'fieldType.text', required: true },
+    { key: 'phone', label: 'Phone Number', icon: 'bi bi-telephone', typeName: 'fieldType.text', required: true },
+    { key: 'line_id', label: 'Line ID (Optional)', icon: 'bi bi-chat-dots', typeName: 'fieldType.text', required: false },
+    { key: 'experience', label: 'Pet Experience', icon: 'bi bi-star', typeName: 'fieldType.select', required: true },
+    { key: 'family', label: 'Does family/roommate agree?', icon: 'bi bi-people', typeName: 'fieldType.radio', required: true },
+    { key: 'message', label: 'Message to Owner (Briefly)', icon: 'bi bi-chat-square-text', typeName: 'fieldType.textarea', required: true },
 ]
 
 // Template data

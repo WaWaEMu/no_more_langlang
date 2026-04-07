@@ -114,9 +114,9 @@
                                             <div v-for="field in baseFields" :key="field.key"
                                                 class="template-mgr__base-item">
                                                 <i :class="field.icon"></i>
-                                                <span>{{ field.label }}</span>
+                                                <span>{{ $t(field.label) }}</span>
                                                 <span v-if="field.required" class="template-mgr__base-required">*</span>
-                                                <span class="template-mgr__base-type">{{ field.typeName }}</span>
+                                                <span class="template-mgr__base-type">{{ $t(field.typeName) }}</span>
                                             </div>
                                         </div>
                                     </Transition>
@@ -181,14 +181,14 @@ const form = reactive({
     is_default: false,
 })
 
-// The 7 fixed base fields that every application always has
+// The 6 fixed base fields that every application always has
 const baseFields = [
-    { key: 'name', label: '暱稱', icon: 'bi bi-person', typeName: '文字', required: true },
-    { key: 'phone', label: '電話', icon: 'bi bi-telephone', typeName: '文字', required: true },
-    { key: 'line_id', label: 'Line ID', icon: 'bi bi-chat-dots', typeName: '文字', required: false },
-    { key: 'experience', label: '養寵經驗', icon: 'bi bi-star', typeName: '下拉選單', required: true },
-    { key: 'family', label: '家人/室友是否同意', icon: 'bi bi-people', typeName: '單選', required: true },
-    { key: 'message', label: '想對送養者說的話 (簡述即可)', icon: 'bi bi-chat-square-text', typeName: '多行文字', required: true },
+    { key: 'name', label: 'Nickname', icon: 'bi bi-person', typeName: 'fieldType.text', required: true },
+    { key: 'phone', label: 'Phone Number', icon: 'bi bi-telephone', typeName: 'fieldType.text', required: true },
+    { key: 'line_id', label: 'Line ID (Optional)', icon: 'bi bi-chat-dots', typeName: 'fieldType.text', required: false },
+    { key: 'experience', label: 'Pet Experience', icon: 'bi bi-star', typeName: 'fieldType.select', required: true },
+    { key: 'family', label: 'Does family/roommate agree?', icon: 'bi bi-people', typeName: 'fieldType.radio', required: true },
+    { key: 'message', label: 'Message to Owner (Briefly)', icon: 'bi bi-chat-square-text', typeName: 'fieldType.textarea', required: true },
 ]
 
 // Suggested custom fields to pre-populate for new templates
