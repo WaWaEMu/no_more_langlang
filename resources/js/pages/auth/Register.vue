@@ -38,6 +38,22 @@
                             @focus="delete errors.password_confirmation" @input="delete errors.password_confirmation">
                         <div v-if="errors.password_confirmation" class="invalid-feedback">{{ errors.password_confirmation }}</div>
                     </div>
+
+                    <!-- Terms & Privacy Consent -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input type="checkbox" id="consent" v-model="consentChecked"
+                                class="form-check-input register__consent-check"
+                                :class="{ 'is-invalid': errors.consent }">
+                            <label for="consent" class="form-check-label register__consent-label">
+                                {{ $t('I agree to the') }}
+                                <RouterLink to="/terms" target="_blank" class="register__legal-link">{{ $t('Terms of Service') }}</RouterLink>
+                                {{ $t('and') }}
+                                <RouterLink to="/privacy" target="_blank" class="register__legal-link">{{ $t('Privacy Policy') }}</RouterLink>
+                            </label>
+                            <div v-if="errors.consent" class="invalid-feedback d-block">{{ errors.consent }}</div>
+                        </div>
+                    </div>
                     <div class="d-grid gap-2 mb-4">
                         <button type="submit" :disabled="isLoading" class="btn register__btn btn-lg text-white fw-bold">
                             <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
@@ -86,6 +102,7 @@ const form = reactive({
 
 const errors = reactive<Record<string, string>>({})
 const isLoading = ref(false)
+const consentChecked = ref(false)
 
 function validateForm(): boolean {
     // Clear previous errors
@@ -116,6 +133,11 @@ function validateForm(): boolean {
 
     if (form.password !== form.password_confirmation) {
         errors.password_confirmation = trans('The :attribute confirmation does not match.', { attribute: trans('Password') })
+        isValid = false
+    }
+
+    if (!consentChecked.value) {
+        errors.consent = trans('You must agree to the Terms of Service and Privacy Policy to register.')
         isValid = false
     }
 
@@ -221,6 +243,31 @@ async function handleRegister() {
     &:hover {
         opacity: 1;
         color: var(--color-denim-blue-dark);
+    }
+}
+
+.register__consent-check:checked {
+    background-color: var(--color-denim-blue);
+    border-color: var(--color-denim-blue);
+}
+
+.register__consent-check:focus {
+    box-shadow: 0 0 0 0.2rem rgba(66, 91, 118, 0.25);
+}
+
+.register__consent-label {
+    color: #4a5568;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.register__legal-link {
+    color: var(--color-denim-blue);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
     }
 }
 

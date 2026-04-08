@@ -113,6 +113,16 @@ const routes = [
         meta: { title: t('Website Concept') }
     },
     {
+        path: '/terms',
+        component: () => import('@/pages/Terms.vue'),
+        meta: { title: t('Terms of Service') }
+    },
+    {
+        path: '/privacy',
+        component: () => import('@/pages/Privacy.vue'),
+        meta: { title: t('Privacy Policy') }
+    },
+    {
         path: '/:pathMatch(.*)*',
         component: () => import('@/pages/NotFound.vue'),
         meta: { title: t('Page Not Found') }

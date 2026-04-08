@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue';
+import SiteFooter from '@/components/Footer.vue'
 
 onBeforeMount(() => {
     const ua = navigator.userAgent;
@@ -15,5 +16,16 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <RouterView></RouterView>
+    <div class="app-layout">
+        <RouterView></RouterView>
+        <SiteFooter />
+    </div>
 </template>
+
+<style>
+.app-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+</style>
