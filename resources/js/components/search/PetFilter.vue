@@ -55,7 +55,7 @@
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="text" class="form-control border-0" placeholder="請輸入關鍵字" v-model.trim="keyword">
-                <button type="submit" class="btn border-0">搜尋</button>
+                <button type="submit" class="btn border-0 btn-search">搜尋</button>
             </div>
         </form>
     </div>
@@ -96,25 +96,25 @@ const { resetFilters, fetchPets } = adoptStore
 
 .pet-filter__form .input-group {
     height: 38px;
-    border-radius: 5%;
+    border-radius: 8px;
 }
 
 .pet-filter__form .input-group>* {
     font-size: 0.85rem;
 }
 
-.pet-filter__form button {
-    color: #ffffff;
-    background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
-    border-radius: 5% !important;
-    font-weight: 500;
-    transition: all 0.2s ease;
+.pet-filter__form .btn-search {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--color-denim-blue) 0%, var(--color-denim-blue-dark) 100%) !important;
+    border-radius: 0 8px 8px 0 !important;
+    font-weight: 600;
+    padding: 0 1.5rem;
+    transition: all 0.3s ease;
 }
 
-.pet-filter__form button:hover {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(44, 82, 130, 0.3);
+.pet-filter__form .btn-search:hover {
+    background: linear-gradient(135deg, var(--color-denim-blue-dark) 0%, #1a365d 100%) !important;
+    box-shadow: 0 4px 8px rgba(44, 82, 130, 0.3);
 }
 
 .form-control:focus {

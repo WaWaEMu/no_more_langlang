@@ -237,13 +237,13 @@ onUnmounted(() => {
 
 .user-menu__btn--register {
     color: #fff;
-    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
-    border-color: transparent;
+    background: linear-gradient(135deg, var(--color-denim-blue) 0%, var(--color-denim-blue-dark) 100%);
+    box-shadow: 0 4px 6px rgba(44, 82, 130, 0.15);
 
     &:hover {
-        background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+        background: linear-gradient(135deg, var(--color-denim-blue-dark) 0%, #1a365d 100%);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+        box-shadow: 0 6px 15px rgba(44, 82, 130, 0.3);
     }
 }
 
