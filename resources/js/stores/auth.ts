@@ -123,7 +123,7 @@ export const useAuthStore = defineStore('auth', () => {
         })
 
         if (result.isConfirmed) {
-            window.location.href = `#/auth/login?redirect=${encodeURIComponent(window.location.hash.replace('#', ''))}`
+            window.location.href = `/auth/login?redirect=${encodeURIComponent(window.location.pathname)}`
             return false
         }
 
