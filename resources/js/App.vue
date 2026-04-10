@@ -17,7 +17,9 @@ onBeforeMount(() => {
 
 <template>
     <div class="app-layout">
-        <RouterView></RouterView>
+        <div class="app-content">
+            <RouterView></RouterView>
+        </div>
         <SiteFooter />
     </div>
 </template>
@@ -27,5 +29,10 @@ onBeforeMount(() => {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+.app-content {
+    flex: 1;
+    width: 100%;
 }
 </style>
