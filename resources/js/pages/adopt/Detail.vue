@@ -60,7 +60,7 @@
                                     <i class="bi bi-person-fill me-2"></i>{{ $t('Posted by') }}
                                 </h3>
                                 <div class="d-flex flex-column gap-2">
-                                    <RouterLink :to="`/user/profile/${pet.user.id}`"
+                                    <RouterLink :to="`/user/profile/${pet.user.uuid}`"
                                         class="pet-detail__owner-link text-decoration-none fw-semibold fs-6 d-inline-flex align-items-center">
                                         <i class="bi bi-person-circle me-2"></i>{{ pet.user.name }}
                                     </RouterLink>

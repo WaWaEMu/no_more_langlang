@@ -77,7 +77,7 @@
 
                     <ul class="user-menu__dropdown-list">
                         <li>
-                            <RouterLink :to="`/user/profile/${authStore.user?.id}`" class="user-menu__dropdown-item"
+                            <RouterLink :to="`/user/profile/${authStore.user?.uuid}`" class="user-menu__dropdown-item"
                                 @click="closeMenu">
                                 <i class="bi bi-person-fill"></i>
                                 <span>個人資料</span>

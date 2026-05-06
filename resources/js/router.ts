@@ -63,7 +63,7 @@ const routes = [
         meta: { title: t('Goodbye') }
     },
     {
-        path: '/user/profile/:id',
+        path: '/user/profile/:uuid',
         component: () => import('@/pages/user/Profile.vue'),
         meta: { title: t('Profile') }
     },

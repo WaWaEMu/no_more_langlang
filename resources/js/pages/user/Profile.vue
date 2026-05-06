@@ -41,13 +41,7 @@
                                 <span class="profile__value">{{ userProfile.email }}</span>
                             </div>
                         </div>
-                        <div class="profile__detail-item">
-                            <i class="bi bi-person-badge-fill"></i>
-                            <div>
-                                <span class="profile__label">會員編號</span>
-                                <span class="profile__value">{{ userProfile.id }}</span>
-                            </div>
-                        </div>
+                        <!-- Member ID hidden for privacy -->
                         <div class="profile__detail-item">
                             <i class="bi bi-calendar-check-fill"></i>
                             <div>
@@ -121,7 +115,7 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 
 // Use computed to make userId reactive to route changes
-const userId = computed(() => route.params.id)
+const userId = computed(() => route.params.uuid)
 
 async function fetchUserProfile() {
     loading.value = true
@@ -147,7 +141,7 @@ function formatDate(dateStr: string): string {
 }
 
 // Watch for route param changes
-watch(() => route.params.id, (newId, oldId) => {
+watch(() => route.params.uuid, (newId, oldId) => {
     if (newId && newId !== oldId) {
         fetchUserProfile()
     }
