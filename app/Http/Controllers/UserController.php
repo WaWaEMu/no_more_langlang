@@ -16,9 +16,8 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
         return response()->json($user);
     }
 

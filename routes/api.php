@@ -33,7 +33,7 @@ Route::post('/adopt/{id}/images', [PetController::class, 'addImage'])->middlewar
 
 
 // RESTful API Routes
-Route::get('/users/{id}', [UserController::class, 'show']);
+Route::get('/users/{user}', [UserController::class, 'show']);
 
 // Pet Comments
 Route::get('/adopt/{id}/comments', [\App\Http\Controllers\PetCommentController::class, 'index']);
