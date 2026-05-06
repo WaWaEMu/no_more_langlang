@@ -32,4 +32,12 @@ interface UserServiceInterface
      * @return User|null
      */
     public function lookupByEmail(string $email, ?int $excludeId = null): ?User;
+    /**
+     * Get user profile with privacy masking.
+     *
+     * @param User $user
+     * @param int|null $viewerId
+     * @return User
+     */
+    public function getProfile(User $user, ?int $viewerId = null): User;
 }

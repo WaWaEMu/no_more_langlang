@@ -18,6 +18,9 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $viewerId = auth('sanctum')->id();
+        $user = $this->userService->getProfile($user, $viewerId);
+
         return response()->json($user);
     }
 
