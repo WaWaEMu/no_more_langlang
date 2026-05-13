@@ -11,10 +11,14 @@ class FosterVenue extends Model
     use HasFactory;
 
     // Type constants
-    public const TYPE_CAFE = 'cafe';
     public const TYPE_RESTAURANT = 'restaurant';
     public const TYPE_SHELTER = 'shelter';
     public const TYPE_VET_CLINIC = 'vet_clinic';
+    public const TYPE_HAIR_SALON = 'hair_salon';
+    public const TYPE_BOARD_GAME = 'board_game';
+    public const TYPE_PET_STORE = 'pet_store';
+    public const TYPE_OTHER = 'other';
+
 
     // Status constants
     public const STATUS_ACTIVE = 'active';
