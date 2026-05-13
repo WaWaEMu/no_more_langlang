@@ -31,6 +31,10 @@ Route::put('/adopt/{id}/status', [PetController::class, 'updateStatus'])->middle
 Route::post('/adopt/{id}/images/{imageId}', [PetController::class, 'replaceImage'])->middleware('auth:sanctum');
 Route::post('/adopt/{id}/images', [PetController::class, 'addImage'])->middleware('auth:sanctum');
 
+// Foster Venues (Public)
+Route::get('/foster-venues', [\App\Http\Controllers\FosterVenueController::class, 'index']);
+Route::get('/foster-venues/{uuid}', [\App\Http\Controllers\FosterVenueController::class, 'show']);
+
 
 // RESTful API Routes
 Route::get('/users/{user}', [UserController::class, 'show']);
