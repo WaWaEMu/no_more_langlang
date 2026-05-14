@@ -74,7 +74,20 @@ class FetchFosterVenues extends Command
                     $response = Http::withHeaders([
                         'Content-Type' => 'application/json',
                         'X-Goog-Api-Key' => $apiKey,
-                        'X-Goog-FieldMask' => 'places.displayName,places.formattedAddress,places.location,places.types,places.websiteUri'
+                        'X-Goog-FieldMask' => implode(',', [
+                            'places.displayName',
+                            'places.formattedAddress',
+                            'places.addressComponents',
+                            'places.location',
+                            'places.types',
+                            'places.primaryTypeDisplayName',
+                            'places.websiteUri',
+                            'places.nationalPhoneNumber',
+                            'places.rating',
+                            'places.userRatingCount',
+                            'places.regularOpeningHours',
+                            'places.businessStatus',
+                        ])
                     ])->post($url, [
                                 'textQuery' => $query,
                                 'languageCode' => 'zh-TW'
@@ -100,6 +113,8 @@ class FetchFosterVenues extends Command
                             }
                         }
 
+                        $businessStatus = $place['businessStatus'] ?? 'OPERATIONAL';
+
                         // Use updateOrCreate to ensure no duplicates based on name and address
                         FosterVenue::updateOrCreate(
                             [
@@ -108,10 +123,17 @@ class FetchFosterVenues extends Command
                             ],
                             [
                                 'city' => $county,
+                                'district' => $this->extractDistrict($place['addressComponents'] ?? [], $county),
+                                'phone' => $place['nationalPhoneNumber'] ?? null,
                                 'latitude' => $place['location']['latitude'] ?? null,
                                 'longitude' => $place['location']['longitude'] ?? null,
+                                'rating' => $place['rating'] ?? null,
+                                'user_rating_count' => $place['userRatingCount'] ?? null,
+                                'business_hours' => $place['regularOpeningHours']['weekdayDescriptions'] ?? null,
                                 'website_url' => $place['websiteUri'] ?? null,
                                 'type' => $this->determineType($name, $place['types'] ?? []),
+                                'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? null,
+                                'business_status' => $businessStatus,
                                 'status' => FosterVenue::STATUS_ACTIVE,
                                 'pet_types' => $this->determinePetTypes($name, $keyword),
                                 'services' => ['adoption'],
@@ -132,6 +154,22 @@ class FetchFosterVenues extends Command
         }
 
         $this->info("\nNationwide midway merchant data collection complete!");
+    }
+
+    /**
+     * Extract district (行政區, e.g. 中正區, 松山區) from Google Places addressComponents.
+     * In Taiwan, administrative_area_level_2 = 區/鄉/鎮, which is the district we want.
+     */
+    private function extractDistrict(array $components, string $city): ?string
+    {
+        foreach ($components as $component) {
+            if (in_array('administrative_area_level_2', $component['types'] ?? [])) {
+                $district = $component['longText'] ?? null;
+                return $district ? $this->fixAddress($district) : null;
+            }
+        }
+
+        return null;
     }
 
     /**

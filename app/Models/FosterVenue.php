@@ -29,6 +29,7 @@ class FosterVenue extends Model
         'uuid',
         'name',
         'type',
+        'primary_type_display_name',
         'description',
         'phone',
         'city',
@@ -36,6 +37,8 @@ class FosterVenue extends Model
         'address',
         'latitude',
         'longitude',
+        'rating',
+        'user_rating_count',
         'business_hours',
         'website_url',
         'facebook_url',
@@ -45,6 +48,7 @@ class FosterVenue extends Model
         'services',
         'is_verified',
         'status',
+        'business_status',
         'user_id',
     ];
 
@@ -54,6 +58,8 @@ class FosterVenue extends Model
         'services' => 'array',
         'latitude' => 'float',
         'longitude' => 'float',
+        'rating' => 'float',
+        'user_rating_count' => 'integer',
         'is_verified' => 'boolean',
     ];
 
@@ -89,11 +95,17 @@ class FosterVenue extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        if (isset($filters['city'])) {
+        if (!empty($filters['city'])) {
             $query->where('city', $filters['city']);
         }
-        if (isset($filters['type'])) {
+        if (!empty($filters['district'])) {
+            $query->where('district', $filters['district']);
+        }
+        if (!empty($filters['type'])) {
             $query->where('type', $filters['type']);
+        }
+        if (!empty($filters['pet_type'])) {
+            $query->whereJsonContains('pet_types', $filters['pet_type']);
         }
     }
 
