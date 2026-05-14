@@ -25,6 +25,7 @@ export interface FosterVenueInter {
 
 export interface FosterVenueFiltersInter {
     city: string
+    district: string
     type: string
     pet_type: string
 }

@@ -10,6 +10,7 @@ export const useFosterVenueStore = defineStore('fosterVenue', () => {
 
     const filters = reactive<FosterVenueFiltersInter>({
         city: '',
+        district: '',
         type: '',
         pet_type: ''
     })
@@ -24,6 +25,7 @@ export const useFosterVenueStore = defineStore('fosterVenue', () => {
         try {
             const params: any = {}
             if (filters.city) params.city = filters.city
+            if (filters.district) params.district = filters.district
             if (filters.type) params.type = filters.type
             if (filters.pet_type) params.pet_type = filters.pet_type
 
@@ -42,6 +44,7 @@ export const useFosterVenueStore = defineStore('fosterVenue', () => {
      */
     function resetFilters() {
         filters.city = ''
+        filters.district = ''
         filters.type = ''
         filters.pet_type = ''
         fetchVenues()

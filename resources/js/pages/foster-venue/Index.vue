@@ -15,9 +15,18 @@
                         <span class="foster-venue__filter-label">縣市</span>
                         <div class="foster-venue__select-wrap">
                             <i class="bi bi-geo-alt foster-venue__city-icon"></i>
-                            <select v-model="filters.city" class="foster-venue__select" @change="fetchVenues">
+                            <select v-model="filters.city" class="foster-venue__select" @change="handleCityChange">
                                 <option value="">{{ $t('All Cities') }}</option>
                                 <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
+                            </select>
+                            <i class="bi bi-chevron-down foster-venue__select-arrow"></i>
+                        </div>
+                        
+                        <!-- District Select (Shows only when a city is selected) -->
+                        <div class="foster-venue__select-wrap" v-if="filters.city">
+                            <select v-model="filters.district" class="foster-venue__select ps-3" @change="fetchVenues">
+                                <option value="">全部區域</option>
+                                <option v-for="district in districts" :key="district" :value="district">{{ district }}</option>
                             </select>
                             <i class="bi bi-chevron-down foster-venue__select-arrow"></i>
                         </div>
@@ -26,7 +35,7 @@
                                 共 <strong>{{ venues.length }}</strong> 間商家
                             </span>
                             <button class="foster-venue__reset-btn" @click="resetFilters"
-                                v-if="filters.city || filters.type || filters.pet_type">
+                                v-if="filters.city || filters.district || filters.type || filters.pet_type">
                                 <i class="bi bi-x-lg me-1"></i>{{ $t('Reset Filters') }}
                             </button>
                         </div>
@@ -132,12 +141,13 @@
 import Navbar from '@/components/Navbar.vue'
 import Content from '@/components/Content.vue'
 import FosterVenueMap from '@/components/foster-venue/FosterVenueMap.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useFosterVenueStore } from '@/stores/fosterVenue'
 import { storeToRefs } from 'pinia'
 import { trans } from 'laravel-vue-i18n'
 import { FosterVenueInter } from '@/types/fosterVenue'
-import { CITIES, TYPE_CHIPS, PET_CHIPS } from '@/../data/fosterVenues'
+import { TYPE_CHIPS, PET_CHIPS } from '@/../data/fosterVenues'
+import { areas } from '@/../data/areas'
 import { getTypeIcon } from '@/utils/fosterVenue'
 
 const $t = trans
@@ -147,10 +157,27 @@ const { fetchVenues, resetFilters } = store
 
 const selectedVenue = ref<FosterVenueInter | null>(null)
 
-const cities = CITIES
+// Extract flat list of cities from areas object
+const cities = Object.values(areas).flatMap(region => Object.keys(region))
+
+// Dynamically compute districts based on selected city
+const districts = computed(() => {
+    if (!filters.value.city) return []
+    for (const region in areas) {
+        if (areas[region][filters.value.city]) {
+            return areas[region][filters.value.city]
+        }
+    }
+    return []
+})
 const typeChips = TYPE_CHIPS
 const petChips = PET_CHIPS
 const typeIcon = getTypeIcon
+
+function handleCityChange() {
+    filters.value.district = ''
+    fetchVenues()
+}
 
 function selectType(value: string) {
     filters.value.type = value

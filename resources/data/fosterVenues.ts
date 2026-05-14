@@ -20,10 +20,3 @@ export const PET_CHIPS = [
     { value: 'dog', label: 'venue.pet_type.dog' },
 ] as const
 
-// ─── City List ──────────────────────────────────────────────────
-
-export const CITIES = [
-    '台北', '新北', '基隆', '桃園', '新竹', '苗栗', '台中', '彰化',
-    '南投', '雲林', '嘉義', '台南', '高雄', '屏東', '宜蘭', '花蓮', '台東',
-    '澎湖', '金門', '馬祖',
-] as const
