@@ -13,6 +13,11 @@ const routes = [
         meta: { title: t('Adopt') }
     },
     {
+        path: '/foster-venues',
+        component: () => import('@/pages/foster-venue/Index.vue'),
+        meta: { title: t('Foster Venue Map') }
+    },
+    {
         path: '/adopt/new',
         component: () => import('@/pages/adopt/Create.vue'),
         meta: { title: t('New Adoption') }

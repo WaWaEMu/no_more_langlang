@@ -47,6 +47,7 @@ const isMenuOpen = ref(false);
 const navList = ref<{ id: string; label: string; path: string }[]>([
     { id: '10', label: 'landing.Home', path: '/' },
     { id: '00', label: 'Adopt', path: '/adopt' },
+    { id: '04', label: 'Foster Venue Map', path: '/foster-venues' },
     { id: '01', label: 'New Adoption', path: '/adopt/new' },
     { id: '02', label: 'Create Case', path: '/case/new' },
     { id: '03', label: 'Website Concept', path: '/about' }

@@ -17,6 +17,7 @@ const whiteList = [
     '/401',
     '/500',
     '/adopt',
+    '/foster-venues',
     '/about',
     '/terms',
     '/privacy'

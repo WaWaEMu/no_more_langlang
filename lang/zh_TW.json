@@ -573,5 +573,27 @@
     "landing.Mockup.DiaryTitle": "近期生活日誌",
     "landing.Mockup.Pill1": "自動回報提醒已設定",
     "landing.Mockup.Pill2": "專屬案號管理",
-    "landing.Mockup.Pill3": "自定義領養申請表單"
+    "landing.Mockup.Pill3": "自定義領養申請表單",
+
+    "Foster Venue Map": "中途商家地圖",
+    "All Cities": "全部縣市",
+    "All Types": "全部類型",
+    "All Pet Types": "全部動物",
+    "Reset Filters": "重設篩選",
+    "No venues found": "找不到符合條件的商家",
+    "venue.type.restaurant": "餐廳／咖啡廳",
+    "venue.type.shelter": "公立收容所",
+    "venue.type.pet_store": "寵物用品店",
+    "venue.type.hair_salon": "美髮沙龍",
+    "venue.type.board_game": "桌遊店",
+    "venue.type.vet_clinic": "動物醫院",
+    "venue.type.other": "其他",
+    "venue.pet_type.cat": "貓咪",
+    "venue.pet_type.dog": "狗狗",
+    "Venue List": "商家列表",
+    "venues found": "間商家",
+    "Failed to fetch foster venues": "無法載入中途商家資料",
+    "Visit Website": "前往官網",
+    "foster-venue.Hero.Title": "找到你附近的中途商家",
+    "foster-venue.Hero.Sub": "全台中途咖啡廳、收容所、領養活動商家，一張地圖看清楚"
 }
