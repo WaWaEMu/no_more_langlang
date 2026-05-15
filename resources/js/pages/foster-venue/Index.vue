@@ -10,25 +10,30 @@
                 <!-- Filter Bar: BMW-style icon chips -->
                 <div class="foster-venue__filter-section">
 
-                    <!-- Row 1: City Select -->
+                    <!-- Row 1: City & District Select -->
                     <div class="foster-venue__city-bar">
-                        <span class="foster-venue__filter-label">縣市</span>
-                        <div class="foster-venue__select-wrap">
-                            <i class="bi bi-geo-alt foster-venue__city-icon"></i>
-                            <select v-model="filters.city" class="foster-venue__select" @change="handleCityChange">
-                                <option value="">{{ $t('All Cities') }}</option>
-                                <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
-                            </select>
-                            <i class="bi bi-chevron-down foster-venue__select-arrow"></i>
-                        </div>
-                        
-                        <!-- District Select (Shows only when a city is selected) -->
-                        <div class="foster-venue__select-wrap" v-if="filters.city">
-                            <select v-model="filters.district" class="foster-venue__select ps-3" @change="fetchVenues">
-                                <option value="">全部區域</option>
-                                <option v-for="district in districts" :key="district" :value="district">{{ district }}</option>
-                            </select>
-                            <i class="bi bi-chevron-down foster-venue__select-arrow"></i>
+                        <span class="foster-venue__filter-label">地點</span>
+                        <div class="d-flex gap-2">
+                            <AppSelect 
+                                v-model="filters.city" 
+                                :options="cities" 
+                                icon="bi bi-geo-alt"
+                                placeholder="全部縣市"
+                                clearLabel="全部縣市"
+                                rounded="sharp"
+                                @change="handleCityChange"
+                            />
+                            
+                            <!-- District Select (Shows only when a city is selected) -->
+                            <AppSelect 
+                                v-if="filters.city"
+                                v-model="filters.district" 
+                                :options="districts" 
+                                placeholder="全部區域"
+                                clearLabel="全部區域"
+                                rounded="sharp"
+                                @change="fetchVenues"
+                            />
                         </div>
                         <div class="ms-auto d-flex align-items-center gap-3">
                             <span class="foster-venue__count" v-if="!loading">
@@ -149,6 +154,7 @@ import { FosterVenueInter } from '@/types/fosterVenue'
 import { TYPE_CHIPS, PET_CHIPS } from '@/../data/fosterVenues'
 import { areas } from '@/../data/areas'
 import { getTypeIcon } from '@/utils/fosterVenue'
+import AppSelect from '@/components/common/AppSelect.vue'
 
 const $t = trans
 const store = useFosterVenueStore()
@@ -217,7 +223,8 @@ onMounted(async () => {
     border-radius: 3px;
     background: #fff;
     margin-bottom: 2.5rem;
-    overflow: hidden;
+    position: relative;
+    z-index: 10;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
 }
 
@@ -242,36 +249,6 @@ onMounted(async () => {
 .foster-venue__city-icon {
     color: #94a3b8;
     font-size: 0.9rem;
-}
-
-.foster-venue__select-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.foster-venue__select {
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 0;
-    padding-right: 1.25rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1a202c;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.foster-venue__select-arrow {
-    position: absolute;
-    right: 0;
-    font-size: 0.6rem;
-    color: #94a3b8;
-    pointer-events: none;
 }
 
 .foster-venue__count {
