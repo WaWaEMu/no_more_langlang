@@ -54,13 +54,150 @@ class FetchFosterVenues extends Command
             '馬祖'
         ];
 
-        // Precise semantic keyword pairs — let Google filter irrelevant results for us
+        // Targeted keywords — cast a wide net, whitelist filter handles precision
         $keywords = [
-            '中途 貓',
-            '中途 狗',
-            '中途 領養',
-            '中途 餐廳',
-            '領養 浪浪'
+            '中途 送養',
+            '浪浪 送養',
+            '流浪動物 護生園 狗園',
+            '收容所 動物之家 教育園區',
+        ];
+
+        // 1. Foster-related strong keywords (Needs animal context)
+        $fosterKeywords = [
+            '中途',
+            '領養',
+            '認養',
+            '送養',
+            '收容',
+            '流浪',
+            '救援',
+            '庇護',
+            '照護中心',
+            '護生',
+            '愛媽',
+            '愛爸'
+        ];
+
+        // 2. Animal-related keywords (The context)
+        $animalKeywords = [
+            '貓',
+            '狗',
+            '喵',
+            '汪',
+            '毛孩',
+            '毛小孩',
+            '動物',
+            '寵物',
+            '米克斯',
+            '浪犬',
+            '浪貓'
+        ];
+
+        // 3. Definitive Animal Venue keywords (Passes even without dual check)
+        $definitiveAnimalKeywords = [
+            '狗園',
+            '貓園',
+            'TNR',
+            '動物之家',
+            '保育場',
+            '動保',
+            '浪浪',
+            '認養中心',
+            '送養中心',
+            '領養中心',
+            '護生園',
+            '教育園區',
+            '躍動園區',
+            '寵物銀行',
+            '貓格里拉',
+            '小犬',
+            '浪浪別哭',
+            '咪可思',
+            '躍動園區',
+            '新屋貓舍',
+            '狗腳印',
+            '好好善待',
+            '流浪狗中途之家',
+            '外帶一隻貓',
+            '和貓咪有約',
+            '東森寵物',
+            '認養小站',
+            'Help Save A Pet',
+            '燕巢動物保護關愛園區',
+            '狗場',
+            '巴克幫',
+            '金汪汪',
+            '䕶生園',
+            '犬山居',
+            '愛狗人協會',
+            '賴媽媽',
+            '毛小孩幸福農莊',
+            '善化收容所',
+            '莉丰慧民',
+            '世界聯合保護動物協會',
+            '小松樹',
+            '毛小孩的窩仁德園區',
+            '貓咪也瘋狂公益協會',
+            '貓狗甜園',
+            '新竹收容所'
+        ];
+
+        // 4. Ineligible Venue Blacklist (Instant skip)
+        $globalBlacklist = [
+            '移民署',
+            '更生',
+            '戒毒',
+            '少年',
+            '基督教',
+            '更生團契',
+            '法務部',
+            '福利',
+            '心理',
+            '安置',
+            '野生',
+            '保育類',
+            '試驗',
+            '研究',
+            '實驗',
+            '貓舍',
+            '犬舍',
+            '辦公室',
+            '辦事處',
+            '動保處',
+            '防疫所',
+            '試吃',
+            '婚宴',
+            '喜餅',
+            '水世界',
+            '寄養',
+            '佛學會',
+            '醫院'
+        ];
+
+        // 5. Specific Precise Blacklist (Names that trick the system)
+        $preciseBlacklist = [
+            '天使之戀',
+            '聖力貓舍',
+            '寵翻天寵物家族',
+            '庭園寵物',
+            '動物保護處',
+            '汪喵歡樂營',
+            '貓膩會館',
+            '寵物公園(苗栗竹南)',
+            '觀音的家',
+            '屏東動物之家—寵物美容、行為訓練中心',
+            '新店動物之家山下辦公室',
+            'UNI Cafe'
+        ];
+
+        $typeWhitelist = [
+            'animal_shelter',
+            'non_governmental_organization',
+            'pet_store',
+            'restaurant',
+            'cafe',
+            'pet_boarding_service',
+            'veterinary_care'
         ];
 
         $url = 'https://places.googleapis.com/v1/places:searchText';
@@ -103,17 +240,69 @@ class FetchFosterVenues extends Command
                     foreach ($places as $place) {
                         $name = $place['displayName']['text'] ?? '';
                         $address = $this->fixAddress($place['formattedAddress'] ?? '');
+                        $googleTypes = $place['types'] ?? [];
 
-                        // 1. Blacklist filter: skip commercial breeding or trading shops
-                        $blacklist = ['買賣', '繁殖', '品種', '名犬', '名貓', '出售', '合法犬舍', '專業犬舍', '精品寵物'];
-                        foreach ($blacklist as $badWord) {
-                            if (str_contains($name, $badWord)) {
-                                $this->warn("  - Skipping (Commercial/Breeding): {$name}");
-                                continue 2; // Skip this place and continue to the next one
+                        // 1. Precise Blacklist: ULTIMATE SKIP (No one bypasses this, not even VIPs)
+                        foreach ($preciseBlacklist as $badName) {
+                            if (str_contains($name, $badName)) {
+                                $this->warn("  - Skipping (Precise Blacklist Match): {$name}");
+                                continue 2;
                             }
                         }
 
+                        // 2. VIP Whitelist: Identify definitive animal venues
+                        $isDefinitiveAnimal = false;
+                        foreach ($definitiveAnimalKeywords as $kw) {
+                            if (str_contains($name, $kw)) {
+                                $isDefinitiveAnimal = true;
+                                break;
+                            }
+                        }
+
+                        // 3. Global Blacklist: Only check if NOT a definitive animal venue
+                        if (!$isDefinitiveAnimal) {
+                            foreach ($globalBlacklist as $badWord) {
+                                if (str_contains($name, $badWord)) {
+                                    $this->warn("  - Skipping (Ineligible Venue): {$name}");
+                                    continue 2;
+                                }
+                            }
+                        }
+
+                        // 4. Skip permanently closed businesses
                         $businessStatus = $place['businessStatus'] ?? 'OPERATIONAL';
+                        if ($businessStatus === 'CLOSED_PERMANENTLY') {
+                            $this->warn("  - Skipping (Permanently Closed): {$name}");
+                            continue;
+                        }
+
+                        // 5. Relevance Verification
+                        $isOfficialShelter = !empty(array_intersect($googleTypes, $typeWhitelist));
+
+                        $hasFosterWord = false;
+                        foreach ($fosterKeywords as $kw) {
+                            if (str_contains($name, $kw)) {
+                                $hasFosterWord = true;
+                                break;
+                            }
+                        }
+
+                        $hasAnimalWord = false;
+                        foreach ($animalKeywords as $kw) {
+                            if (str_contains($name, $kw)) {
+                                $hasAnimalWord = true;
+                                break;
+                            }
+                        }
+
+                        $isFosterAnimalVenue = $hasFosterWord && $hasAnimalWord;
+
+                        if (!$isDefinitiveAnimal && !$isOfficialShelter && !$isFosterAnimalVenue) {
+                            $this->warn("  - Skipping (Not an animal foster venue): {$name}");
+                            continue;
+                        }
+
+                        $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $county;
 
                         // Use updateOrCreate to ensure no duplicates based on name and address
                         FosterVenue::updateOrCreate(
@@ -122,8 +311,8 @@ class FetchFosterVenues extends Command
                                 'address' => $address
                             ],
                             [
-                                'city' => $county,
-                                'district' => $this->extractDistrict($place['addressComponents'] ?? [], $county),
+                                'city' => $this->fixAddress($realCity),
+                                'district' => $this->extractDistrict($place['addressComponents'] ?? []),
                                 'phone' => $place['nationalPhoneNumber'] ?? null,
                                 'latitude' => $place['location']['latitude'] ?? null,
                                 'longitude' => $place['location']['longitude'] ?? null,
@@ -157,10 +346,24 @@ class FetchFosterVenues extends Command
     }
 
     /**
+     * Extract city (縣市, e.g. 臺北市, 新北市) from Google Places addressComponents.
+     */
+    private function extractCity(array $components): ?string
+    {
+        foreach ($components as $component) {
+            if (in_array('administrative_area_level_1', $component['types'] ?? [])) {
+                return $component['longText'] ?? null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Extract district (行政區, e.g. 中正區, 松山區) from Google Places addressComponents.
      * In Taiwan, administrative_area_level_2 = 區/鄉/鎮, which is the district we want.
      */
-    private function extractDistrict(array $components, string $city): ?string
+    private function extractDistrict(array $components): ?string
     {
         foreach ($components as $component) {
             if (in_array('administrative_area_level_2', $component['types'] ?? [])) {
@@ -195,14 +398,14 @@ class FetchFosterVenues extends Command
 
         // 2. Check by Google Types
         if (
-            in_array('restaurant', $googleTypes) || 
-            in_array('food', $googleTypes) || 
-            in_array('cafe', $googleTypes) || 
+            in_array('restaurant', $googleTypes) ||
+            in_array('food', $googleTypes) ||
+            in_array('cafe', $googleTypes) ||
             in_array('coffee_shop', $googleTypes)
         ) {
             return FosterVenue::TYPE_RESTAURANT;
         }
-        
+
         if (in_array('veterinary_care', $googleTypes)) {
             return FosterVenue::TYPE_VET_CLINIC;
         }
