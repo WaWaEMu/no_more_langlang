@@ -319,7 +319,7 @@ class FetchFosterVenues extends Command
                                 'rating' => $place['rating'] ?? null,
                                 'user_rating_count' => $place['userRatingCount'] ?? null,
                                 'business_hours' => $place['regularOpeningHours']['weekdayDescriptions'] ?? null,
-                                'website_url' => $place['websiteUri'] ?? null,
+                                'website_url' => $place['websiteUri'] ? substr($place['websiteUri'], 0, 255) : null,
                                 'type' => $this->determineType($name, $place['types'] ?? []),
                                 'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? null,
                                 'business_status' => $businessStatus,
