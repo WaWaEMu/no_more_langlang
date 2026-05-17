@@ -96,10 +96,12 @@ class FosterVenue extends Model
     public function scopeFilter($query, array $filters)
     {
         if (!empty($filters['city'])) {
-            $query->where('city', $filters['city']);
+            $city = str_replace('台', '臺', $filters['city']);
+            $query->where('city', 'LIKE', "%{$city}%");
         }
         if (!empty($filters['district'])) {
-            $query->where('district', $filters['district']);
+            $district = str_replace('台', '臺', $filters['district']);
+            $query->where('district', 'LIKE', "%{$district}%");
         }
         if (!empty($filters['type'])) {
             $query->where('type', $filters['type']);

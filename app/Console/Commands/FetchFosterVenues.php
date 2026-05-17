@@ -418,6 +418,10 @@ class FetchFosterVenues extends Command
      */
     private function fixAddress(string $address): string
     {
+        // 1. Remove leading postal code and "Taiwan" (Support both 台/臺 and optional space)
+        // Matches: "202臺灣", "202 台灣", "202 臺灣", etc.
+        $address = preg_replace('/\d{3,5}\s?(台灣|臺灣)/u', '', $address);
+
         $map = [
             // Administrative divisions
             '区' => '區',
