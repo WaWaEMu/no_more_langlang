@@ -103,20 +103,12 @@ class FetchFosterVenues extends Command
             '辦公室', '辦事處', '動保處', '防疫所', '試吃', '婚宴', '喜餅',
             '水世界', '寄養', '佛學會', '醫院',
             '寵物美容學苑', '寵物美容學院',
-            '品種', '買賣', '名貓', '名犬', '自家繁殖', '特寵字', '特寵證', '血統', '出售'
+            '品種', '買賣', '名貓', '名犬', '自家繁殖', '特寵字', '特寵證', '血統', '出售',
+            // Added exclusions for feeding spots and temple sanctuaries
+            '餵食場', '餵食點', '餵養點', '餵養場', '放生', '功德', '放生場', '護生協會'
         ];
 
-        // 2. Definitive/Official Animal Shelters (100% trusted, passes instantly as verified)
-        $definitiveShelters = [
-            '狗園', 'TNR', '動物之家', '保育場', '動保', '浪浪',
-            '認養中心', '送養中心', '領養中心', '護生園', '教育園區', '收容所',
-            '中途之家', '義工團', '愛護動物協會', '保護動物協會'
-        ];
 
-        // 3. Official Google Place Type (Passes instantly as verified)
-        $officialTypes = [
-            'animal_shelter'
-        ];
 
         $url = 'https://places.googleapis.com/v1/places:searchText';
 
@@ -168,27 +160,19 @@ class FetchFosterVenues extends Command
                             }
                         }
 
+                        // Skip religious places (temples, places of worship) to filter out religious release sites
+                        $religiousTypes = ['place_of_worship', 'buddhist_temple', 'temple', 'church', 'hindu_temple', 'mosque', 'synagogue'];
+                        if (!empty(array_intersect($googleTypes, $religiousTypes))) {
+                            $this->warn("  - Skipping (Religious Place): {$name}");
+                            continue;
+                        }
+
                         // 2. Skip permanently closed businesses
                         $businessStatus = $place['businessStatus'] ?? 'OPERATIONAL';
                         if ($businessStatus === 'CLOSED_PERMANENTLY') {
                             $this->warn("  - Skipping (Permanently Closed): {$name}");
                             continue;
                         }
-
-                        // 3. VIP Whitelist: Identify 100% official/definitive public shelters
-                        $isOfficialShelter = !empty(array_intersect($googleTypes, $officialTypes));
-                        $isDefinitiveShelter = false;
-                        foreach ($definitiveShelters as $kw) {
-                            if (str_contains($name, $kw)) {
-                                $isDefinitiveShelter = true;
-                                break;
-                            }
-                        }
-
-                        $isVerifiedShelter = $isOfficialShelter || $isDefinitiveShelter;
-
-                        // 4. Send all other non-blacklisted results to AI Agent for verification
-                        // No strict keyword matching here to avoid missing quirky names like "毛髦" or "haven hair"
 
                         $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $target['label'];
 
@@ -200,8 +184,8 @@ class FetchFosterVenues extends Command
 
                         // Only set default status and verification for NEW venues
                         if (!$venue->exists) {
-                            $venue->status = $isVerifiedShelter ? FosterVenue::STATUS_ACTIVE : FosterVenue::STATUS_PENDING;
-                            $venue->is_verified = $isVerifiedShelter;
+                            $venue->status = FosterVenue::STATUS_PENDING;
+                            $venue->is_verified = false;
                         }
 
                         // Always update basic info, preserving existing status and is_verified
