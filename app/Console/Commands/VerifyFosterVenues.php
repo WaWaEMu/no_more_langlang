@@ -26,45 +26,45 @@ class VerifyFosterVenues extends Command
      */
     public function handle()
     {
-        $this->info("🔍 測試 Agent 的眼睛（上網搜尋能力）...");
+        $this->info("🔍 Testing Agent's web search capability...");
 
-        // 假設我們要測試找這家名叫 haven hair 的店
+        // Suppose we are testing the search for this store named 'haven hair'
         $testQuery = '"haven hair" 中途 送養';
 
-        $this->line("正在向 Google 發送搜尋請求: [ {$testQuery} ]\n");
+        $this->line("Sending search request to Google: [ {$testQuery} ]\n");
 
         $snippets = $this->performSearch($testQuery);
 
         if (empty($snippets)) {
-            $this->error("沒有找到結果，或 API 設定有誤。");
+            $this->error("No results found, or API configuration is incorrect.");
             return;
         }
 
-        $this->info("✅ 成功獲取搜尋摘要！Agent 準備進行思考...\n");
+        $this->info("✅ Successfully retrieved search snippets! Agent is preparing to analyze...\n");
         
-        $this->info("🧠 呼叫 Gemini AI 大腦判斷中...");
+        $this->info("🧠 Calling Gemini AI brain for judgment...");
         $aiResult = $this->analyzeWithAI('haven hair', $snippets);
         
         if ($aiResult) {
-            $this->info("\n🎉 AI 判斷完成！以下是回傳的 JSON 結果：\n");
+            $this->info("\n🎉 AI analysis complete! Here is the returned JSON result:\n");
             $this->line(json_encode($aiResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
             
             if ($aiResult['is_foster_venue'] ?? false) {
-                $this->info("\n✅ 結論：這是一間真正的中途商家！原因：{$aiResult['reason']}");
+                $this->info("\n✅ Conclusion: This is a genuine foster venue! Reason: {$aiResult['reason']}");
             } else {
-                $this->warn("\n❌ 結論：這不是中途商家。原因：{$aiResult['reason']}");
+                $this->warn("\n❌ Conclusion: This is not a foster venue. Reason: {$aiResult['reason']}");
             }
         }
     }
 
     /**
-     * Agent 的搜尋工具：透過 Serper API 獲取 Google 搜尋摘要
+     * Agent's search tool: Fetch Google search snippets via Serper API
      */
     private function performSearch(string $query): string
     {
         $apiKey = env('SERPER_API_KEY');
         if (empty($apiKey)) {
-            $this->error('請確認 .env 中有設定 SERPER_API_KEY');
+            $this->error('Please ensure SERPER_API_KEY is set in your .env file.');
             return '';
         }
 
@@ -73,44 +73,45 @@ class VerifyFosterVenues extends Command
                 'X-API-KEY' => $apiKey,
                 'Content-Type' => 'application/json'
             ])->post('https://google.serper.dev/search', [
-                        'q' => $query,
-                        'gl' => 'tw',        // 定位在台灣
-                        'hl' => 'zh-tw',     // 使用繁體中文
-                        'num' => 5           // 只抓前 5 筆最相關的，節省 AI 閱讀時間與 Token
-                    ]);
+                'q' => $query,
+                'gl' => 'tw',        // Target Taiwan
+                'hl' => 'zh-tw',     // Use Traditional Chinese
+                'num' => 5           // Fetch top 5 results to save AI context window and tokens
+            ]);
 
             if ($response->successful()) {
                 $data = $response->json();
                 $snippets = [];
 
-                // 解析 Google 搜尋的「自然搜尋結果 (Organic)」
+                // Parse the organic search results from Google
                 if (isset($data['organic'])) {
                     foreach ($data['organic'] as $result) {
                         $title = $result['title'] ?? '';
                         $snippet = $result['snippet'] ?? '';
-                        $snippets[] = "標題: {$title}\n摘要: {$snippet}";
+                        $snippets[] = "Title: {$title}\nSnippet: {$snippet}";
                     }
                 }
 
-                // 將前 5 筆摘要組合成一段文字回傳給 AI
+                // Combine the top 5 snippets into a single text block for the AI
                 return implode("\n---\n", $snippets);
             } else {
-                $this->error("Serper API 回應錯誤: " . $response->body());
+                $this->error("Serper API error response: " . $response->body());
             }
         } catch (\Exception $e) {
-            $this->error("搜尋時發生例外錯誤: " . $e->getMessage());
+            $this->error("Exception occurred during search: " . $e->getMessage());
         }
 
         return '';
     }
+
     /**
-     * Agent 的思考工具：透過 Gemini API 進行 LLM 邏輯推演
+     * Agent's reasoning tool: Perform LLM logical deduction via Gemini API
      */
     private function analyzeWithAI(string $name, string $snippets): ?array
     {
         $apiKey = env('GEMINI_API_KEY');
         if (empty($apiKey)) {
-            $this->error('請確認 .env 中有設定 GEMINI_API_KEY');
+            $this->error('Please ensure GEMINI_API_KEY is set in your .env file.');
             return null;
         }
 
@@ -139,8 +140,8 @@ class VerifyFosterVenues extends Command
                     ]
                 ],
                 'generationConfig' => [
-                    'temperature' => 0.1, // 保持冷靜與客觀，減少幻覺
-                    'responseMimeType' => 'application/json' // 強制 JSON 輸出
+                    'temperature' => 0.1, // Keep it calm and objective to reduce hallucinations
+                    'responseMimeType' => 'application/json' // Force JSON output
                 ]
             ]);
 
@@ -148,15 +149,15 @@ class VerifyFosterVenues extends Command
                 $result = $response->json();
                 $text = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
                 
-                // 去除可能出現的 markdown 標籤
+                // Strip out potential markdown code blocks
                 $text = trim(str_replace(['```json', '```'], '', $text));
                 
                 return json_decode($text, true);
             } else {
-                $this->error("Gemini API 回應錯誤: " . $response->body());
+                $this->error("Gemini API error response: " . $response->body());
             }
         } catch (\Exception $e) {
-            $this->error("AI 分析時發生例外錯誤: " . $e->getMessage());
+            $this->error("Exception occurred during AI analysis: " . $e->getMessage());
         }
 
         return null;
