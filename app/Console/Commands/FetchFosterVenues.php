@@ -245,41 +245,52 @@ class FetchFosterVenues extends Command
     }
 
     /**
-     * Determine the venue type based on name and Google Place types
+     * Determine the venue tags (array) based on name and Google Place types
      */
-    private function determineType(string $name, array $googleTypes): string
+    private function determineType(string $name, array $googleTypes): array
     {
         $name = mb_strtolower($name);
-        // 1. Check by Name Keywords (Priority)
-        if (str_contains($name, '髮') || str_contains($name, '沙龍') || str_contains($name, 'salon')) {
-            return FosterVenue::TYPE_HAIR_SALON;
-        }
-        if (str_contains($name, '桌遊') || str_contains($name, '遊戲')) {
-            return FosterVenue::TYPE_BOARD_GAME;
-        }
-        if (str_contains($name, '收容所') || str_contains($name, '動物之家') || str_contains($name, '協會')) {
-            return FosterVenue::TYPE_SHELTER;
-        }
-        // 新增：判定寵物用品店
-        if (str_contains($name, '寵物用品') || str_contains($name, '寵物館') || in_array('pet_store', $googleTypes)) {
-            return FosterVenue::TYPE_PET_STORE;
-        }
+        $tags = [];
 
-        // 2. Check by Google Types
+        if (str_contains($name, '髮') || str_contains($name, '沙龍') || str_contains($name, 'salon') || in_array('hair_care', $googleTypes)) {
+            $tags[] = FosterVenue::TYPE_HAIR_SALON;
+        }
+        if (str_contains($name, '動物醫院') || str_contains($name, '獸醫') || in_array('veterinary_care', $googleTypes)) {
+            $tags[] = FosterVenue::TYPE_VET_CLINIC;
+        }
+        if (str_contains($name, '寵物用品') || str_contains($name, '寵物館') || str_contains($name, '水族') || in_array('pet_store', $googleTypes)) {
+            $tags[] = FosterVenue::TYPE_PET_SUPPLIES;
+        }
+        if (str_contains($name, '美容') || str_contains($name, '洗狗') || str_contains($name, '洗貓') || str_contains($name, 'grooming')) {
+            $tags[] = FosterVenue::TYPE_PET_GROOMING;
+        }
+        if (str_contains($name, '旅館') || str_contains($name, '住宿') || str_contains($name, '寄宿') || str_contains($name, 'hotel')) {
+            $tags[] = FosterVenue::TYPE_PET_HOTEL;
+        }
         if (
-            in_array('restaurant', $googleTypes) ||
-            in_array('food', $googleTypes) ||
-            in_array('cafe', $googleTypes) ||
-            in_array('coffee_shop', $googleTypes)
+            str_contains($name, '餐廳') || str_contains($name, '咖啡') || str_contains($name, 'cafe') || str_contains($name, '食堂') ||
+            in_array('restaurant', $googleTypes) || in_array('cafe', $googleTypes) || in_array('food', $googleTypes)
         ) {
-            return FosterVenue::TYPE_RESTAURANT;
+            $tags[] = FosterVenue::TYPE_RESTAURANT_CAFE;
+        }
+        if (str_contains($name, '收容所') || str_contains($name, '動物之家')) {
+            $tags[] = FosterVenue::TYPE_PUBLIC_SHELTER;
+        }
+        if (str_contains($name, '協會') || str_contains($name, '保育場') || str_contains($name, '狗園') || str_contains($name, '中途之家') || str_contains($name, '護生園') || in_array('animal_shelter', $googleTypes)) {
+            $tags[] = FosterVenue::TYPE_PRIVATE_SHELTER;
+        }
+        if (str_contains($name, '工作室') || str_contains($name, 'studio')) {
+            $tags[] = FosterVenue::TYPE_STUDIO;
+        }
+        if (str_contains($name, '書') || str_contains($name, '漫畫') || str_contains($name, '桌遊') || str_contains($name, '空間') || str_contains($name, '藝廊')) {
+            $tags[] = FosterVenue::TYPE_LEISURE_HYBRID;
         }
 
-        if (in_array('veterinary_care', $googleTypes)) {
-            return FosterVenue::TYPE_VET_CLINIC;
+        if (empty($tags)) {
+            $tags[] = FosterVenue::TYPE_STUDIO; 
         }
 
-        return FosterVenue::TYPE_OTHER;
+        return array_unique($tags);
     }
 
     /**

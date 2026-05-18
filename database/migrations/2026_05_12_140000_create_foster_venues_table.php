@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('uuid', 12)->unique();
             $table->string('name');
-            $table->string('type');                         // cafe / restaurant / shelter / vet_clinic
+            $table->json('type')->nullable();               // Array of categories, e.g., ['寵物用品店', '寵物美容']
             $table->text('description')->nullable();
             $table->string('phone')->nullable();
             $table->string('city');

@@ -10,14 +10,17 @@ class FosterVenue extends Model
 {
     use HasFactory;
 
-    // Type constants
-    public const TYPE_RESTAURANT = 'restaurant';
-    public const TYPE_SHELTER = 'shelter';
-    public const TYPE_VET_CLINIC = 'vet_clinic';
+    // Type constants (Tags)
     public const TYPE_HAIR_SALON = 'hair_salon';
-    public const TYPE_BOARD_GAME = 'board_game';
-    public const TYPE_PET_STORE = 'pet_store';
-    public const TYPE_OTHER = 'other';
+    public const TYPE_VET_CLINIC = 'vet_clinic';
+    public const TYPE_PET_SUPPLIES = 'pet_supplies';
+    public const TYPE_PET_GROOMING = 'pet_grooming';
+    public const TYPE_PET_HOTEL = 'pet_hotel';
+    public const TYPE_RESTAURANT_CAFE = 'restaurant_cafe';
+    public const TYPE_PUBLIC_SHELTER = 'public_shelter';
+    public const TYPE_PRIVATE_SHELTER = 'private_shelter';
+    public const TYPE_STUDIO = 'studio';
+    public const TYPE_LEISURE_HYBRID = 'leisure_hybrid';
 
 
     // Status constants
@@ -53,6 +56,7 @@ class FosterVenue extends Model
     ];
 
     protected $casts = [
+        'type' => 'array',
         'business_hours' => 'array',
         'pet_types' => 'array',
         'services' => 'array',
@@ -104,7 +108,7 @@ class FosterVenue extends Model
             $query->where('district', 'LIKE', "%{$district}%");
         }
         if (!empty($filters['type'])) {
-            $query->where('type', $filters['type']);
+            $query->whereJsonContains('type', $filters['type']);
         }
         if (!empty($filters['pet_type'])) {
             $query->whereJsonContains('pet_types', $filters['pet_type']);
