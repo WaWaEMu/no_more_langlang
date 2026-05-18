@@ -252,10 +252,10 @@ class VerifyFosterVenues extends Command
                     $text = trim(str_replace(['```json', '```'], '', $text));
 
                     return json_decode($text, true);
-                } elseif ($response->status() === 429) {
+                } elseif (in_array($response->status(), [429, 500, 503])) {
                     $attempt++;
                     $waitTime = 15 * $attempt; // Exponential backoff: 15s, 30s, 45s
-                    $this->warn("⚠️ Rate limit exceeded (429). Sleeping for {$waitTime} seconds before retrying (Attempt {$attempt}/{$maxRetries})...");
+                    $this->warn("⚠️ API Overloaded or Rate limited ({$response->status()}). Sleeping for {$waitTime} seconds before retrying (Attempt {$attempt}/{$maxRetries})...");
                     sleep($waitTime);
                     continue;
                 } else {
