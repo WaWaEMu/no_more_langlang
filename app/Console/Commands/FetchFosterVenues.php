@@ -56,148 +56,41 @@ class FetchFosterVenues extends Command
 
         // Targeted keywords — cast a wide net, whitelist filter handles precision
         $keywords = [
-            '中途 送養',
-            '浪浪 送養',
+            '中途 認養 OR 送養',
+            '浪浪',
             '流浪動物 護生園 狗園',
             '收容所 動物之家 教育園區',
+            '美髮 貓 OR 狗',
+            '漫畫 貓 OR 狗',
+            '咖啡廳 貓 OR 狗',
+            '寵物用品 認養 OR 送養 OR 中途',
+            '寵物美容 認養 OR 送養 OR 中途',
+            '寵物旅館 認養 OR 送養 OR 中途',
+            '工作室 認養 OR 送養 OR 中途'
         ];
 
-        // 1. Foster-related strong keywords (Needs animal context)
-        $fosterKeywords = [
-            '中途',
-            '領養',
-            '認養',
-            '送養',
-            '收容',
-            '流浪',
-            '救援',
-            '庇護',
-            '照護中心',
-            '護生',
-            '愛媽',
-            '愛爸'
+        // 1. Ineligible Blacklist (Skip immediately to save API tokens and AI fees)
+        // Combines global non-animal terms and strict commercial/breeder keywords.
+        // We DO NOT block "貓舍/犬舍" here to prevent false positives like "新屋貓舍義工團".
+        $blacklist = [
+            '移民署', '更生', '戒毒', '少年', '基督教', '更生團契', '法務部',
+            '福利', '心理', '安置', '野生', '保育類', '試驗', '研究', '實驗',
+            '辦公室', '辦事處', '動保處', '防疫所', '試吃', '婚宴', '喜餅',
+            '水世界', '寄養', '佛學會', '醫院',
+            '寵物美容學苑', '寵物美容學院',
+            '品種', '買賣', '名貓', '名犬', '自家繁殖', '特寵字', '特寵證', '血統', '出售'
         ];
 
-        // 2. Animal-related keywords (The context)
-        $animalKeywords = [
-            '貓',
-            '狗',
-            '喵',
-            '汪',
-            '毛孩',
-            '毛小孩',
-            '動物',
-            '寵物',
-            '米克斯',
-            '浪犬',
-            '浪貓'
+        // 2. Definitive/Official Animal Shelters (100% trusted, passes instantly as verified)
+        $definitiveShelters = [
+            '狗園', 'TNR', '動物之家', '保育場', '動保', '浪浪',
+            '認養中心', '送養中心', '領養中心', '護生園', '教育園區', '收容所',
+            '中途之家', '義工團', '愛護動物協會', '保護動物協會'
         ];
 
-        // 3. Definitive Animal Venue keywords (Passes even without dual check)
-        $definitiveAnimalKeywords = [
-            '狗園',
-            '貓園',
-            'TNR',
-            '動物之家',
-            '保育場',
-            '動保',
-            '浪浪',
-            '認養中心',
-            '送養中心',
-            '領養中心',
-            '護生園',
-            '教育園區',
-            '躍動園區',
-            '寵物銀行',
-            '貓格里拉',
-            '小犬',
-            '浪浪別哭',
-            '咪可思',
-            '躍動園區',
-            '新屋貓舍',
-            '狗腳印',
-            '好好善待',
-            '流浪狗中途之家',
-            '外帶一隻貓',
-            '和貓咪有約',
-            '東森寵物',
-            '認養小站',
-            'Help Save A Pet',
-            '燕巢動物保護關愛園區',
-            '狗場',
-            '巴克幫',
-            '金汪汪',
-            '䕶生園',
-            '犬山居',
-            '愛狗人協會',
-            '賴媽媽',
-            '毛小孩幸福農莊',
-            '善化收容所',
-            '莉丰慧民',
-            '世界聯合保護動物協會',
-            '小松樹',
-            '毛小孩的窩仁德園區',
-            '貓咪也瘋狂公益協會',
-            '貓狗甜園',
-            '新竹收容所'
-        ];
-
-        // 4. Ineligible Venue Blacklist (Instant skip)
-        $globalBlacklist = [
-            '移民署',
-            '更生',
-            '戒毒',
-            '少年',
-            '基督教',
-            '更生團契',
-            '法務部',
-            '福利',
-            '心理',
-            '安置',
-            '野生',
-            '保育類',
-            '試驗',
-            '研究',
-            '實驗',
-            '貓舍',
-            '犬舍',
-            '辦公室',
-            '辦事處',
-            '動保處',
-            '防疫所',
-            '試吃',
-            '婚宴',
-            '喜餅',
-            '水世界',
-            '寄養',
-            '佛學會',
-            '醫院'
-        ];
-
-        // 5. Specific Precise Blacklist (Names that trick the system)
-        $preciseBlacklist = [
-            '天使之戀',
-            '聖力貓舍',
-            '寵翻天寵物家族',
-            '庭園寵物',
-            '動物保護處',
-            '汪喵歡樂營',
-            '貓膩會館',
-            '寵物公園(苗栗竹南)',
-            '觀音的家',
-            '屏東動物之家—寵物美容、行為訓練中心',
-            '新店動物之家山下辦公室',
-            'UNI Cafe'
-        ];
-
-        $typeWhitelist = [
-            'animal_shelter',
-            'non_governmental_organization',
-            'pet_store',
-            'restaurant',
-            'cafe',
-            'pet_boarding_service',
-            'veterinary_care'
+        // 3. Official Google Place Type (Passes instantly as verified)
+        $officialTypes = [
+            'animal_shelter'
         ];
 
         $url = 'https://places.googleapis.com/v1/places:searchText';
@@ -242,93 +135,69 @@ class FetchFosterVenues extends Command
                         $address = $this->fixAddress($place['formattedAddress'] ?? '');
                         $googleTypes = $place['types'] ?? [];
 
-                        // 1. Precise Blacklist: ULTIMATE SKIP (No one bypasses this, not even VIPs)
-                        foreach ($preciseBlacklist as $badName) {
-                            if (str_contains($name, $badName)) {
-                                $this->warn("  - Skipping (Precise Blacklist Match): {$name}");
+                        // 1. Blacklist Check (Instant Skip)
+                        foreach ($blacklist as $badWord) {
+                            if (str_contains($name, $badWord)) {
+                                $this->warn("  - Skipping (Blacklist Match): {$name}");
                                 continue 2;
                             }
                         }
 
-                        // 2. VIP Whitelist: Identify definitive animal venues
-                        $isDefinitiveAnimal = false;
-                        foreach ($definitiveAnimalKeywords as $kw) {
-                            if (str_contains($name, $kw)) {
-                                $isDefinitiveAnimal = true;
-                                break;
-                            }
-                        }
-
-                        // 3. Global Blacklist: Only check if NOT a definitive animal venue
-                        if (!$isDefinitiveAnimal) {
-                            foreach ($globalBlacklist as $badWord) {
-                                if (str_contains($name, $badWord)) {
-                                    $this->warn("  - Skipping (Ineligible Venue): {$name}");
-                                    continue 2;
-                                }
-                            }
-                        }
-
-                        // 4. Skip permanently closed businesses
+                        // 2. Skip permanently closed businesses
                         $businessStatus = $place['businessStatus'] ?? 'OPERATIONAL';
                         if ($businessStatus === 'CLOSED_PERMANENTLY') {
                             $this->warn("  - Skipping (Permanently Closed): {$name}");
                             continue;
                         }
 
-                        // 5. Relevance Verification
-                        $isOfficialShelter = !empty(array_intersect($googleTypes, $typeWhitelist));
-
-                        $hasFosterWord = false;
-                        foreach ($fosterKeywords as $kw) {
+                        // 3. VIP Whitelist: Identify 100% official/definitive public shelters
+                        $isOfficialShelter = !empty(array_intersect($googleTypes, $officialTypes));
+                        $isDefinitiveShelter = false;
+                        foreach ($definitiveShelters as $kw) {
                             if (str_contains($name, $kw)) {
-                                $hasFosterWord = true;
+                                $isDefinitiveShelter = true;
                                 break;
                             }
                         }
 
-                        $hasAnimalWord = false;
-                        foreach ($animalKeywords as $kw) {
-                            if (str_contains($name, $kw)) {
-                                $hasAnimalWord = true;
-                                break;
-                            }
-                        }
+                        $isVerifiedShelter = $isOfficialShelter || $isDefinitiveShelter;
 
-                        $isFosterAnimalVenue = $hasFosterWord && $hasAnimalWord;
-
-                        if (!$isDefinitiveAnimal && !$isOfficialShelter && !$isFosterAnimalVenue) {
-                            $this->warn("  - Skipping (Not an animal foster venue): {$name}");
-                            continue;
-                        }
+                        // 4. Send all other non-blacklisted results to AI Agent for verification
+                        // No strict keyword matching here to avoid missing quirky names like "毛髦" or "haven hair"
 
                         $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $county;
 
-                        // Use updateOrCreate to ensure no duplicates based on name and address
-                        FosterVenue::updateOrCreate(
-                            [
-                                'name' => $name,
-                                'address' => $address
-                            ],
-                            [
-                                'city' => $this->fixAddress($realCity),
-                                'district' => $this->extractDistrict($place['addressComponents'] ?? []),
-                                'phone' => $place['nationalPhoneNumber'] ?? null,
-                                'latitude' => $place['location']['latitude'] ?? null,
-                                'longitude' => $place['location']['longitude'] ?? null,
-                                'rating' => $place['rating'] ?? null,
-                                'user_rating_count' => $place['userRatingCount'] ?? null,
-                                'business_hours' => $place['regularOpeningHours']['weekdayDescriptions'] ?? null,
-                                'website_url' => $place['websiteUri'] ? substr($place['websiteUri'], 0, 255) : null,
-                                'type' => $this->determineType($name, $place['types'] ?? []),
-                                'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? null,
-                                'business_status' => $businessStatus,
-                                'status' => FosterVenue::STATUS_ACTIVE,
-                                'pet_types' => $this->determinePetTypes($name, $keyword),
-                                'services' => ['adoption'],
-                                'is_verified' => false
-                            ]
-                        );
+                        // Use firstOrNew to prevent overwriting AI Agent's verification status
+                        $venue = FosterVenue::firstOrNew([
+                            'name' => $name,
+                            'address' => $address
+                        ]);
+
+                        // Only set default status and verification for NEW venues
+                        if (!$venue->exists) {
+                            $venue->status = $isVerifiedShelter ? FosterVenue::STATUS_ACTIVE : FosterVenue::STATUS_PENDING;
+                            $venue->is_verified = $isVerifiedShelter;
+                        }
+
+                        // Always update basic info, preserving existing status and is_verified
+                        $venue->fill([
+                            'city' => $this->fixAddress($realCity),
+                            'district' => $this->extractDistrict($place['addressComponents'] ?? []),
+                            'phone' => $place['nationalPhoneNumber'] ?? null,
+                            'latitude' => $place['location']['latitude'] ?? null,
+                            'longitude' => $place['location']['longitude'] ?? null,
+                            'rating' => $place['rating'] ?? null,
+                            'user_rating_count' => $place['userRatingCount'] ?? null,
+                            'business_hours' => $place['regularOpeningHours']['weekdayDescriptions'] ?? null,
+                            'website_url' => $place['websiteUri'] ? substr($place['websiteUri'], 0, 255) : null,
+                            'type' => $this->determineType($name, $place['types'] ?? []),
+                            'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? null,
+                            'business_status' => $businessStatus,
+                            'pet_types' => $this->determinePetTypes($name, $keyword),
+                            'services' => ['adoption'],
+                        ]);
+
+                        $venue->save();
 
                         $this->line("  - <info>Processed</info>: {$name}");
                     }
