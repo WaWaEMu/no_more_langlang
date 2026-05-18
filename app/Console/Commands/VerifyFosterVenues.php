@@ -43,7 +43,7 @@ class VerifyFosterVenues extends Command
             }
 
             $this->info("[AI] Snippets retrieved. Analyzing with Gemini...");
-            $aiResult = $this->analyzeWithAI($manualName, $snippets);
+            $aiResult = $this->analyzeWithAI($manualName, "", $snippets);
 
             if ($aiResult) {
                 if ($aiResult['is_foster_venue'] ?? false) {
@@ -89,8 +89,15 @@ class VerifyFosterVenues extends Command
             $this->info("\n----------------------------------------");
             $this->info("🔍 Verifying: {$venue->name}");
 
-            // Crafting the search query with explicit logical grouping to filter out noisy list pages
-            $searchQuery = "\"{$venue->name}\" AND (\"中途\" OR \"認養\" OR \"送養\" OR \"領養\")";
+            $locationContext = trim(($venue->city ?? '') . ' ' . ($venue->district ?? ''));
+
+            // Crafting the search query with explicit logical grouping and geographic context to differentiate branches
+            $searchQuery = "\"{$venue->name}\"";
+            if ($locationContext) {
+                $searchQuery .= " {$locationContext}";
+            }
+            $searchQuery .= " AND (\"中途\" OR \"認養\" OR \"送養\" OR \"領養\")";
+
             $this->line("Sending search query: [ {$searchQuery} ]");
 
             $snippets = $this->performSearch($searchQuery);
@@ -101,7 +108,7 @@ class VerifyFosterVenues extends Command
             }
 
             $this->info("[AI] Snippets retrieved. Analyzing with Gemini...");
-            $aiResult = $this->analyzeWithAI($venue->name, $snippets);
+            $aiResult = $this->analyzeWithAI($venue->name, $locationContext, $snippets);
 
             if ($aiResult) {
                 if ($aiResult['is_foster_venue'] ?? false) {
@@ -179,7 +186,7 @@ class VerifyFosterVenues extends Command
     /**
      * Agent's reasoning tool: Perform LLM logical deduction via Gemini API
      */
-    private function analyzeWithAI(string $name, string $snippets): ?array
+    private function analyzeWithAI(string $name, string $locationContext, string $snippets): ?array
     {
         $apiKey = env('GEMINI_API_KEY');
         if (empty($apiKey)) {
@@ -187,8 +194,10 @@ class VerifyFosterVenues extends Command
             return null;
         }
 
+        $locationString = $locationContext ? "（位於 {$locationContext}）" : "";
+
         $prompt = "你是一位台灣流浪動物中途商家的「極度嚴格」審核專家。\n"
-            . "任務：請根據以下 Google 搜尋摘要，判斷這家店「{$name}」是否「長期且持續地在店內提供流浪貓狗的中途、安置或認養/送養服務」。\n\n"
+            . "任務：請根據以下 Google 搜尋摘要，判斷這家店「{$name}」{$locationString}是否「長期且持續地在店內提供流浪貓狗的中途、安置或認養/送養服務」。\n\n"
             . "【⚠️ 絕對排除條款 - 出現以下情況必須判斷為 false】\n"
             . "1. 純「寵物友善」：僅允許顧客帶寵物入內、提供寵物餐，但店內「沒有」常駐待認養的流浪動物。\n"
             . "2. 「單次/短期活動」：僅舉辦過單次或短期的流浪動物認養會、義賣會、新書發表會或動保講座。\n"
@@ -197,7 +206,7 @@ class VerifyFosterVenues extends Command
             . "5. 「純科技館/觀光景點/娛樂場所」：如 ANIVERSE KEELUNG，即使曾與動保處合作辦過一次性認養活動，也絕非中途商家，必須排除。\n\n"
             . "【⚠️ 嚴格防範「跨主體關聯謬誤」（重要！）】\n"
             . "在搜尋摘要中，不同商家的資訊可能因為「並列推薦」、「懶人包對比清單（例如：推薦10大餐廳，包含中途咖啡廳A、純寵物友善餐廳B）」或「YouTube 頻道系列影片名稱（例如：探訪「{$name}」...與大型貓互動...【轉運棧－貓中途咖啡廳ep1】）」而同時出現在同一個摘要中。\n"
-            . "你必須「語意理解」這些詞彙與本商家「{$name}」的真實關係。\n"
+            . "你必須「語意理解」這些詞彙與本商家「{$name}」{$locationString}的真實關係。\n"
             . "- 錯誤範例：若摘要寫著『探訪「{$name}」！...與大型貓互動...【轉運棧－貓中途咖啡廳ep1】』，這代表中途是「轉運棧」，而不是「{$name}」，此時你必須判定為 false。\n"
             . "- 錯誤範例：若摘要是某人抱怨『去貓舍「{$name}」問免費認養...』，這代表它是貓舍，不是中途，此時你必須判定為 false。\n"
             . "- 黃金法則：只有當搜尋摘要中，明確且直接指出「{$name}」這家店本身就是貓咪中途、有提供中途安置或店內貓狗供認養時，才能判定為 true！\n\n"
