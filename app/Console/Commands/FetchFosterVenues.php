@@ -30,29 +30,54 @@ class FetchFosterVenues extends Command
             return;
         }
 
-        // Full Taiwan counties including offshore islands
-        $counties = [
-            '台北',
-            '新北',
-            '基隆',
-            '桃園',
-            '新竹',
-            '苗栗',
-            '台中',
-            '彰化',
-            '南投',
-            '雲林',
-            '嘉義',
-            '台南',
-            '高雄',
-            '屏東',
-            '宜蘭',
-            '花蓮',
-            '台東',
-            '澎湖',
-            '金門',
-            '馬祖'
+        // District lists for metropolitan areas with dense pet business populations
+        $metroDistricts = [
+            '台北' => [
+                '大安區', '信義區', '中山區', '內湖區', '士林區', '松山區', 
+                '大同區', '萬華區', '文山區', '中正區', '南港區', '北投區'
+            ],
+            '新北' => [
+                '板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', 
+                '土城區', '蘆洲區', '汐止區', '樹林區', '淡水區', '林口區', '三峽區'
+            ],
+            '台中' => [
+                '西屯區', '北屯區', '南屯區', '西區', '北區', '東區', '南區', 
+                '豐原區', '大里區', '太平區', '沙鹿區', '潭子區'
+            ],
+            '高雄' => [
+                '三民區', '左營區', '鼓山區', '鳳山區', '前鎮區', '新興區', 
+                '苓雅區', '楠梓區', '小港區', '岡山區', '仁武區'
+            ],
+            '桃園' => [
+                '桃園區', '中壢區', '平鎮區', '八德區', '蘆竹區', '龜山區', '楊梅區'
+            ],
+            '台南' => [
+                '東區', '永康區', '安平區', '中西區', '北區', '南區', '安南區', '新營區'
+            ]
         ];
+
+        // Basic counties (including offshore islands) processed as a single unit
+        $counties = [
+            '基隆', '新竹', '苗栗', '彰化', '南投', '雲林', '嘉義', '屏東', 
+            '宜蘭', '花蓮', '台東', '澎湖', '金門', '馬祖'
+        ];
+
+        // Assemble search targets with district-level granularity for high-density areas
+        $searchTargets = [];
+        foreach ($metroDistricts as $city => $districts) {
+            foreach ($districts as $district) {
+                $searchTargets[] = [
+                    'label' => "{$city}市{$district}",
+                    'query_prefix' => "{$city}市{$district}"
+                ];
+            }
+        }
+        foreach ($counties as $county) {
+            $searchTargets[] = [
+                'label' => $county,
+                'query_prefix' => $county
+            ];
+        }
 
         // Targeted keywords — cast a wide net, whitelist filter handles precision
         $keywords = [
@@ -95,9 +120,9 @@ class FetchFosterVenues extends Command
 
         $url = 'https://places.googleapis.com/v1/places:searchText';
 
-        foreach ($counties as $county) {
+        foreach ($searchTargets as $target) {
             foreach ($keywords as $keyword) {
-                $query = "{$county} {$keyword}";
+                $query = "{$target['query_prefix']} {$keyword}";
                 $this->info("Searching: {$query}...");
 
                 try {
@@ -165,7 +190,7 @@ class FetchFosterVenues extends Command
                         // 4. Send all other non-blacklisted results to AI Agent for verification
                         // No strict keyword matching here to avoid missing quirky names like "毛髦" or "haven hair"
 
-                        $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $county;
+                        $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $target['label'];
 
                         // Use firstOrNew to prevent overwriting AI Agent's verification status
                         $venue = FosterVenue::firstOrNew([
