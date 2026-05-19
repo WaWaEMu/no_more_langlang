@@ -31,8 +31,14 @@ class VerifyFosterVenues extends Command
         if ($manualName) {
             $this->info("🔍 [Manual] Verifying: {$manualName}");
 
-            // Clean the manual name for search: strip out parentheses/brackets and their contents
-            $cleanManualName = preg_replace('/(\(|（).*?(\)|）)/u', '', $manualName);
+            // Clean the manual name for search: strip out parentheses/brackets and everything after them
+            $cleanManualName = $manualName;
+            $delimiters = ['(', '（', '【', '['];
+            foreach ($delimiters as $delimiter) {
+                if (str_contains($cleanManualName, $delimiter)) {
+                    $cleanManualName = explode($delimiter, $cleanManualName)[0];
+                }
+            }
             $cleanManualName = trim($cleanManualName);
 
             // Crafting the search query with explicit logical grouping
@@ -94,8 +100,14 @@ class VerifyFosterVenues extends Command
 
             $locationContext = trim(($venue->city ?? '') . ' ' . ($venue->district ?? ''));
 
-            // Clean the venue name for search: strip out parentheses/brackets (both English and Full-width Chinese) and their contents
-            $cleanName = preg_replace('/(\(|（).*?(\)|）)/u', '', $venue->name);
+            // Clean the venue name for search: strip out parentheses/brackets and everything after them
+            $cleanName = $venue->name;
+            $delimiters = ['(', '（', '【', '['];
+            foreach ($delimiters as $delimiter) {
+                if (str_contains($cleanName, $delimiter)) {
+                    $cleanName = explode($delimiter, $cleanName)[0];
+                }
+            }
             $cleanName = trim($cleanName);
 
             // Crafting the search query with explicit logical grouping and geographic context to differentiate branches
@@ -212,7 +224,8 @@ class VerifyFosterVenues extends Command
             . "4. 「僅捐款/義賣」：僅將部分盈餘捐給動保團體，或僅在店內置放發票箱、販售公益年曆，但店內並無實際安置中途浪浪。\n"
             . "5. 「名字誤導」：例如「小獸書屋」雖有「獸」字，但本質是獨立書店，除非有強烈證據顯示它「長期在店內安置流浪貓狗供人認養」，否則一律排除。\n"
             . "6. 「純科技館/觀光景點/娛樂場所」：如 ANIVERSE KEELUNG，即使曾與動保處合作辦過一次性認養活動，也絕非中途商家，必須排除。\n"
-            . "7. 「已退役/過時歷史資訊」（極度重要）：台灣許多早期老牌貓咪咖啡廳（如：極簡咖啡館 Minimal Cafe）在十年前曾是知名中途之家，但如今已停止送養，店內全為「已收編的非賣品老店貓」。若搜尋摘要顯示的資訊多為「超過三年以上的舊文/舊網誌」，且缺乏「最近三年內」明確的「現正送養中」、「待認養貓狗」資訊，【必須判定為 false】！本平台只收錄「最近三年內仍有活躍送養紀錄」的中途商家。\n\n"
+            . "7. 「已退役/過時歷史資訊」（極度重要）：台灣許多早期老牌貓咪咖啡廳（如：極簡咖啡館 Minimal Cafe）在十年前曾是知名中途之家，但如今已停止送養，店內全為「已收編的非賣品老店貓」。若搜尋摘要顯示的資訊多為「超過三年以上的舊文/舊網誌」，且缺乏「最近三年內」明確的「現正送養中」、「待認養貓狗」資訊，【必須判定為 false】！本平台只收錄「最近三年內仍有活躍送養紀錄」的中途商家。\n"
+            . "8. 「非主營中途之一般商業寵物店/美容精品/醫院」（極度重要）：如果該店本質上是「一般的寵物用品店、寵物美容店、精品店、動物醫院或寵物旅館」，雖然店主/店員私下很有愛心、會做流浪動物救濟、在店內放發票箱、或「偶爾私下幫忙媒合送養」，但如果該店內【沒有常態且公開展示的中途安置/領養區】，亦即一般顧客無法直接去店裡跟待認養的浪浪互動，就【必須判定為 false】！我們絕不收錄主營一般商業服務但僅私下做愛心的寵物店。\n\n"
             . "【⚠️ 嚴格防範「跨主體關聯謬誤」（重要！）】\n"
             . "在搜尋摘要中，不同商家的資訊可能因為「並列推薦」、「懶人包對比清單（例如：推薦10大餐廳，包含中途咖啡廳A、純寵物友善餐廳B）」或「YouTube 頻道系列影片名稱（例如：探訪「{$name}」...與大型貓互動...【轉運棧－貓中途咖啡廳ep1】）」而同時出現在同一個摘要中。\n"
             . "你必須「語意理解」這些詞彙與本商家「{$name}」{$locationString}的真實關係。\n"
