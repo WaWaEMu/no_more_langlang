@@ -50,7 +50,7 @@
                     <div class="foster-venue__chip-row">
                         <button v-for="chip in typeChips" :key="chip.value" class="foster-venue__chip"
                             :class="{ 'foster-venue__chip--active': filters.type === chip.value }"
-                            @click="selectType(chip.value)">
+                            @click="selectType(chip.value, $event)">
                             <i :class="chip.icon" class="foster-venue__chip-icon"></i>
                             <span class="foster-venue__chip-label">{{ $t(chip.label) }}</span>
                         </button>
@@ -61,7 +61,7 @@
                         <button v-for="pet in petChips" :key="pet.value"
                             class="foster-venue__chip foster-venue__chip--sm"
                             :class="{ 'foster-venue__chip--active': filters.pet_type === pet.value }"
-                            @click="selectPetType(pet.value)">
+                            @click="selectPetType(pet.value, $event)">
                             <span class="foster-venue__chip-label">{{ $t(pet.label) }}</span>
                         </button>
                     </div>
@@ -97,11 +97,11 @@
                                 <div v-for="venue in venues" :key="venue.id" class="foster-venue-page__card"
                                     :class="{ 'foster-venue-page__card--active': selectedVenue?.id === venue.id }"
                                     @click="handleVenueSelect(venue)">
-                                    <div class="foster-venue-page__card-type">
-                                        <span class="foster-venue-page__type-badge"
-                                            :class="`foster-venue-page__type-badge--${venue.type}`">
-                                            <i :class="typeIcon(venue.type)" class="me-1"></i>{{
-                                                $t(`venue.type.${venue.type}`) }}
+                                    <div class="foster-venue-page__card-type d-flex gap-1 flex-wrap">
+                                        <span v-for="t in venue.type" :key="t"
+                                            class="foster-venue-page__type-badge"
+                                            :class="`foster-venue-page__type-badge--${t}`">
+                                            <i :class="typeIcon(t)" class="me-1"></i>{{ $t(`venue.type.${t}`) }}
                                         </span>
                                     </div>
 
@@ -185,14 +185,30 @@ function handleCityChange() {
     fetchVenues()
 }
 
-function selectType(value: string) {
+function selectType(value: string, event?: MouseEvent) {
     filters.value.type = value
     fetchVenues()
+
+    if (event?.currentTarget) {
+        (event.currentTarget as HTMLElement).scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+        })
+    }
 }
 
-function selectPetType(value: string) {
+function selectPetType(value: string, event?: MouseEvent) {
     filters.value.pet_type = value
     fetchVenues()
+
+    if (event?.currentTarget) {
+        (event.currentTarget as HTMLElement).scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+        })
+    }
 }
 
 function handleVenueSelect(venue: FosterVenueInter) {
@@ -278,7 +294,6 @@ onMounted(async () => {
     border-color: #94a3b8;
 }
 
-/* Chip rows */
 .foster-venue__chip-row {
     display: flex;
     align-items: center;
@@ -286,6 +301,14 @@ onMounted(async () => {
     padding: 0 1rem;
     border-bottom: 1px solid #f1f5f9;
     overflow-x: auto;
+    
+    /* Hide scrollbars for a premium touchless-swipe feel */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.foster-venue__chip-row::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
 }
 
 .foster-venue__chip-row--sm {
@@ -437,19 +460,35 @@ onMounted(async () => {
     display: inline-block;
 }
 
-.foster-venue-page__type-badge--restaurant {
+.foster-venue-page__type-badge--restaurant_cafe {
     background: #fef9c3;
     color: #a16207;
 }
 
-.foster-venue-page__type-badge--shelter {
+.foster-venue-page__type-badge--public_shelter {
     background: #dbeafe;
     color: #1d4ed8;
 }
 
-.foster-venue-page__type-badge--pet_store {
+.foster-venue-page__type-badge--private_shelter {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px dashed #bfdbfe;
+}
+
+.foster-venue-page__type-badge--pet_supplies {
     background: #d1fae5;
     color: #065f46;
+}
+
+.foster-venue-page__type-badge--pet_grooming {
+    background: #ecfeff;
+    color: #0891b2;
+}
+
+.foster-venue-page__type-badge--pet_hotel {
+    background: #e0f2fe;
+    color: #0369a1;
 }
 
 .foster-venue-page__type-badge--hair_salon {
@@ -457,14 +496,19 @@ onMounted(async () => {
     color: #9d174d;
 }
 
-.foster-venue-page__type-badge--board_game {
-    background: #ede9fe;
-    color: #5b21b6;
-}
-
 .foster-venue-page__type-badge--vet_clinic {
     background: #fee2e2;
     color: #991b1b;
+}
+
+.foster-venue-page__type-badge--studio {
+    background: #f5f5f4;
+    color: #57534e;
+}
+
+.foster-venue-page__type-badge--leisure_hybrid {
+    background: #ede9fe;
+    color: #5b21b6;
 }
 
 /* =========================================

@@ -2,7 +2,7 @@ export interface FosterVenueInter {
     id: number
     uuid: string
     name: string
-    type: string
+    type: string[]
     primary_type_display_name: string | null
     description: string | null
     phone: string | null

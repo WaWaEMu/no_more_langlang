@@ -9,6 +9,7 @@ import { onMounted, watch, onBeforeUnmount } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { FosterVenueInter } from '@/types/fosterVenue'
+import { trans } from 'laravel-vue-i18n'
 
 const props = defineProps<{
     venues: FosterVenueInter[]
@@ -69,7 +70,9 @@ const updateMarkers = () => {
                     <div class="foster-venue-map__popup">
                         <h6 class="fw-bold mb-1">${venue.name}</h6>
                         <p class="small text-muted mb-1">${venue.address}</p>
-                        <span class="badge bg-primary">${venue.type}</span>
+                        <div class="d-flex gap-1 flex-wrap mt-1">
+                            ${venue.type.map(t => `<span class="badge bg-primary">${trans(`venue.type.${t}`)}</span>`).join('')}
+                        </div>
                     </div>
                 `)
             
