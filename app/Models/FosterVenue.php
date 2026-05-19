@@ -19,7 +19,6 @@ class FosterVenue extends Model
     public const TYPE_RESTAURANT_CAFE = 'restaurant_cafe';
     public const TYPE_PUBLIC_SHELTER = 'public_shelter';
     public const TYPE_PRIVATE_SHELTER = 'private_shelter';
-    public const TYPE_STUDIO = 'studio';
     public const TYPE_LEISURE_HYBRID = 'leisure_hybrid';
 
 

@@ -14,7 +14,6 @@ export const TYPE_CHIPS = [
     { value: 'vet_clinic',      icon: 'bi bi-heart-pulse', label: 'venue.type.vet_clinic' },
     { value: 'public_shelter',  icon: 'bi bi-bank',        label: 'venue.type.public_shelter' },
     { value: 'private_shelter', icon: 'bi bi-house-heart', label: 'venue.type.private_shelter' },
-    { value: 'studio',          icon: 'bi bi-palette',     label: 'venue.type.studio' },
     { value: 'leisure_hybrid',  icon: 'bi bi-dice-5',      label: 'venue.type.leisure_hybrid' },
 ] as const
 

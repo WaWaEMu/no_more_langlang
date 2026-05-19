@@ -82,8 +82,7 @@ class FetchFosterVenues extends Command
             '餐廳 中途 OR 認養 OR 送養',
             '寵物用品 中途 OR 認養 OR 送養',
             '寵物美容 中途 OR 認養 OR 送養',
-            '寵物旅館 中途 OR 認養 OR 送養',
-            '工作室 中途 OR 認養 OR 送養'
+            '寵物旅館 中途 OR 認養 OR 送養'
         ];
 
         // 1. Ineligible Blacklist (Skip immediately to save API tokens and AI fees)
@@ -344,9 +343,6 @@ class FetchFosterVenues extends Command
         }
         if (str_contains($name, '協會') || str_contains($name, '保育場') || str_contains($name, '狗園') || str_contains($name, '狗場') || str_contains($name, '中途') || str_contains($name, '護生') || str_contains($name, '庇護') || str_contains($name, '貓舍') || in_array('animal_shelter', $googleTypes)) {
             $tags[] = FosterVenue::TYPE_PRIVATE_SHELTER;
-        }
-        if (str_contains($name, '工作室') || str_contains($name, 'studio')) {
-            $tags[] = FosterVenue::TYPE_STUDIO;
         }
         if (str_contains($name, '書') || str_contains($name, '漫畫') || str_contains($name, '桌遊') || str_contains($name, '空間') || str_contains($name, '藝廊')) {
             $tags[] = FosterVenue::TYPE_LEISURE_HYBRID;
