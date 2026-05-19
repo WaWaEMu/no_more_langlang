@@ -462,18 +462,19 @@ onMounted(async () => {
 
 .foster-venue-page__type-badge--restaurant_cafe {
     background: #fef9c3;
-    color: #a16207;
+    color: #713f12; /* Switched to a rich Espresso Brown for perfect WCAG high contrast and cozy coffee vibe */
 }
 
 .foster-venue-page__type-badge--public_shelter {
     background: #dbeafe;
     color: #1d4ed8;
+    border: 1px solid #bfdbfe; /* Solid border to represent official/institutional status */
 }
 
 .foster-venue-page__type-badge--private_shelter {
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px dashed #bfdbfe;
+    background: #fff7ed; /* Warm peach background for volunteer/grassroots warmth */
+    color: #c2410c; /* Deep warm rust/orange for beautiful distinction */
+    border: 1px dashed #ffedd5; /* Dashed border represents non-governmental/volunteer status */
 }
 
 .foster-venue-page__type-badge--pet_supplies {
