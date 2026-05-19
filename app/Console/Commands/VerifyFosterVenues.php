@@ -247,8 +247,8 @@ class VerifyFosterVenues extends Command
 
         while ($attempt < $maxRetries) {
             try {
-                // Gemini API endpoint (Using the production-stable gemini-1.5-flash model to avoid experimental preview limits & 503 errors)
-                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+                // Gemini API endpoint (Using gemini-2.5-flash on v1beta which perfectly supports our camelCase JSON payload)
+                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}";
 
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json'
