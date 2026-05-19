@@ -64,12 +64,17 @@ class VerifyFosterVenues extends Command
                     $placeDetails = $this->fetchPlaceDetails($manualName);
                     
                     if ($placeDetails) {
-                        $this->ingestManualVenue($manualName, $placeDetails);
+                        $this->ingestManualVenue($manualName, $placeDetails, $aiResult['pet_types'] ?? ['cat', 'dog']);
                     } else {
                         // Create basic model entry if Google Places doesn't return anything
                         $venue = FosterVenue::firstOrNew(['name' => $manualName]);
                         $venue->status = FosterVenue::STATUS_ACTIVE;
                         $venue->is_verified = true;
+                        if (isset($aiResult['pet_types']) && is_array($aiResult['pet_types'])) {
+                            $venue->pet_types = array_values(array_intersect(['cat', 'dog'], $aiResult['pet_types']));
+                        } else {
+                            $venue->pet_types = ['cat', 'dog'];
+                        }
                         $venue->save();
                         $this->info("[Saved] {$manualName} (Google Places search returned no direct match).");
                     }
@@ -135,6 +140,9 @@ class VerifyFosterVenues extends Command
                     // Update database for approved venues
                     $venue->status = FosterVenue::STATUS_ACTIVE;
                     $venue->is_verified = true;
+                    if (isset($aiResult['pet_types']) && is_array($aiResult['pet_types'])) {
+                        $venue->pet_types = array_values(array_intersect(['cat', 'dog'], $aiResult['pet_types']));
+                    }
                 } else {
                     $this->warn("❌ [Rejected] Reason: {$aiResult['reason']}");
                     // Update database for rejected venues so we don't check them again
@@ -234,11 +242,18 @@ class VerifyFosterVenues extends Command
             . "- 黃金法則：只有當搜尋摘要中，明確且直接指出「{$name}」這家店本身就是貓咪中途、有提供中途安置或店內貓狗供認養時，才能判定為 true！\n\n"
             . "【🟢 核准標準 - 必須符合以下情況才能為 true】\n"
             . "- 該店「長期且持續地」作為流浪貓狗的避風港/中途站，店內常年有待認養的貓狗活動，並有明確的送養與領養機制。\n\n"
+            . "【🐱🐶 貓狗種類分析規則 (pet_types)】\n"
+            . "請從搜尋摘要中仔細判定這家店究竟是安置貓咪、狗狗、還是兩者皆有。\n"
+            . "- 若為「純貓咪咖啡廳/中途貓舍」，請回傳 [\"cat\"]\n"
+            . "- 若為「純流浪狗園/狗場」，請回傳 [\"dog\"]\n"
+            . "- 若為「貓狗皆有安置」或「一般的動物之家/公私立收容所」（如：彰化防疫所、臺北市動物之家、浪浪別哭咖啡廳），請回傳 [\"cat\", \"dog\"]\n"
+            . "- 若搜尋摘要資訊過於模糊、難以精確分辨種類，請預設回傳 [\"cat\", \"dog\"]\n\n"
             . "搜尋摘要：\n{$snippets}\n\n"
             . "請務必只回傳純 JSON 格式，不要包含 Markdown 語法（例如 ```json），格式如下：\n"
             . "{\n"
             . '  "is_foster_venue": true 或 false,' . "\n"
             . '  "confidence_score": 0到100的整數,' . "\n"
+            . '  "pet_types": ["cat"] 或 ["dog"] 或 ["cat", "dog"],' . "\n"
             . '  "reason": "你的判斷理由（繁體中文，限 50 字以內，若判定為 false 請明確指出違反了哪條排除條款或謬誤條款）"' . "\n"
             . "}";
 
@@ -249,7 +264,7 @@ class VerifyFosterVenues extends Command
             try {
                 // Gemini API endpoint (Using gemini-2.5-flash on v1beta which perfectly supports our camelCase JSON payload)
                 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}";
-
+ 
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json'
                 ])->post($url, [
@@ -277,7 +292,8 @@ class VerifyFosterVenues extends Command
                 } elseif (in_array($response->status(), [429, 500, 503])) {
                     $attempt++;
                     $waitTime = 15 * $attempt; // Exponential backoff: 15s, 30s, 45s
-                    $this->warn("⚠️ API Overloaded or Rate limited ({$response->status()}). Sleeping for {$waitTime} seconds before retrying (Attempt {$attempt}/{$maxRetries})...");
+                    $this->warn("⚠️ API Overloaded or Rate limited ({$response->status()}). Response: " . $response->body());
+                    $this->warn("Sleeping for {$waitTime} seconds before retrying (Attempt {$attempt}/{$maxRetries})...");
                     sleep($waitTime);
                     continue;
                 } else {
@@ -329,7 +345,7 @@ class VerifyFosterVenues extends Command
     /**
      * Ingest manual verified venue details into the database
      */
-    private function ingestManualVenue(string $name, array $placeDetails): void
+    private function ingestManualVenue(string $name, array $placeDetails, array $aiPetTypes = ['cat', 'dog']): void
     {
         $address = $placeDetails['formattedAddress'] ?? '';
         $venue = FosterVenue::firstOrNew([
@@ -362,6 +378,7 @@ class VerifyFosterVenues extends Command
             'business_hours' => $placeDetails['regularOpeningHours']['weekdayDescriptions'] ?? null,
             'website_url' => isset($placeDetails['websiteUri']) ? substr($placeDetails['websiteUri'], 0, 255) : null,
             'type' => [FosterVenue::TYPE_RESTAURANT_CAFE], // Defaulting manually added cafes to restaurant tag array
+            'pet_types' => array_values(array_intersect(['cat', 'dog'], $aiPetTypes)),
             'business_status' => $placeDetails['businessStatus'] ?? 'OPERATIONAL',
             'services' => ['adoption'],
         ]);
