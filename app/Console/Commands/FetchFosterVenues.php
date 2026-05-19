@@ -30,82 +30,117 @@ class FetchFosterVenues extends Command
             return;
         }
 
-        // District lists for metropolitan areas with dense pet business populations
-        $metroDistricts = [
-            '台北' => [
-                '大安區', '信義區', '中山區', '內湖區', '士林區', '松山區', 
-                '大同區', '萬華區', '文山區', '中正區', '南港區', '北投區'
-            ],
-            '新北' => [
-                '板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', 
-                '土城區', '蘆洲區', '汐止區', '樹林區', '淡水區', '林口區', '三峽區'
-            ],
-            '台中' => [
-                '西屯區', '北屯區', '南屯區', '西區', '北區', '東區', '南區', 
-                '豐原區', '大里區', '太平區', '沙鹿區', '潭子區'
-            ],
-            '高雄' => [
-                '三民區', '左營區', '鼓山區', '鳳山區', '前鎮區', '新興區', 
-                '苓雅區', '楠梓區', '小港區', '岡山區', '仁武區'
-            ],
-            '桃園' => [
-                '桃園區', '中壢區', '平鎮區', '八德區', '蘆竹區', '龜山區', '楊梅區'
-            ],
-            '台南' => [
-                '東區', '永康區', '安平區', '中西區', '北區', '南區', '安南區', '新營區'
-            ]
-        ];
+        // Instead of granular districts (which causes Google Maps to return irrelevant local businesses when no strict matches exist),
+        // we search at the City/County level. This ensures Google only returns highly relevant true matches across the whole city.
+        $metroCities = ['台北', '新北', '桃園', '台中', '台南', '高雄'];
 
-        // Basic counties (including offshore islands) processed as a single unit
         $counties = [
-            '基隆', '新竹', '苗栗', '彰化', '南投', '雲林', '嘉義', '屏東', 
-            '宜蘭', '花蓮', '台東', '澎湖', '金門', '馬祖'
+            '基隆',
+            '新竹',
+            '苗栗',
+            '彰化',
+            '南投',
+            '雲林',
+            '嘉義',
+            '屏東',
+            '宜蘭',
+            '花蓮',
+            '台東',
+            '澎湖',
+            '金門',
+            '馬祖'
         ];
 
-        // Assemble search targets with district-level granularity for high-density areas
         $searchTargets = [];
-        foreach ($metroDistricts as $city => $districts) {
-            foreach ($districts as $district) {
-                $searchTargets[] = [
-                    'label' => "{$city}市{$district}",
-                    'query_prefix' => "{$city}市{$district}"
-                ];
-            }
-        }
-        foreach ($counties as $county) {
+
+        foreach ($metroCities as $city) {
             $searchTargets[] = [
-                'label' => $county,
-                'query_prefix' => $county
+                'label' => "{$city}地區",
+                'query_prefix' => $city,
+                'use_pagination' => true
             ];
         }
 
-        // Targeted keywords — cast a wide net, whitelist filter handles precision
+        foreach ($counties as $county) {
+            $searchTargets[] = [
+                'label' => "{$county}地區",
+                'query_prefix' => $county,
+                'use_pagination' => false
+            ];
+        }
+
+        // Targeted keywords — STRICTLY require adoption/midway terms to avoid fetching thousands of regular pet-friendly venues
         $keywords = [
             '中途 認養 OR 送養',
-            '浪浪',
+            '浪浪 中途 OR 認養 OR 送養',
             '流浪動物 護生園 狗園',
             '收容所 動物之家 教育園區',
-            '美髮 貓 OR 狗',
-            '漫畫 貓 OR 狗',
-            '咖啡廳 貓 OR 狗',
-            '寵物用品 認養 OR 送養 OR 中途',
-            '寵物美容 認養 OR 送養 OR 中途',
-            '寵物旅館 認養 OR 送養 OR 中途',
-            '工作室 認養 OR 送養 OR 中途'
+            '美髮 中途 OR 認養 OR 送養',
+            '漫畫 中途 OR 認養 OR 送養',
+            '桌遊 中途 OR 認養 OR 送養',
+            '咖啡廳 中途 OR 認養 OR 送養',
+            '餐廳 中途 OR 認養 OR 送養',
+            '寵物用品 中途 OR 認養 OR 送養',
+            '寵物美容 中途 OR 認養 OR 送養',
+            '寵物旅館 中途 OR 認養 OR 送養',
+            '工作室 中途 OR 認養 OR 送養'
         ];
 
         // 1. Ineligible Blacklist (Skip immediately to save API tokens and AI fees)
         // Combines global non-animal terms and strict commercial/breeder keywords.
         // We DO NOT block "貓舍/犬舍" here to prevent false positives like "新屋貓舍義工團".
         $blacklist = [
-            '移民署', '更生', '戒毒', '少年', '基督教', '更生團契', '法務部',
-            '福利', '心理', '安置', '野生', '保育類', '試驗', '研究', '實驗',
-            '辦公室', '辦事處', '動保處', '防疫所', '試吃', '婚宴', '喜餅',
-            '水世界', '寄養', '佛學會', '醫院',
-            '寵物美容學苑', '寵物美容學院',
-            '品種', '買賣', '名貓', '名犬', '自家繁殖', '特寵字', '特寵證', '血統', '出售',
+            '移民署',
+            '更生',
+            '戒毒',
+            '少年',
+            '基督教',
+            '更生團契',
+            '法務部',
+            '福利',
+            '心理',
+            '停止',
+            '歇業',
+            '永久停業',
+            '結束營業',
+            '已關閉',
+            '野生',
+            '保育類',
+            '試驗',
+            '研究',
+            '實驗',
+            '辦公室',
+            '辦事處',
+            '試吃',
+            '婚宴',
+            '喜餅',
+            '水世界',
+            '寄養',
+            '佛學會',
+            '醫院',
+            '寵物美容學苑',
+            '寵物美容學院',
+            '品種',
+            '買賣',
+            '名貓',
+            '名犬',
+            '自家繁殖',
+            '特寵字',
+            '特寵證',
+            '血統',
+            '出售',
             // Added exclusions for feeding spots and temple sanctuaries
-            '餵食場', '餵食點', '餵養點', '餵養場', '放生', '功德', '放生場', '護生協會'
+            '餵食場',
+            '餵食點',
+            '餵養點',
+            '餵養場',
+            '放生',
+            '功德',
+            '放生場',
+            '護生協會',
+            '鳥',
+            '兔',
+            '鼠'
         ];
 
 
@@ -115,104 +150,126 @@ class FetchFosterVenues extends Command
         foreach ($searchTargets as $target) {
             foreach ($keywords as $keyword) {
                 $query = "{$target['query_prefix']} {$keyword}";
-                $this->info("Searching: {$query}...");
-
                 try {
-                    $response = Http::withHeaders([
-                        'Content-Type' => 'application/json',
-                        'X-Goog-Api-Key' => $apiKey,
-                        'X-Goog-FieldMask' => implode(',', [
-                            'places.displayName',
-                            'places.formattedAddress',
-                            'places.addressComponents',
-                            'places.location',
-                            'places.types',
-                            'places.primaryTypeDisplayName',
-                            'places.websiteUri',
-                            'places.nationalPhoneNumber',
-                            'places.rating',
-                            'places.userRatingCount',
-                            'places.regularOpeningHours',
-                            'places.businessStatus',
-                        ])
-                    ])->post($url, [
-                                'textQuery' => $query,
-                                'languageCode' => 'zh-TW'
+                    $pageToken = null;
+                    $pageCount = 1;
+
+                    do {
+                        $this->info("Searching: {$query}... (Page {$pageCount})");
+
+                        $payload = [
+                            'textQuery' => $query,
+                            'languageCode' => 'zh-TW',
+                            'pageSize' => 20
+                        ];
+
+                        if ($pageToken) {
+                            $payload['pageToken'] = $pageToken;
+                        }
+
+                        $response = Http::withHeaders([
+                            'Content-Type' => 'application/json',
+                            'X-Goog-Api-Key' => $apiKey,
+                            'X-Goog-FieldMask' => implode(',', [
+                                'places.displayName',
+                                'places.formattedAddress',
+                                'places.addressComponents',
+                                'places.location',
+                                'places.types',
+                                'places.primaryTypeDisplayName',
+                                'places.websiteUri',
+                                'places.nationalPhoneNumber',
+                                'places.rating',
+                                'places.userRatingCount',
+                                'places.regularOpeningHours',
+                                'places.businessStatus',
+                                'nextPageToken'
+                            ])
+                        ])->post($url, $payload);
+
+                        if (!$response->successful()) {
+                            $this->error("Failed to fetch data for {$query}: " . $response->body());
+                            break;
+                        }
+
+                        $places = $response->json()['places'] ?? [];
+
+                        foreach ($places as $place) {
+                            $name = $place['displayName']['text'] ?? '';
+                            $address = $this->fixAddress($place['formattedAddress'] ?? '');
+                            $googleTypes = $place['types'] ?? [];
+
+                            // 1. Blacklist Check (Instant Skip)
+                            foreach ($blacklist as $badWord) {
+                                if (str_contains($name, $badWord)) {
+                                    $this->warn("  - Skipping (Blacklist Match): {$name}");
+                                    continue 2;
+                                }
+                            }
+
+                            // Skip religious places (temples, places of worship) to filter out religious release sites
+                            $religiousTypes = ['place_of_worship', 'buddhist_temple', 'temple', 'church', 'hindu_temple', 'mosque', 'synagogue'];
+                            if (!empty(array_intersect($googleTypes, $religiousTypes))) {
+                                $this->warn("  - Skipping (Religious Place): {$name}");
+                                continue;
+                            }
+
+                            // 2. Skip permanently closed businesses
+                            $businessStatus = $place['businessStatus'] ?? 'OPERATIONAL';
+                            if ($businessStatus === 'CLOSED_PERMANENTLY') {
+                                $this->warn("  - Skipping (Permanently Closed): {$name}");
+                                continue;
+                            }
+
+                            $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $target['label'];
+
+                            // Use firstOrNew to prevent overwriting AI Agent's verification status
+                            $venue = FosterVenue::firstOrNew([
+                                'name' => $name,
+                                'address' => $address
                             ]);
 
-                    if (!$response->successful()) {
-                        $this->error("Failed to fetch data for {$query}: " . $response->body());
-                        continue;
-                    }
-
-                    $places = $response->json()['places'] ?? [];
-
-                    foreach ($places as $place) {
-                        $name = $place['displayName']['text'] ?? '';
-                        $address = $this->fixAddress($place['formattedAddress'] ?? '');
-                        $googleTypes = $place['types'] ?? [];
-
-                        // 1. Blacklist Check (Instant Skip)
-                        foreach ($blacklist as $badWord) {
-                            if (str_contains($name, $badWord)) {
-                                $this->warn("  - Skipping (Blacklist Match): {$name}");
-                                continue 2;
+                            // Only set default status and verification for NEW venues
+                            if (!$venue->exists) {
+                                $venue->status = FosterVenue::STATUS_PENDING;
+                                $venue->is_verified = false;
                             }
+
+                            // Always update basic info, preserving existing status and is_verified
+                            $venue->fill([
+                                'city' => $this->fixAddress($realCity),
+                                'district' => $this->extractDistrict($place['addressComponents'] ?? []),
+                                'phone' => $place['nationalPhoneNumber'] ?? null,
+                                'latitude' => $place['location']['latitude'] ?? null,
+                                'longitude' => $place['location']['longitude'] ?? null,
+                                'rating' => $place['rating'] ?? null,
+                                'user_rating_count' => $place['userRatingCount'] ?? null,
+                                'business_hours' => $place['regularOpeningHours']['weekdayDescriptions'] ?? null,
+                                'website_url' => isset($place['websiteUri']) ? substr($place['websiteUri'], 0, 255) : null,
+                                'type' => $this->determineType($name, $place['types'] ?? []),
+                                'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? null,
+                                'business_status' => $businessStatus,
+                                'pet_types' => $this->determinePetTypes($name, $keyword),
+                                'services' => ['adoption'],
+                            ]);
+
+                            $venue->save();
+
+                            $this->line("  - <info>Processed</info>: {$name}");
                         }
 
-                        // Skip religious places (temples, places of worship) to filter out religious release sites
-                        $religiousTypes = ['place_of_worship', 'buddhist_temple', 'temple', 'church', 'hindu_temple', 'mosque', 'synagogue'];
-                        if (!empty(array_intersect($googleTypes, $religiousTypes))) {
-                            $this->warn("  - Skipping (Religious Place): {$name}");
-                            continue;
+                        $pageToken = $response->json()['nextPageToken'] ?? null;
+
+                        if ($pageToken) {
+                            $pageCount++;
+                            // Google requires a short delay before using the nextPageToken
+                            sleep(2);
+                        } else {
+                            // Regular throttling to respect API rate limits
+                            usleep(300000);
                         }
 
-                        // 2. Skip permanently closed businesses
-                        $businessStatus = $place['businessStatus'] ?? 'OPERATIONAL';
-                        if ($businessStatus === 'CLOSED_PERMANENTLY') {
-                            $this->warn("  - Skipping (Permanently Closed): {$name}");
-                            continue;
-                        }
-
-                        $realCity = $this->extractCity($place['addressComponents'] ?? []) ?: $target['label'];
-
-                        // Use firstOrNew to prevent overwriting AI Agent's verification status
-                        $venue = FosterVenue::firstOrNew([
-                            'name' => $name,
-                            'address' => $address
-                        ]);
-
-                        // Only set default status and verification for NEW venues
-                        if (!$venue->exists) {
-                            $venue->status = FosterVenue::STATUS_PENDING;
-                            $venue->is_verified = false;
-                        }
-
-                        // Always update basic info, preserving existing status and is_verified
-                        $venue->fill([
-                            'city' => $this->fixAddress($realCity),
-                            'district' => $this->extractDistrict($place['addressComponents'] ?? []),
-                            'phone' => $place['nationalPhoneNumber'] ?? null,
-                            'latitude' => $place['location']['latitude'] ?? null,
-                            'longitude' => $place['location']['longitude'] ?? null,
-                            'rating' => $place['rating'] ?? null,
-                            'user_rating_count' => $place['userRatingCount'] ?? null,
-                            'business_hours' => $place['regularOpeningHours']['weekdayDescriptions'] ?? null,
-                            'website_url' => isset($place['websiteUri']) ? substr($place['websiteUri'], 0, 255) : null,
-                            'type' => $this->determineType($name, $place['types'] ?? []),
-                            'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? null,
-                            'business_status' => $businessStatus,
-                            'pet_types' => $this->determinePetTypes($name, $keyword),
-                            'services' => ['adoption'],
-                        ]);
-
-                        $venue->save();
-
-                        $this->line("  - <info>Processed</info>: {$name}");
-                    }
-
-                    // Throttling to respect API rate limits and keep it steady
-                    usleep(300000); // 0.3 seconds
+                    } while ($pageToken && $pageCount <= 3 && $target['use_pagination']); // Max 3 pages (60 results) per query, only for 6 Metro cities
 
                 } catch (\Exception $e) {
                     $this->error("Error occurred during {$query}: " . $e->getMessage());
@@ -285,7 +342,7 @@ class FetchFosterVenues extends Command
         if (str_contains($name, '收容所') || str_contains($name, '動物之家')) {
             $tags[] = FosterVenue::TYPE_PUBLIC_SHELTER;
         }
-        if (str_contains($name, '協會') || str_contains($name, '保育場') || str_contains($name, '狗園') || str_contains($name, '中途之家') || str_contains($name, '護生園') || in_array('animal_shelter', $googleTypes)) {
+        if (str_contains($name, '協會') || str_contains($name, '保育場') || str_contains($name, '狗園') || str_contains($name, '狗場') || str_contains($name, '中途') || str_contains($name, '護生') || str_contains($name, '庇護') || str_contains($name, '貓舍') || in_array('animal_shelter', $googleTypes)) {
             $tags[] = FosterVenue::TYPE_PRIVATE_SHELTER;
         }
         if (str_contains($name, '工作室') || str_contains($name, 'studio')) {
@@ -296,7 +353,9 @@ class FetchFosterVenues extends Command
         }
 
         if (empty($tags)) {
-            $tags[] = FosterVenue::TYPE_STUDIO; 
+            // If we absolutely cannot determine the type from the name or Google API, 
+            // a private shelter/midway is the most statistically accurate fallback.
+            $tags[] = FosterVenue::TYPE_PRIVATE_SHELTER;
         }
 
         return array_unique($tags);
