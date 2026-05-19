@@ -31,8 +31,12 @@ class VerifyFosterVenues extends Command
         if ($manualName) {
             $this->info("🔍 [Manual] Verifying: {$manualName}");
 
+            // Clean the manual name for search: strip out parentheses/brackets and their contents
+            $cleanManualName = preg_replace('/(\(|（).*?(\)|）)/u', '', $manualName);
+            $cleanManualName = trim($cleanManualName);
+
             // Crafting the search query with explicit logical grouping
-            $searchQuery = "\"{$manualName}\" AND (\"中途\" OR \"認養\" OR \"送養\" OR \"領養\")";
+            $searchQuery = "\"{$cleanManualName}\" AND (\"中途\" OR \"認養\" OR \"送養\" OR \"領養\")";
             $this->line("Sending search query: [ {$searchQuery} ]");
 
             $snippets = $this->performSearch($searchQuery);
@@ -90,8 +94,12 @@ class VerifyFosterVenues extends Command
 
             $locationContext = trim(($venue->city ?? '') . ' ' . ($venue->district ?? ''));
 
+            // Clean the venue name for search: strip out parentheses/brackets (both English and Full-width Chinese) and their contents
+            $cleanName = preg_replace('/(\(|（).*?(\)|）)/u', '', $venue->name);
+            $cleanName = trim($cleanName);
+
             // Crafting the search query with explicit logical grouping and geographic context to differentiate branches
-            $searchQuery = "\"{$venue->name}\"";
+            $searchQuery = "\"{$cleanName}\"";
             if ($locationContext) {
                 $searchQuery .= " {$locationContext}";
             }
@@ -226,8 +234,8 @@ class VerifyFosterVenues extends Command
 
         while ($attempt < $maxRetries) {
             try {
-                // Gemini API endpoint (Using a stable model to avoid preview daily rate limits)
-                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}";
+                // Gemini API endpoint (Using the production-stable gemini-1.5-flash model to avoid experimental preview limits & 503 errors)
+                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
 
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json'
